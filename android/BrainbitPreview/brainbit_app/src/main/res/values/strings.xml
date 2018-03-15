@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Brain Activity</string>
+    <string name="connect_to_device">Connect to device</string>
+    <string name="ready_to_scan">Ready to scan</string>
+    <string name="show_plot_with_data">Show plot with data</string>
+    <string name="send_data">Send data</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="back">Back</string>
+    <string name="bluetooth_not_supported">Bluetooth not supported</string>
+    <string name="please_enable_bluetooth">Please enable bluetooth</string>
+    <string name="t3">T3</string>
+    <string name="o1">O1</string>
+    <string name="t4">T4</string>
+    <string name="O2">O2</string>
+    <string name="green">Green</string>
+    <string name="yellow">Yellow</string>
+    <string name="red1">Red 1</string>
+    <string name="red2">Red 2</string>
+    <string name="scanning_started">Scanning started</string>
+    <string name="no_devices_found">No devices found</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="connected">"Connected"</string>
+    <string name="stop">Stop</string>
+    <string name="start_test">Start test</string>
+    <string name="device_found">Device found</string>
+    <string name="connecting_to">"Connecting to"</string>
+    <string name="disconnecting">Disconnecting</string>
+</resources>

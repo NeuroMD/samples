@@ -1,0 +1,110 @@
+
+/* Class = "UILabel"; text = "Search device"; ObjectID = "06M-iS-uBf"; */
+"06M-iS-uBf.text" = "Поиск";
+
+/* Class = "UIButton"; normalTitle = "RELAX"; ObjectID = "1CQ-HZ-wpv"; */
+"1CQ-HZ-wpv.normalTitle" = "РЕЛАКС";
+
+/* Class = "UILabel"; text = "0"; ObjectID = "3zp-Fs-Ssu"; */
+"3zp-Fs-Ssu.text" = "0";
+
+/* Class = "UIButton"; normalTitle = "Write"; ObjectID = "4jc-yE-qHe"; */
+"4jc-yE-qHe.normalTitle" = "ЗАПИСАТЬ";
+
+/* Class = "UILabel"; text = "Current amplitude"; ObjectID = "6aC-hk-dPg"; */
+"6aC-hk-dPg.text" = "Ток";
+
+/* Class = "UILabel"; text = "Programs"; ObjectID = "88V-lV-T6F"; */
+"88V-lV-T6F.text" = "Программы";
+
+/* Class = "UILabel"; text = "0"; ObjectID = "8Js-hT-qS5"; */
+"8Js-hT-qS5.text" = "0";
+
+/* Class = "UILabel"; text = "Stimulation"; ObjectID = "931-gb-T1C"; */
+"931-gb-T1C.text" = "Стимуляция";
+
+/* Class = "UILabel"; text = "Stim"; ObjectID = "Hsc-BG-uZc"; */
+"Hsc-BG-uZc.text" = "Stim";
+
+/* Class = "UIButton"; normalTitle = "TONIC"; ObjectID = "IkV-RV-Pue"; */
+"IkV-RV-Pue.normalTitle" = "ТОНИЗИРУЮЩАЯ";
+
+/* Class = "UILabel"; text = "11"; ObjectID = "JVs-UL-YHa"; */
+"JVs-UL-YHa.text" = "11";
+
+/* Class = "UILabel"; text = "Application site"; ObjectID = "K3S-Oc-Tgg"; */
+"K3S-Oc-Tgg.text" = "Место наложения";
+
+/* Class = "UISegmentedControl"; R5s-Es-2jx.segmentTitles[0] = "Left"; ObjectID = "R5s-Es-2jx"; */
+"R5s-Es-2jx.segmentTitles[0]" = "Левая";
+
+/* Class = "UISegmentedControl"; R5s-Es-2jx.segmentTitles[1] = "Right"; ObjectID = "R5s-Es-2jx"; */
+"R5s-Es-2jx.segmentTitles[1]" = "Правая";
+
+/* Class = "UILabel"; text = "Start angle"; ObjectID = "RWQ-2K-p9f"; */
+"RWQ-2K-p9f.text" = "Угол срабатывания";
+
+/* Class = "UIButton"; normalTitle = "Read"; ObjectID = "TDl-cG-doZ"; */
+"TDl-cG-doZ.normalTitle" = "ЧИТАТЬ";
+
+/* Class = "UIButton"; normalTitle = "Test"; ObjectID = "Vmx-hR-bGB"; */
+"Vmx-hR-bGB.normalTitle" = "ТЕСТ";
+
+/* Class = "UIButton"; normalTitle = "SYNAPS"; ObjectID = "YMg-Qi-NMK"; */
+"YMg-Qi-NMK.normalTitle" = "СИНАПС";
+
+/* Class = "UITabBarItem"; title = "Devices"; ObjectID = "acW-dT-cKf"; */
+"acW-dT-cKf.title" = "Устройства";
+
+/* Class = "UILabel"; text = "90"; ObjectID = "c2b-hv-EaN"; */
+"c2b-hv-EaN.text" = "90";
+
+/* Class = "UITabBarItem"; title = "Corrector"; ObjectID = "cPa-gy-q4n"; */
+"cPa-gy-q4n.title" = "Корректор";
+
+/* Class = "UIButton"; normalTitle = "DEEP"; ObjectID = "d8r-qG-v8s"; */
+"d8r-qG-v8s.normalTitle" = "ГЛУБОКАЯ";
+
+/* Class = "UIButton"; normalTitle = "ANALGESIA"; ObjectID = "fb8-pc-u80"; */
+"fb8-pc-u80.normalTitle" = "ЭЛЕКТРОАНАЛЬГЕЗИЯ";
+
+/* Class = "UISegmentedControl"; heI-3o-Isb.segmentTitles[0] = "60 us"; ObjectID = "heI-3o-Isb"; */
+"heI-3o-Isb.segmentTitles[0]" = "60 мкс";
+
+/* Class = "UISegmentedControl"; heI-3o-Isb.segmentTitles[1] = "100 us"; ObjectID = "heI-3o-Isb"; */
+"heI-3o-Isb.segmentTitles[1]" = "100 мкс";
+
+/* Class = "UISegmentedControl"; heI-3o-Isb.segmentTitles[2] = "200 us"; ObjectID = "heI-3o-Isb"; */
+"heI-3o-Isb.segmentTitles[2]" = "200 мкс";
+
+/* Class = "UILabel"; text = "Stop angle"; ObjectID = "lDf-b8-oW2"; */
+"lDf-b8-oW2.text" = "Угол остановки";
+
+/* Class = "UILabel"; text = "Frequency"; ObjectID = "lZC-dx-cyi"; */
+"lZC-dx-cyi.text" = "Частота";
+
+/* Class = "UIButton"; normalTitle = "DYNAMIC"; ObjectID = "lvA-PI-MHX"; */
+"lvA-PI-MHX.normalTitle" = "ДИНАМИЧЕСКАЯ";
+
+/* Class = "UISegmentedControl"; pzG-2s-3CG.segmentTitles[0] = "Leg"; ObjectID = "pzG-2s-3CG"; */
+"pzG-2s-3CG.segmentTitles[0]" = "Нога";
+
+/* Class = "UISegmentedControl"; pzG-2s-3CG.segmentTitles[1] = "Hand"; ObjectID = "pzG-2s-3CG"; */
+"pzG-2s-3CG.segmentTitles[1]" = "Рука";
+
+/* Class = "UITabBarItem"; title = "Programs"; ObjectID = "qZ5-vJ-k58"; */
+"qZ5-vJ-k58.title" = "Программы";
+
+/* Class = "UIButton"; normalTitle = "HIGH-FREQUENT"; ObjectID = "tc1-6i-Nmg"; */
+"tc1-6i-Nmg.normalTitle" = "ВЫСОКОЧАСТОТНАЯ";
+
+/* Class = "UILabel"; text = "Motion assistant"; ObjectID = "w8e-RO-M25"; */
+"w8e-RO-M25.text" = "Корректор";
+
+/* Class = "UILabel"; text = "Current amplitude"; ObjectID = "xWs-jo-dHJ"; */
+"xWs-jo-dHJ.text" = "Ток";
+
+/* Class = "UILabel"; text = "Puls duration"; ObjectID = "y5T-T8-mj1"; */
+"y5T-T8-mj1.text" = "Инмульс";
+
+

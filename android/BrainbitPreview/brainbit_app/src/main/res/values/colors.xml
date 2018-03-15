@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="grey">#B6B6B6</color>
+    <color name="green">#008100</color>
+    <color name="yellow">#EFF100</color>
+    <color name="red1">#FF0000</color>
+    <color name="red2">#820000</color>
+    <color name="raw_data_plot_color">#303030</color>
+</resources>
