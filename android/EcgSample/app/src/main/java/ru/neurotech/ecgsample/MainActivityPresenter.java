@@ -6,8 +6,8 @@ import java.util.List;
 
 import ru.neurotech.common.INotificationCallback;
 import ru.neurotech.common.SubscribersNotifier;
-import ru.neurotech.neurodevices.ecg.EcgDevice;
-import ru.neurotech.neurodevices.state.NeuroDeviceState;
+import ru.neurotech.neurosdk.Device;
+import ru.neurotech.neurosdk.parameters.types.DeviceState;
 
 public class MainActivityPresenter {
 
@@ -38,16 +38,16 @@ public class MainActivityPresenter {
                 onScanStateChanged(scanState);
             }
         });
-        mModel.deviceListChanged.subscribe(new INotificationCallback<List<EcgDevice>>() {
+        mModel.deviceListChanged.subscribe(new INotificationCallback<List<Device>>() {
             @Override
-            public void onNotify(Object sender, List<EcgDevice> ecgDevices) {
+            public void onNotify(Object sender, List<Device> ecgDevices) {
                 onDeviceListChanged(ecgDevices);
             }
         });
 
-        mModel.selectedDeviceChanged.subscribe(new INotificationCallback<EcgDevice>() {
+        mModel.selectedDeviceChanged.subscribe(new INotificationCallback<Device>() {
             @Override
-            public void onNotify(Object sender, EcgDevice selectedDevice) {
+            public void onNotify(Object sender, Device selectedDevice) {
                 if (selectedDevice == null){
                     mStartSignalButtonEnabled = false;
                     notifyStartSignalButtonEnabledChanged();
@@ -68,8 +68,6 @@ public class MainActivityPresenter {
                     notifyBatteryStateTextChanged();
                     mDeviceStateText = mModel.getDeviceState().name();
                     notifyDeviceStateTextChanged();
-                    mDeviceErrorText = mModel.getError().name();
-                    notifyDeviceErrorTextChanged();
                     mHpfStateText = mModel.isHpfEnabled() ? "ON" : "OFF";
                     notifyHpfStateTextChanged();
                     mSamplingFrequencyText = String.format("%d HZ", mModel.getSamplingFrequency());
@@ -84,9 +82,9 @@ public class MainActivityPresenter {
             }
         });
 
-        mModel.deviceStateChanged.subscribe(new INotificationCallback<NeuroDeviceState>() {
+        mModel.deviceStateChanged.subscribe(new INotificationCallback<DeviceState>() {
             @Override
-            public void onNotify(Object o, NeuroDeviceState neuroDeviceState) {
+            public void onNotify(Object o, DeviceState neuroDeviceState) {
                 mDeviceStateText = mModel.getDeviceState().name();
                 notifyDeviceStateTextChanged();
             }
@@ -115,7 +113,7 @@ public class MainActivityPresenter {
     /**
      * DeviceList events
      */
-    public SubscribersNotifier<List<EcgDevice>> deviceListChanged = new SubscribersNotifier<>();
+    public SubscribersNotifier<List<Device>> deviceListChanged = new SubscribersNotifier<>();
 
     /**
      * Device parameters events
@@ -133,7 +131,7 @@ public class MainActivityPresenter {
     /**
      * Getters
      */
-    public List<EcgDevice> getDeviceList(){
+    public List<Device> getDeviceList(){
         return mModel.getDeviceList();
     }
     public boolean isStartScanButtonEnabled() {
@@ -180,7 +178,7 @@ public class MainActivityPresenter {
         mModel.removeDevice();
     }
 
-    public void onDeviceListItemSelected(EcgDevice device) {
+    public void onDeviceListItemSelected(Device device) {
         mModel.selectDevice(device);
     }
 
@@ -196,7 +194,7 @@ public class MainActivityPresenter {
         notifyStopScanButtonEnabledChanged();
     }
 
-    private void onDeviceListChanged(final List<EcgDevice> ecgDevices) {
+    private void onDeviceListChanged(final List<Device> ecgDevices) {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

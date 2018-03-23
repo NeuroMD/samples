@@ -16,8 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import ru.neurotech.common.INotificationCallback;
 import ru.neurotech.common.SubscribersNotifier;
-import ru.neurotech.neurodevices.ecg.EcgDevice;
-import ru.neurotech.neurodevices.ecg.RPeak;
+import ru.neurotech.neurosdk.Device;
 
 public class EcgSignalStorage {
 
@@ -29,9 +28,9 @@ public class EcgSignalStorage {
 
     public EcgSignalStorage(EcgDeviceModel model){
         mModel = model;
-        mModel.selectedDeviceChanged.subscribe(new INotificationCallback<EcgDevice>() {
+        mModel.selectedDeviceChanged.subscribe(new INotificationCallback<Device>() {
             @Override
-            public void onNotify(Object o, final EcgDevice ecgDevice) {
+            public void onNotify(Object o, final Device ecgDevice) {
                 if (ecgDevice != null){
                     createDataBuffers();
                     lastAdditionLength = 0;
@@ -58,10 +57,10 @@ public class EcgSignalStorage {
             return;
         }
 
-        RPeak[] peaks = mModel.getRPeaks(0, mModel.getTotalDuration());
+        /*RPeak[] peaks = mModel.getRPeaks(0, mModel.getTotalDuration());
         for (RPeak p : peaks){
             mRPeakSamples.add((int)(p.time()*mModel.getSamplingFrequency()));
-        }
+        }*/
 
         if (!isExternalStorageWritable()){
             return;
@@ -69,7 +68,7 @@ public class EcgSignalStorage {
 
         mBufferLock.lock();
         File signalStorageFile = new File(getSignalStorageDir(), "signal.spl");
-        File peaksStorageFile = new File(getSignalStorageDir(), "rpeaks.snb");
+        //File peaksStorageFile = new File(getSignalStorageDir(), "rpeaks.snb");
         try {
             FileOutputStream signalSaveStream = new FileOutputStream(signalStorageFile);
             for (int i = 0; i < lastAdditionLength; ++i) {
@@ -79,12 +78,12 @@ public class EcgSignalStorage {
                 signalSaveStream.write(output);
             }
 
-            FileOutputStream peaksSaveStream = new FileOutputStream(peaksStorageFile);
+            /*FileOutputStream peaksSaveStream = new FileOutputStream(peaksStorageFile);
             for (int i = 0; i < mRPeakSamples.size(); ++i){
                 byte[] output = new byte[4];
                 ByteBuffer.wrap(output).order(ByteOrder.LITTLE_ENDIAN).putInt(mRPeakSamples.get(i));
                 peaksSaveStream.write(output);
-            }
+            }*/
 
             signalFileSaved.sendNotification(this, null);
         }
@@ -107,7 +106,7 @@ public class EcgSignalStorage {
         int newLength = (int)(signalDuration * mModel.getSamplingFrequency());
         int offset = lastAdditionLength;
         int length = newLength - lastAdditionLength;
-        double[] newSignal = mModel.getRawSignal(offset, length);
+        Double[] newSignal = mModel.getRawSignal(offset, length);
         if (newSignal == null || newSignal.length!=length) {
             mBufferLock.unlock();
             return;

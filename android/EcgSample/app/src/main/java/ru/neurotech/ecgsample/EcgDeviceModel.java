@@ -2,29 +2,32 @@ package ru.neurotech.ecgsample;
 
 import android.content.Context;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import ru.neurotech.bleconnection.exceptions.BluetoothAdapterException;
+import ru.neurotech.bleconnection.exceptions.BluetoothPermissionException;
 import ru.neurotech.common.INotificationCallback;
 import ru.neurotech.common.SubscribersNotifier;
-import ru.neurotech.neurodevices.ArtifactZone;
-import ru.neurotech.neurodevices.ecg.EcgDevice;
-import ru.neurotech.neurodevices.ecg.EcgDeviceConnector;
-import ru.neurotech.neurodevices.ecg.RPeak;
-import ru.neurotech.neurodevices.exceptions.BluetoothAdapterException;
-import ru.neurotech.neurodevices.exceptions.BluetoothPermissionException;
-import ru.neurotech.neurodevices.features.Channel;
-import ru.neurotech.neurodevices.state.NeuroDeviceError;
-import ru.neurotech.neurodevices.state.NeuroDeviceState;
+import ru.neurotech.neurosdk.Device;
+import ru.neurotech.neurosdk.DeviceScanner;
+import ru.neurotech.neurosdk.channels.BatteryChannel;
+import ru.neurotech.neurosdk.channels.ChannelInfo;
+import ru.neurotech.neurosdk.channels.SignalChannel;
+import ru.neurotech.neurosdk.parameters.Command;
+import ru.neurotech.neurosdk.parameters.ParameterName;
+import ru.neurotech.neurosdk.parameters.types.DeviceState;
 
 public class EcgDeviceModel {
 
-    private final EcgDeviceConnector mDeviceConnector;
-    private final List<EcgDevice> mDeviceList = new ArrayList<>();
-    private EcgDevice mSelectedDevice = null;
-    private Channel mEcgChannel = null;
-    private NeuroDeviceState mDeviceState;
-    private NeuroDeviceError mDeviceError;
+    private final DeviceScanner mDeviceConnector;
+    private final List<Device> mDeviceList = new ArrayList<>();
+    private Device mSelectedDevice = null;
+    private SignalChannel mEcgChannel = null;
+    private BatteryChannel mBatteryChannel = null;
+    private DeviceState mDeviceState;
     private int mBatteryLevel;
     private boolean mHpfEnabled;
     private int mSamplingFrequency;
@@ -38,12 +41,33 @@ public class EcgDeviceModel {
 
     public EcgDeviceModel(Context context){
 
-        mDeviceConnector = new EcgDeviceConnector(context);
-        mDeviceConnector.deviceFound.subscribe(new INotificationCallback<EcgDevice>() {
+        mDeviceConnector = new DeviceScanner(context);
+        mDeviceConnector.deviceFound.subscribe(new INotificationCallback<Device>() {
             @Override
-            public void onNotify(Object o, EcgDevice ecgDevice) {
-                    mDeviceList.add(ecgDevice);
-                    deviceListChanged.sendNotification(this, mDeviceList);
+            public void onNotify(Object o, final Device device) {
+                    DeviceState state = (DeviceState)device.readParam(ParameterName.State);
+                    if (state == DeviceState.Connected) {
+                        /*ChannelInfo[] channels = device.channels();
+                        Arrays.asList(channels).contains(ChannelInfo)*/
+                        mDeviceList.add(device);
+                        deviceListChanged.sendNotification(this, mDeviceList);
+                    }else{
+                        device.parameterChanged.subscribe(new INotificationCallback<ParameterName>() {
+                            @Override
+                            public void onNotify(Object o, ParameterName parameterName) {
+                                if (parameterName == ParameterName.State){
+                                    DeviceState state = (DeviceState)device.readParam(ParameterName.State);
+                                    if (state == DeviceState.Connected) {
+                                        device.parameterChanged.unsubscribe();
+                                        mDeviceList.add(device);
+                                        deviceListChanged.sendNotification(this, mDeviceList);
+                                    }
+                                }
+                            }
+                        });
+                        device.connect();
+                    }
+
             }
         });
         mDeviceConnector.scanStateChanged.subscribe(new INotificationCallback<Boolean>() {
@@ -58,10 +82,9 @@ public class EcgDeviceModel {
     public SubscribersNotifier bluetoothAdapterEnableNeeded = new SubscribersNotifier<>();
     public SubscribersNotifier bluetoothPermissionsNeeded = new SubscribersNotifier<>();
     public SubscribersNotifier<Boolean> scanStateChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<List<EcgDevice>> deviceListChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<EcgDevice> selectedDeviceChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<NeuroDeviceState> deviceStateChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<NeuroDeviceError> deviceErrorChanged = new SubscribersNotifier<>();
+    public SubscribersNotifier<List<Device>> deviceListChanged = new SubscribersNotifier<>();
+    public SubscribersNotifier<Device> selectedDeviceChanged = new SubscribersNotifier<>();
+    public SubscribersNotifier<DeviceState> deviceStateChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Boolean> hpfEnabledChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Integer> samplingFrequencyChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Integer> gainChanged = new SubscribersNotifier<>();
@@ -73,16 +96,15 @@ public class EcgDeviceModel {
     public SubscribersNotifier<Double> stressIndexChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Double> signalDurationChanged = new SubscribersNotifier<>();
 
-    public List<EcgDevice> getDeviceList(){
+    public List<Device> getDeviceList(){
         return  mDeviceList;
     }
 
     public void startScan(){
 
         removeDevice();
-        for (EcgDevice device : mDeviceList){
-            device.getNeuroDevice().disconnect();
-            device.getNeuroDevice().close();
+        for (Device device : mDeviceList){
+            device.disconnect();
         }
         mDeviceList.clear();
         deviceListChanged.sendNotification(this, mDeviceList);
@@ -103,75 +125,56 @@ public class EcgDeviceModel {
         mDeviceConnector.stopScan();
     }
 
-    public void selectDevice(EcgDevice device){
+    public void selectDevice(Device device){
 
         if (mSelectedDevice!=null){
-            mSelectedDevice.batteryLevelChanged.unsubscribe();
-            mSelectedDevice.deviceStateChanged.unsubscribe();
-            mSelectedDevice.electrodesAttachedStateChanged.unsubscribe();
-            mSelectedDevice.totalSignalDurationChanged.unsubscribe();
-            mSelectedDevice.heartRateChanged.unsubscribe();
-            mSelectedDevice.stressIndexChanged.unsubscribe();
+            mSelectedDevice.parameterChanged.unsubscribe();
         }
 
         mSelectedDevice = device;
 
         if (mSelectedDevice!=null) {
-            mEcgChannel = mSelectedDevice.getNeuroDevice().getSignalSubsystem().getChannels()[0];
-
-            mSelectedDevice.deviceStateChanged.subscribe(new INotificationCallback<NeuroDeviceState>() {
+            mSelectedDevice.parameterChanged.subscribe(new INotificationCallback<ParameterName>() {
                 @Override
-                public void onNotify(Object o, NeuroDeviceState neuroDeviceState) {
-                    mDeviceState = neuroDeviceState;
-                    deviceStateChanged.sendNotification(this, mDeviceState);
-                }
-            });
-            mSelectedDevice.batteryLevelChanged.subscribe(new INotificationCallback<Integer>() {
-                @Override
-                public void onNotify(Object o, Integer level) {
-                    mBatteryLevel = level;
-                    batteryStateChanged.sendNotification(this, mBatteryLevel);
-                }
-            });
-            mSelectedDevice.electrodesAttachedStateChanged.subscribe(new INotificationCallback<Boolean>() {
-                @Override
-                public void onNotify(Object o, Boolean isAttached) {
-                    mIsElectrodesAttached = isAttached;
-                    electrodesStateChanged.sendNotification(this, mIsElectrodesAttached);
-                }
-            });
-            mSelectedDevice.totalSignalDurationChanged.subscribe(new INotificationCallback<Double>() {
-                @Override
-                public void onNotify(Object o, Double duration) {
-                    mSignalDuration = duration;
-                    signalDurationChanged.sendNotification(this, mSignalDuration);
-                }
-            });
-            mSelectedDevice.heartRateChanged.subscribe(new INotificationCallback<Integer>() {
-                @Override
-                public void onNotify(Object o, Integer heartRate) {
-                    mHeartRate = heartRate;
-                    heartRateChanged.sendNotification(this, mHeartRate);
-                }
-            });
-            mSelectedDevice.stressIndexChanged.subscribe(new INotificationCallback<Double>() {
-                @Override
-                public void onNotify(Object o, Double stressIndex) {
-                    mStressIndex = stressIndex;
-                    stressIndexChanged.sendNotification(this, mStressIndex);
+                public void onNotify(Object o, ParameterName paramName) {
+                    if (paramName == ParameterName.State) {
+                        mDeviceState = (DeviceState)mSelectedDevice.readParam(paramName);
+                        deviceStateChanged.sendNotification(this, mDeviceState);
+                    }
                 }
             });
 
-            mBatteryLevel = mSelectedDevice.getBatteryLevel();
+            mEcgChannel = new SignalChannel(mSelectedDevice);
+            mEcgChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
+                @Override
+                public void onNotify(Object o, Long length) {
+                    mSignalDuration = (double)mEcgChannel.totalLength() / mEcgChannel.samplingFrequency();
+                }
+            });
+
+            mBatteryChannel = new BatteryChannel(mSelectedDevice);
+            mBatteryChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
+                @Override
+                public void onNotify(Object o, Long length) {
+                    if (length > 0) {
+                        mBatteryLevel = mBatteryChannel.readData(length - 1, 1)[0];
+                        batteryStateChanged.sendNotification(this, mBatteryLevel);
+                    }
+                }
+            });
+            long batteryDataLength = mBatteryChannel.totalLength();
+            if (batteryDataLength > 0) {
+                mBatteryLevel = mBatteryChannel.readData(batteryDataLength - 1, 1)[0];
+            }
+            else{
+                mBatteryLevel = 0;
+            }
             batteryStateChanged.sendNotification(this, mBatteryLevel);
 
-            mDeviceState = mSelectedDevice.getNeuroDevice().getState();
+            mDeviceState = (DeviceState)mSelectedDevice.readParam(ParameterName.State);
             deviceStateChanged.sendNotification(this, mDeviceState);
 
-            mDeviceError = mSelectedDevice.getNeuroDevice().getError();
-            deviceErrorChanged.sendNotification(this, mDeviceError);
-
-            //mHpfEnabled = mSelectedDevice.getCallibriDevice().getNeuroDevice().getSignalSubsystem().getHpfEnabled();
+            /*mHpfEnabled = mSelectedDevice.getCallibriDevice().getNeuroDevice().getSignalSubsystem().getHpfEnabled();
             hpfEnabledChanged.sendNotification(this, mHpfEnabled);
 
             mSamplingFrequency = mSelectedDevice.getNeuroDevice().getSignalSubsystem().getSamplingFrequency();
@@ -190,26 +193,24 @@ public class EcgDeviceModel {
             heartRateChanged.sendNotification(this, mHeartRate);
 
             mStressIndex = mSelectedDevice.getCurrentStressIndex();
-            stressIndexChanged.sendNotification(this, mStressIndex);
+            stressIndexChanged.sendNotification(this, mStressIndex);*/
 
-            mSignalDuration = mSelectedDevice.getTotalSignalDuration();
+            mSignalDuration = (double)mEcgChannel.totalLength() / mEcgChannel.samplingFrequency();
             signalDurationChanged.sendNotification(this, mSignalDuration);
 
-            mIsElectrodesAttached = mSelectedDevice.getElectrodesState();
-            electrodesStateChanged.sendNotification(this, mIsElectrodesAttached);
+           /* mIsElectrodesAttached = mSelectedDevice.getElectrodesState();
+            electrodesStateChanged.sendNotification(this, mIsElectrodesAttached);*/
         }
         else
         {
             mEcgChannel = null;
+            mBatteryChannel = null;
 
             mBatteryLevel = 0;
             batteryStateChanged.sendNotification(this, mBatteryLevel);
 
-            mDeviceState = NeuroDeviceState.UNKNOWN;
+            mDeviceState = DeviceState.Disconnected;
             deviceStateChanged.sendNotification(this, mDeviceState);
-
-            mDeviceError = NeuroDeviceError.NO_ERROR;
-            deviceErrorChanged.sendNotification(this, mDeviceError);
 
             mHpfEnabled = false;
             hpfEnabledChanged.sendNotification(this, mHpfEnabled);
@@ -245,37 +246,31 @@ public class EcgDeviceModel {
         if (mSelectedDevice==null)
             return;
 
-        mSelectedDevice.startReceive();
+        mSelectedDevice.execute(Command.StartSignal);
     }
 
     public void signalStop() {
         if (mSelectedDevice==null)
             return;
 
-        mSelectedDevice.stopReceive();
+        mSelectedDevice.execute(Command.StopSignal);
     }
 
     public void removeDevice() {
         if (mSelectedDevice == null)
             return;
-
-        mSelectedDevice.getNeuroDevice().disconnect();
-        mSelectedDevice.getNeuroDevice().close();
+        mSelectedDevice.disconnect();
         mDeviceList.remove(mSelectedDevice);
         deviceListChanged.sendNotification(this, mDeviceList);
         selectDevice(null);
     }
 
-    public EcgDevice getSelectedDevice(){
+    public Device getSelectedDevice(){
         return mSelectedDevice;
     }
 
-    public NeuroDeviceState getDeviceState(){
+    public DeviceState getDeviceState(){
         return mDeviceState;
-    }
-
-    public NeuroDeviceError getError(){
-        return mDeviceError;
     }
 
     public boolean isHpfEnabled(){
@@ -302,7 +297,7 @@ public class EcgDeviceModel {
         return mChannelsCount;
     }
 
-    public double[] getSignalData(double time, double duration){
+    public Double[] getSignalData(double time, double duration){
         if (mSelectedDevice == null) {
             return null;
         }
@@ -311,15 +306,20 @@ public class EcgDeviceModel {
             time = 0;
             duration = getTotalDuration();
         }
-        return mSelectedDevice.getEcgSignal(time, duration);
+
+        float samplingFreq = mEcgChannel.samplingFrequency();
+        int offset = (int)(time * samplingFreq);
+        int length = (int)(duration * samplingFreq);
+
+        return getRawSignal(offset, length);
     }
 
-    public double[] getRawSignal(int offset, int length){
+    public Double[] getRawSignal(int offset, int length){
         if (mSelectedDevice == null){
             return null;
         }
 
-        return mEcgChannel.getRawData(offset, length);
+        return mEcgChannel.readData(offset, length);
     }
 
     public double getTotalDuration(){
@@ -327,10 +327,13 @@ public class EcgDeviceModel {
             return 0;
         }
 
-        return mSelectedDevice.getTotalSignalDuration();
+        double length = mEcgChannel.totalLength();
+        double duration = length / mEcgChannel.samplingFrequency();
+
+        return duration;
     }
 
-    public RPeak[] getRPeaks(double startTime, double endTime){
+   /* public Object[] getRPeaks(double startTime, double endTime){
         if (mSelectedDevice == null) {
             return null;
         }
@@ -342,9 +345,10 @@ public class EcgDeviceModel {
         }
 
         return mSelectedDevice.getRWavesOnInterval(startTime, endTime);
-    }
+        return null;
+    }*/
 
-    public ArtifactZone[] getArtifacts(double time, double duration){
+    /*public ArtifactZone[] getArtifacts(double time, double duration){
         if (mSelectedDevice == null) {
             return null;
         }
@@ -356,5 +360,5 @@ public class EcgDeviceModel {
         }
 
         return mSelectedDevice.getArtifacts(time, duration);
-    }
+    }*/
 }

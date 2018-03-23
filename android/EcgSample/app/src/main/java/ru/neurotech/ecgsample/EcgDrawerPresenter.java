@@ -2,22 +2,19 @@ package ru.neurotech.ecgsample;
 
 
 import android.os.Handler;
-import android.util.Log;
 
 import java.util.ListIterator;
 import java.util.LinkedList;
 
 import ru.neurotech.common.SubscribersNotifier;
-import ru.neurotech.neurodevices.ArtifactZone;
-import ru.neurotech.neurodevices.ecg.RPeak;
-import ru.neurotech.neurodevices.state.NeuroDeviceState;
+import ru.neurotech.neurosdk.parameters.types.DeviceState;
 
 public class EcgDrawerPresenter {
 
     private EcgDeviceModel mModel;
     private float[] mSignalBuffer;
-    private RPeak[] mRPeaks;
-    private ArtifactZone[] mArtifacts;
+    //private RPeak[] mRPeaks;
+    //private ArtifactZone[] mArtifacts;
     private ListIterator<ScaleValue> mVerticalScaleIterator;
     private ListIterator<ScaleValue> mHorizontalScaleIterator;
     private ScaleValue mVerticalScale;
@@ -69,11 +66,11 @@ public class EcgDrawerPresenter {
 
     public void updateSignalData(){
 
-        if (mModel.getDeviceState() != NeuroDeviceState.CONNECTED && mModel.getDeviceState() != NeuroDeviceState.WORKING){
+        if (mModel.getDeviceState() != DeviceState.Connected){
             mSignalStartTime = 0.0;
             mViewTime = 0.0;
             mSignalBuffer = null;
-            mRPeaks = null;
+            //mRPeaks = null;
             return;
         }
 
@@ -83,15 +80,15 @@ public class EcgDrawerPresenter {
         }
         mSignalStartTime = signalTime;
 
-        double[] signalData = mModel.getSignalData(mViewTime, mHorizontalScale.getScaleValue());
+        Double[] signalData = mModel.getSignalData(mViewTime, mHorizontalScale.getScaleValue());
         if (signalData == null || signalData.length==0){
             mSignalStartTime = 0.0;
             mViewTime = 0.0;
             mSignalBuffer = null;
-            mRPeaks = null;
+            //mRPeaks = null;
             return;
         }
-        mRPeaks = mModel.getRPeaks(mViewTime, mViewTime + mHorizontalScale.getScaleValue());
+        //mRPeaks = mModel.getRPeaks(mViewTime, mViewTime + mHorizontalScale.getScaleValue());
         int requestedDataLength = getRequestedSamplesCount();
         float[] buffer = new float[requestedDataLength];
         int start = requestedDataLength - signalData.length;
@@ -99,7 +96,7 @@ public class EcgDrawerPresenter {
             buffer[i] = (float)(signalData[i-start] * 1e6);
         }
 
-        mArtifacts = mModel.getArtifacts(mViewTime, mHorizontalScale.getScaleValue());
+        //mArtifacts = mModel.getArtifacts(mViewTime, mHorizontalScale.getScaleValue());
 
         mSignalBuffer = buffer;
     }
@@ -108,11 +105,11 @@ public class EcgDrawerPresenter {
         return mSignalBuffer;
     }
 
-    public RPeak[] getRPeaks(){
+    /*public RPeak[] getRPeaks(){
         return mRPeaks;
-    }
+    }*/
 
-    public ArtifactZone[] getArtifacts() { return mArtifacts;}
+    /*public ArtifactZone[] getArtifacts() { return mArtifacts;}*/
 
     public ScaleValue getVerticalScale(){
         return mVerticalScale;

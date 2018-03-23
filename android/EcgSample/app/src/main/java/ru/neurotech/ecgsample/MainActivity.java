@@ -30,7 +30,7 @@ import java.util.List;
 import ru.neurotech.common.INotificationCallback;
 import ru.neurotech.ecgsample.drawer.GraphicsView;
 import ru.neurotech.ecgsample.drawer.IDrawerEngine;
-import ru.neurotech.neurodevices.ecg.EcgDevice;
+import ru.neurotech.neurosdk.Device;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -304,9 +304,9 @@ public class MainActivity extends AppCompatActivity {
 
         final VisualDeviceAdapter deviceListAdapter = new VisualDeviceAdapter(getApplicationContext(), R.layout.device_layout, mMainPresenter.getDeviceList());
         final ListView deviceListView = (ListView)findViewById(R.id.deviceListView);
-        mMainPresenter.deviceListChanged.subscribe(new INotificationCallback<List<EcgDevice>>() {
+        mMainPresenter.deviceListChanged.subscribe(new INotificationCallback<List<Device>>() {
             @Override
-            public void onNotify(Object o, List<EcgDevice> devices) {
+            public void onNotify(Object o, List<Device> devices) {
                 deviceListAdapter.notifyDataSetChanged();
                 deviceListView.clearChoices();
                 deviceListView.requestLayout();
@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                EcgDevice device = (EcgDevice)parent.getItemAtPosition(position);
+                Device device = (Device)parent.getItemAtPosition(position);
                 mMainPresenter.onDeviceListItemSelected(device);
             }
         });

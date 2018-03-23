@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.neurotech.ecgsample.drawer.IDrawerEngine;
-import ru.neurotech.neurodevices.ArtifactZone;
-import ru.neurotech.neurodevices.ecg.RPeak;
 
 
 public class EcgDrawingEngine implements IDrawerEngine
@@ -95,8 +93,8 @@ public class EcgDrawingEngine implements IDrawerEngine
         if (signalData != null) {
             drawGrid(canvas);
             drawSignalData(canvas, signalData);
-            drawRPeaks(canvas, canvas.getWidth(), canvas.getHeight()-mRulerHeight);
-            drawArtifacts(canvas, canvas.getWidth(), canvas.getHeight()-mRulerHeight);
+            //drawRPeaks(canvas, canvas.getWidth(), canvas.getHeight()-mRulerHeight);
+            //drawArtifacts(canvas, canvas.getWidth(), canvas.getHeight()-mRulerHeight);
         }
         else{
             drawNoSignalMessage(canvas);
@@ -119,7 +117,7 @@ public class EcgDrawingEngine implements IDrawerEngine
         canvas.drawPath(path, mSignalPaint);
     }
 
-    private void drawRPeaks(Canvas canvas, float width, float height) {
+    /*private void drawRPeaks(Canvas canvas, float width, float height) {
         RPeak[] peaks = mPresenter.getRPeaks();
         if (peaks == null) return;
         for (int i = 0; i < peaks.length; ++i) {
@@ -144,9 +142,9 @@ public class EcgDrawingEngine implements IDrawerEngine
                     mRulerPaint
             );
         }
-    }
+    }*/
 
-    private void drawArtifacts(Canvas canvas, int width, int height) {
+    /*private void drawArtifacts(Canvas canvas, int width, int height) {
 
         ArtifactZone[] artifacts = mPresenter.getArtifacts();
         if (artifacts == null) return;
@@ -155,7 +153,7 @@ public class EcgDrawingEngine implements IDrawerEngine
             float artifactX2 = (float) (artifacts[i].time()+artifacts[i].duration() - mPresenter.getSignalViewTime()) / mPresenter.getHorizontalScale().getScaleValue() * width;
             canvas.drawRect(artifactX1, 0, artifactX2, height, mArtifactPaint);
         }
-    }
+    }*/
 
     private void drawNoSignalMessage(Canvas canvas) {
 

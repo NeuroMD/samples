@@ -12,13 +12,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ru.neurotech.neurodevices.ecg.EcgDevice;
+import ru.neurotech.neurosdk.Device;
+import ru.neurotech.neurosdk.parameters.ParameterName;
 
 
-public class VisualDeviceAdapter extends ArrayAdapter<EcgDevice> {
+public class VisualDeviceAdapter extends ArrayAdapter<Device> {
 
 
-    public VisualDeviceAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<EcgDevice> objects) {
+    public VisualDeviceAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<Device> objects) {
         super(context, resource, objects);
     }
 
@@ -26,39 +27,43 @@ public class VisualDeviceAdapter extends ArrayAdapter<EcgDevice> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        EcgDevice device = getItem(position);
+        Device device = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.device_layout, parent, false);
         }
 
         TextView deviceNameTextView = (TextView) convertView.findViewById(R.id.deviceNameTextView);
-        String rawDeviceName = device != null ? device.getName() : null;
+        String rawDeviceName = device != null ? (String)device.readParam(ParameterName.Name) : null;
 
         String deviceName = rawDeviceName;
         int deviceColor = Color.BLACK;
         if (rawDeviceName!=null) {
             switch (rawDeviceName) {
                 case "Neurotech_Colibri_R":
-                case "Neurotech_Callibri_R": {
+                case "Neurotech_Callibri_R":
+                case "Callibri_Red":{
                     deviceName = "Callibri Red";
                     deviceColor = Color.RED;
                     break;
                 }
                 case "Neurotech_Colibri_B":
-                case "Neurotech_Callibri_B": {
+                case "Neurotech_Callibri_B":
+                case "Callibri_Blue": {
                     deviceName = "Callibri Blue";
                     deviceColor = Color.BLUE;
                     break;
                 }
                 case "Neurotech_Colibri_Y":
-                case "Neurotech_Callibri_Y": {
+                case "Neurotech_Callibri_Y":
+                case "Callibri_Yellow":{
                     deviceName = "Callibri Yellow";
                     deviceColor = Color.YELLOW;
                     break;
                 }
                 case "Neurotech_Colibri_W":
-                case "Neurotech_Callibri_W": {
+                case "Neurotech_Callibri_W":
+                case "Callibri_White":{
                     deviceName = "Callibri White";
                     deviceColor = Color.WHITE;
                     break;
@@ -69,7 +74,7 @@ public class VisualDeviceAdapter extends ArrayAdapter<EcgDevice> {
         if (deviceName == null || deviceName.isEmpty()) {
             deviceName = "null";
         }
-        String deviceAddress = device != null ? device.getAddress() : null;
+        String deviceAddress = device != null ? (String)device.readParam(ParameterName.Address) : null;
         if (deviceAddress == null || deviceAddress.isEmpty()) {
             deviceAddress = "null";
         }

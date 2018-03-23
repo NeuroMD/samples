@@ -41,7 +41,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.github.NeurotechMRC:libneurosdk:0.11'
+    compile 'com.github.NeurotechLtd:libneurosdk:0.14'
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
     }
