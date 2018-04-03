@@ -19,6 +19,7 @@ import ru.neurotech.neurosdk.channels.SignalChannel;
 import ru.neurotech.neurosdk.parameters.Command;
 import ru.neurotech.neurosdk.parameters.ParameterName;
 import ru.neurotech.neurosdk.parameters.types.DeviceState;
+import ru.neurotech.neurosdk.parameters.types.SamplingFrequency;
 
 public class EcgDeviceModel {
 
@@ -30,7 +31,7 @@ public class EcgDeviceModel {
     private DeviceState mDeviceState;
     private int mBatteryLevel;
     private boolean mHpfEnabled;
-    private int mSamplingFrequency;
+    private SamplingFrequency mSamplingFrequency;
     private int mGain;
     private int mOffset;
     private int mChannelsCount;
@@ -86,7 +87,7 @@ public class EcgDeviceModel {
     public SubscribersNotifier<Device> selectedDeviceChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<DeviceState> deviceStateChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Boolean> hpfEnabledChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<Integer> samplingFrequencyChanged = new SubscribersNotifier<>();
+    public SubscribersNotifier<SamplingFrequency> samplingFrequencyChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Integer> gainChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Integer> offsetChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Integer> channelsCountChanged = new SubscribersNotifier<>();
@@ -134,6 +135,7 @@ public class EcgDeviceModel {
         mSelectedDevice = device;
 
         if (mSelectedDevice!=null) {
+            mSelectedDevice.execute(Command.FindMe);
             mSelectedDevice.parameterChanged.subscribe(new INotificationCallback<ParameterName>() {
                 @Override
                 public void onNotify(Object o, ParameterName paramName) {
@@ -175,12 +177,14 @@ public class EcgDeviceModel {
             deviceStateChanged.sendNotification(this, mDeviceState);
 
             /*mHpfEnabled = mSelectedDevice.getCallibriDevice().getNeuroDevice().getSignalSubsystem().getHpfEnabled();
-            hpfEnabledChanged.sendNotification(this, mHpfEnabled);
+            hpfEnabledChanged.sendNotification(this, mHpfEnabled);*/
 
-            mSamplingFrequency = mSelectedDevice.getNeuroDevice().getSignalSubsystem().getSamplingFrequency();
+            mSamplingFrequency = (SamplingFrequency)mSelectedDevice.readParam(ParameterName.SamplingFrequency);
+            mSelectedDevice.setParam(ParameterName.SamplingFrequency, SamplingFrequency.Hz1000);
+            mSamplingFrequency = (SamplingFrequency)mSelectedDevice.readParam(ParameterName.SamplingFrequency);
             samplingFrequencyChanged.sendNotification(this, mSamplingFrequency);
 
-            mGain = mSelectedDevice.getNeuroDevice().getSignalSubsystem().getGain();
+            /*mGain = mSelectedDevice.getNeuroDevice().getSignalSubsystem().getGain();
             gainChanged.sendNotification(this, mGain);
 
             mOffset = mSelectedDevice.getNeuroDevice().getSignalSubsystem().getSignalOffset();
@@ -215,7 +219,7 @@ public class EcgDeviceModel {
             mHpfEnabled = false;
             hpfEnabledChanged.sendNotification(this, mHpfEnabled);
 
-            mSamplingFrequency = 0;
+            mSamplingFrequency = SamplingFrequency.Hz1000;
             samplingFrequencyChanged.sendNotification(this, mSamplingFrequency);
 
             mGain = 0;
@@ -278,7 +282,16 @@ public class EcgDeviceModel {
     }
 
     public int getSamplingFrequency(){
-        return mSamplingFrequency;
+        switch (mSamplingFrequency) {
+            case Hz125: return 125;
+            case Hz250: return 250;
+            case Hz500: return 500;
+            case Hz1000: return 1000;
+            case Hz2000: return 2000;
+            case Hz4000: return 4000;
+            case Hz8000: return 8000;
+            default: return 0;
+        }
     }
 
     public int getGain(){
@@ -310,6 +323,9 @@ public class EcgDeviceModel {
         float samplingFreq = mEcgChannel.samplingFrequency();
         int offset = (int)(time * samplingFreq);
         int length = (int)(duration * samplingFreq);
+
+        if (length <=0 )
+            return new Double[0];
 
         return getRawSignal(offset, length);
     }
