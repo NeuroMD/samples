@@ -1,6 +1,7 @@
 package ru.neurotech.ecgsample;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import ru.neurotech.common.SubscribersNotifier;
 import ru.neurotech.neurosdk.Device;
 import ru.neurotech.neurosdk.DeviceScanner;
 import ru.neurotech.neurosdk.channels.BatteryChannel;
+import ru.neurotech.neurosdk.channels.ElectrodesStateChannel;
+import ru.neurotech.neurosdk.channels.ElectrodeState;
 import ru.neurotech.neurosdk.channels.ChannelInfo;
 import ru.neurotech.neurosdk.channels.SignalChannel;
 import ru.neurotech.neurosdk.parameters.Command;
@@ -28,6 +31,7 @@ public class EcgDeviceModel {
     private Device mSelectedDevice = null;
     private SignalChannel mEcgChannel = null;
     private BatteryChannel mBatteryChannel = null;
+    private ElectrodesStateChannel mElectrodesStateChannel = null;
     private DeviceState mDeviceState;
     private int mBatteryLevel;
     private boolean mHpfEnabled;
@@ -135,7 +139,6 @@ public class EcgDeviceModel {
         mSelectedDevice = device;
 
         if (mSelectedDevice!=null) {
-            mSelectedDevice.execute(Command.FindMe);
             mSelectedDevice.parameterChanged.subscribe(new INotificationCallback<ParameterName>() {
                 @Override
                 public void onNotify(Object o, ParameterName paramName) {
@@ -146,7 +149,16 @@ public class EcgDeviceModel {
                 }
             });
 
-            mEcgChannel = new SignalChannel(mSelectedDevice);
+            String deviceName = mSelectedDevice.readParam(ParameterName.Name);
+            if (deviceName.equals("BrainBit")){
+                ChannelInfo[] channelInfo = mSelectedDevice.channels();
+                Log.d("CreateChannel", String.format("Creating channel %s", channelInfo[0].getName()));
+                mEcgChannel = new SignalChannel(mSelectedDevice, channelInfo[0]);
+            }
+            else{
+                mSelectedDevice.execute(Command.FindMe);
+                mEcgChannel = new SignalChannel(mSelectedDevice);
+            }
             mEcgChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
                 @Override
                 public void onNotify(Object o, Long length) {
@@ -158,10 +170,14 @@ public class EcgDeviceModel {
             mBatteryChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
                 @Override
                 public void onNotify(Object o, Long length) {
-                    if (length > 0) {
-                        mBatteryLevel = mBatteryChannel.readData(length - 1, 1)[0];
+                    //Log.d("BatteryChannel", String.format("Length changed %d", length));
+                    //if (length > 0) {
+                        long len = mBatteryChannel.totalLength();
+                        long offset =  len - 1;
+                        Integer[] data = mBatteryChannel.readData(offset, 1);
+                        mBatteryLevel = data[0];
                         batteryStateChanged.sendNotification(this, mBatteryLevel);
-                    }
+                    //}
                 }
             });
             long batteryDataLength = mBatteryChannel.totalLength();
@@ -172,7 +188,32 @@ public class EcgDeviceModel {
                 mBatteryLevel = 0;
             }
             batteryStateChanged.sendNotification(this, mBatteryLevel);
-
+            mBatteryChannel.setSamplingFrequency(0.3f);
+    
+            mElectrodesStateChannel = new ElectrodesStateChannel(mSelectedDevice);
+            mElectrodesStateChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
+                @Override
+                public void onNotify(Object o, Long length) {
+                    //Log.d("ElectrodesStateChannel", String.format("Electrode length changed %d", length));
+                    //if (length > 0) {
+                    long len = mElectrodesStateChannel.totalLength();
+                    long offset =  len - 1;
+                    ElectrodeState[] data = mElectrodesStateChannel.readData(offset, 1);
+                    mIsElectrodesAttached = data[0] == ElectrodeState.Normal;
+                    electrodesStateChanged.sendNotification(this, mIsElectrodesAttached);
+                    //}
+                }
+            });
+            long electrodesStateDataLength = mElectrodesStateChannel.totalLength();
+            if (electrodesStateDataLength > 0) {
+                mIsElectrodesAttached = mElectrodesStateChannel.readData(electrodesStateDataLength - 1, 1)[0]== ElectrodeState.Normal;
+            }
+            else{
+                mIsElectrodesAttached = false;
+            }
+            electrodesStateChanged.sendNotification(this, mIsElectrodesAttached);
+            mElectrodesStateChannel.setSamplingFrequency(2f);
+            
             mDeviceState = (DeviceState)mSelectedDevice.readParam(ParameterName.State);
             deviceStateChanged.sendNotification(this, mDeviceState);
 
@@ -180,7 +221,7 @@ public class EcgDeviceModel {
             hpfEnabledChanged.sendNotification(this, mHpfEnabled);*/
 
             mSamplingFrequency = (SamplingFrequency)mSelectedDevice.readParam(ParameterName.SamplingFrequency);
-            mSelectedDevice.setParam(ParameterName.SamplingFrequency, SamplingFrequency.Hz1000);
+            mSelectedDevice.setParam(ParameterName.SamplingFrequency, SamplingFrequency.Hz250);
             mSamplingFrequency = (SamplingFrequency)mSelectedDevice.readParam(ParameterName.SamplingFrequency);
             samplingFrequencyChanged.sendNotification(this, mSamplingFrequency);
 
@@ -209,6 +250,7 @@ public class EcgDeviceModel {
         {
             mEcgChannel = null;
             mBatteryChannel = null;
+            mElectrodesStateChannel = null;
 
             mBatteryLevel = 0;
             batteryStateChanged.sendNotification(this, mBatteryLevel);

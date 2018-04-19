@@ -2,15 +2,15 @@ package ru.neurotech.brainbitpreview;
 
 import android.util.Log;
 
+import java.nio.channels.Channel;
 import java.util.HashMap;
 import java.util.Map;
 
 import ru.neurotech.common.INotificationCallback;
 import ru.neurotech.common.SubscribersNotifier;
-import ru.neurotech.neurodevices.eeg.EegDevice;
-import ru.neurotech.neurodevices.eeg.SpectrumData;
-import ru.neurotech.neurodevices.features.Channel;
-import ru.neurotech.neurodevices.state.NeuroDeviceState;
+import ru.neurotech.neurosdk.Device;
+import ru.neurotech.neurosdk.parameters.ParameterName;
+import ru.neurotech.neurosdk.parameters.types.DeviceState;
 
 /**
  * Created by Danil Vlasenko on 9/13/2017.
@@ -26,13 +26,13 @@ public class BrainbitModel {
         return mInstance;
     }
 
-    private EegDevice mSelectedDevice = null;
+    private Device mSelectedDevice = null;
     private Map<String, Channel> mEegChannels;
 
     public SubscribersNotifier<Integer> batteryStateChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<EegDevice> selectedDeviceChanged = new SubscribersNotifier<>();
+    public SubscribersNotifier<Device> selectedDeviceChanged = new SubscribersNotifier<>();
 
-    public void setDevice(EegDevice selectedDevice){
+    public void setDevice(final Device selectedDevice){
 
         if (selectedDevice == null){
             mEegChannels = null;
@@ -42,13 +42,6 @@ public class BrainbitModel {
         mSelectedDevice = selectedDevice;
 
         if (mSelectedDevice != null) {
-            mSelectedDevice.totalSignalDurationChanged.subscribe(new INotificationCallback<Double>() {
-                @Override
-                public void onNotify(Object sender, Double nParam) {
-
-                }
-            });
-
             mSelectedDevice.batteryStateChanged.subscribe(new INotificationCallback<Integer>() {
                 @Override
                 public void onNotify(Object sender, Integer value) {
@@ -56,12 +49,15 @@ public class BrainbitModel {
                 }
             });
 
-            mSelectedDevice.deviceStateChanged.subscribe(new INotificationCallback<NeuroDeviceState>() {
+            mSelectedDevice.parameterChanged.subscribe(new INotificationCallback<ParameterName>() {
                 @Override
-                public void onNotify(Object sender, NeuroDeviceState state) {
-                    if (state != NeuroDeviceState.READY && state != NeuroDeviceState.WORKING) {
-                        Log.d("BrainbitModel", "Device lost, setting null device");
-                        setDevice(null);
+                public void onNotify(Object sender, ParameterName parameter) {
+                    if (parameter == ParameterName.State) {
+                        DeviceState = (DeviceState)selectedDevice.
+                        if ( !=DeviceState.READY && state != NeuroDeviceState.WORKING){
+                            Log.d("BrainbitModel", "Device lost, setting null device");
+                            setDevice(null);
+                        }
                     }
                 }
             });
