@@ -121,7 +121,14 @@ public class DeviceInfoActivity extends AppCompatActivity
                 if (parameterName == ParameterName.State){
                     DeviceState state = device.readParam(ParameterName.State);
                     if (state == DeviceState.Connected){
-                        onDeviceConnected(device);
+                        runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                onDeviceConnected(device);
+                            }
+                        });
                     }
                 }
             }
