@@ -1,6 +1,5 @@
-package ru.neurotech.ecgsample.drawer;
+package com.neuromd.ecgsample.drawer;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.SurfaceHolder;

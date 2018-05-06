@@ -19,7 +19,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "ru.neurotech.ecgsample"
+        applicationId "com.neuromd.ecgsample"
         minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
@@ -41,7 +41,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.github.NeurotechLtd:libneurosdk:0.15'
+    compile 'com.neuromd.neurosdk:libneurosdk-ext:0.16'
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
     }

@@ -1,4 +1,4 @@
-package ru.neurotech.ecgsample;
+package com.neuromd.ecgsample;
 
 import android.os.Environment;
 import android.util.Log;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.locks.ReentrantLock;
 
-import ru.neurotech.common.INotificationCallback;
-import ru.neurotech.common.SubscribersNotifier;
-import ru.neurotech.neurosdk.Device;
+import com.neuromd.common.INotificationCallback;
+import com.neuromd.common.SubscribersNotifier;
+import com.neuromd.neurosdk.Device;
 
 public class EcgSignalStorage {
 

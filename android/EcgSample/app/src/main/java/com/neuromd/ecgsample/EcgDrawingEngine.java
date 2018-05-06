@@ -1,4 +1,4 @@
-package ru.neurotech.ecgsample;
+package com.neuromd.ecgsample;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,7 +10,7 @@ import android.graphics.Rect;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.neurotech.ecgsample.drawer.IDrawerEngine;
+import com.neuromd.ecgsample.drawer.IDrawerEngine;
 
 
 public class EcgDrawingEngine implements IDrawerEngine
@@ -93,7 +93,7 @@ public class EcgDrawingEngine implements IDrawerEngine
         if (signalData != null) {
             drawGrid(canvas);
             drawSignalData(canvas, signalData);
-            //drawRPeaks(canvas, canvas.getWidth(), canvas.getHeight()-mRulerHeight);
+            drawRPeaks(canvas, canvas.getWidth(), canvas.getHeight()-mRulerHeight);
             //drawArtifacts(canvas, canvas.getWidth(), canvas.getHeight()-mRulerHeight);
         }
         else{
@@ -117,14 +117,14 @@ public class EcgDrawingEngine implements IDrawerEngine
         canvas.drawPath(path, mSignalPaint);
     }
 
-    /*private void drawRPeaks(Canvas canvas, float width, float height) {
-        RPeak[] peaks = mPresenter.getRPeaks();
+    private void drawRPeaks(Canvas canvas, float width, float height) {
+        Long[] peaks = mPresenter.getRPeaks();
         if (peaks == null) return;
         for (int i = 0; i < peaks.length; ++i) {
-            float peakX = (float) (peaks[i].time() - mPresenter.getSignalViewTime()) / mPresenter.getHorizontalScale().getScaleValue() * width;
+            float peakX = (float) ((float)(peaks[i])/125.0 - mPresenter.getSignalViewTime()) / mPresenter.getHorizontalScale().getScaleValue() * width;
             canvas.drawLine(peakX, 0, peakX, height, mRPeakPaint);
 
-            String prevTimeText = String.format("%.02f", peaks[i].deltaPrevious());
+            String prevTimeText = String.format("%.02f", (float)(peaks[i])/125.0);
             Rect prevTextBounds = new Rect();
             mRulerPaint.getTextBounds(prevTimeText, 0, prevTimeText.length(), prevTextBounds);
             canvas.drawText(prevTimeText, peakX - prevTextBounds.width()-2,
@@ -133,7 +133,7 @@ public class EcgDrawingEngine implements IDrawerEngine
             );
 
 
-            String nextTimeText = String.format("%.02f", peaks[i].deltaNext());
+            String nextTimeText = String.format("%.02f", (float)(peaks[i])/125.0);
             Rect nextTextBounds = new Rect();
             mRulerPaint.getTextBounds(nextTimeText, 0, nextTimeText.length(), nextTextBounds);
             canvas.drawText(nextTimeText,
@@ -142,7 +142,7 @@ public class EcgDrawingEngine implements IDrawerEngine
                     mRulerPaint
             );
         }
-    }*/
+    }
 
     /*private void drawArtifacts(Canvas canvas, int width, int height) {
 

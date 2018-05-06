@@ -1,19 +1,19 @@
-package ru.neurotech.ecgsample;
+package com.neuromd.ecgsample;
 
 
 import android.os.Handler;
 
+import com.neuromd.common.SubscribersNotifier;
+import com.neuromd.neurosdk.parameters.types.DeviceState;
+
 import java.util.ListIterator;
 import java.util.LinkedList;
-
-import ru.neurotech.common.SubscribersNotifier;
-import ru.neurotech.neurosdk.parameters.types.DeviceState;
 
 public class EcgDrawerPresenter {
 
     private EcgDeviceModel mModel;
     private float[] mSignalBuffer;
-    //private RPeak[] mRPeaks;
+    private Long[] mRPeaks;
     //private ArtifactZone[] mArtifacts;
     private ListIterator<ScaleValue> mVerticalScaleIterator;
     private ListIterator<ScaleValue> mHorizontalScaleIterator;
@@ -85,10 +85,10 @@ public class EcgDrawerPresenter {
             mSignalStartTime = 0.0;
             mViewTime = 0.0;
             mSignalBuffer = null;
-            //mRPeaks = null;
+            mRPeaks = null;
             return;
         }
-        //mRPeaks = mModel.getRPeaks(mViewTime, mViewTime + mHorizontalScale.getScaleValue());
+        mRPeaks = mModel.getRPeaks(mViewTime, mViewTime + mHorizontalScale.getScaleValue());
         int requestedDataLength = getRequestedSamplesCount();
         float[] buffer = new float[requestedDataLength];
         int start = requestedDataLength - signalData.length;
@@ -105,9 +105,9 @@ public class EcgDrawerPresenter {
         return mSignalBuffer;
     }
 
-    /*public RPeak[] getRPeaks(){
+    public Long[] getRPeaks(){
         return mRPeaks;
-    }*/
+    }
 
     /*public ArtifactZone[] getArtifacts() { return mArtifacts;}*/
 

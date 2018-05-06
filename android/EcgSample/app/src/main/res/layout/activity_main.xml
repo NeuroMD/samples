@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5dp"
-    tools:context="ru.neurotech.ecgsample.MainActivity"
+    tools:context="com.neuromd.ecgsample.MainActivity"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="81dp"
     android:keepScreenOn="true">

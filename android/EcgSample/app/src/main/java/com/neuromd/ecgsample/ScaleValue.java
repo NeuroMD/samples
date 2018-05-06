@@ -1,4 +1,4 @@
-package ru.neurotech.ecgsample;
+package com.neuromd.ecgsample;
 
 public class ScaleValue {
     private final String mLabel;

@@ -1,13 +1,13 @@
-package ru.neurotech.ecgsample;
+package com.neuromd.ecgsample;
 
 import android.app.Activity;
 
 import java.util.List;
 
-import ru.neurotech.common.INotificationCallback;
-import ru.neurotech.common.SubscribersNotifier;
-import ru.neurotech.neurosdk.Device;
-import ru.neurotech.neurosdk.parameters.types.DeviceState;
+import com.neuromd.common.INotificationCallback;
+import com.neuromd.common.SubscribersNotifier;
+import com.neuromd.neurosdk.Device;
+import com.neuromd.neurosdk.parameters.types.DeviceState;
 
 public class MainActivityPresenter {
 

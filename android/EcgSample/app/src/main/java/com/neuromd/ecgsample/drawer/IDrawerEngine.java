@@ -1,4 +1,4 @@
-package ru.neurotech.ecgsample.drawer;
+package com.neuromd.ecgsample.drawer;
 
 import android.graphics.Canvas;
 

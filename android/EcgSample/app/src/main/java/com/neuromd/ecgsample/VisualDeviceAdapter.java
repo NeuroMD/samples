@@ -1,4 +1,4 @@
-package ru.neurotech.ecgsample;
+package com.neuromd.ecgsample;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ru.neurotech.neurosdk.Device;
-import ru.neurotech.neurosdk.parameters.ParameterName;
+import com.neuromd.neurosdk.Device;
+import com.neuromd.neurosdk.parameters.ParameterName;
 
 
 public class VisualDeviceAdapter extends ArrayAdapter<Device> {

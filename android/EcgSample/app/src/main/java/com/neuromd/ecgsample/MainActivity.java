@@ -1,4 +1,4 @@
-package ru.neurotech.ecgsample;
+package com.neuromd.ecgsample;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -9,12 +9,10 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,10 +25,10 @@ import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 import java.util.List;
 
-import ru.neurotech.common.INotificationCallback;
-import ru.neurotech.ecgsample.drawer.GraphicsView;
-import ru.neurotech.ecgsample.drawer.IDrawerEngine;
-import ru.neurotech.neurosdk.Device;
+import com.neuromd.common.INotificationCallback;
+import com.neuromd.ecgsample.drawer.GraphicsView;
+import com.neuromd.ecgsample.drawer.IDrawerEngine;
+import com.neuromd.neurosdk.Device;
 
 public class MainActivity extends AppCompatActivity {
 

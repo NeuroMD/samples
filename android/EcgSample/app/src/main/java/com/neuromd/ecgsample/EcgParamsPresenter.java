@@ -1,10 +1,10 @@
-package ru.neurotech.ecgsample;
+package com.neuromd.ecgsample;
 
 import android.app.Activity;
 import android.widget.Toast;
 
-import ru.neurotech.common.INotificationCallback;
-import ru.neurotech.common.SubscribersNotifier;
+import com.neuromd.common.INotificationCallback;
+import com.neuromd.common.SubscribersNotifier;
 
 public class EcgParamsPresenter {
 
