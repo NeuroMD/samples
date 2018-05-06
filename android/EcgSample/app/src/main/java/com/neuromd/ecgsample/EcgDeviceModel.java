@@ -184,7 +184,8 @@ public class EcgDeviceModel {
                 public void onNotify(Object o, Long length) {
                     if (mEcgChannel == null)
                         return;
-                    mSignalDuration = (double)mEcgChannel.totalLength() / mEcgChannel.samplingFrequency();
+                    mSignalDuration = (double)length / mEcgChannel.samplingFrequency();
+                    signalDurationChanged.sendNotification(this, mSignalDuration);
                 }
             });
 
@@ -196,8 +197,7 @@ public class EcgDeviceModel {
                     //if (length > 0) {
                     if (mBatteryChannel == null)
                         return;
-                        long len = mBatteryChannel.totalLength();
-                        long offset =  len - 1;
+                        long offset =  length - 1;
                         Integer[] data = mBatteryChannel.readData(offset, 1);
                         mBatteryLevel = data[0];
                         batteryStateChanged.sendNotification(this, mBatteryLevel);
@@ -220,10 +220,9 @@ public class EcgDeviceModel {
                 public void onNotify(Object o, Long length) {
                     if (mElectrodesStateChannel == null)
                         return;
-                    long len = mElectrodesStateChannel.totalLength();
-                    Log.d("ElectrodesStateChannel", String.format("Electrode length changed %d", len));
-                    if (len > 0){
-                        long offset = len - 1;
+                    Log.d("ElectrodesStateChannel", String.format("Electrode length changed %d", length));
+                    if (length > 0){
+                        long offset = length - 1;
                         ElectrodeState[] data = mElectrodesStateChannel.readData(offset, 1);
                         mIsElectrodesAttached = data[0] == ElectrodeState.Normal;
                         electrodesStateChanged.sendNotification(this, mIsElectrodesAttached);

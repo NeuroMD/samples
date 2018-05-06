@@ -92,8 +92,10 @@ public class EcgDrawerPresenter {
         int requestedDataLength = getRequestedSamplesCount();
         float[] buffer = new float[requestedDataLength];
         int start = requestedDataLength - signalData.length;
-        for (int i = start; i < requestedDataLength; ++i){
-            buffer[i] = (float)(signalData[i-start] * 1e6);
+        if (start >= 0) {
+            for (int i = start; i < requestedDataLength; ++i) {
+                buffer[i] = (float) (signalData[i - start] * 1e6);
+            }
         }
 
         //mArtifacts = mModel.getArtifacts(mViewTime, mHorizontalScale.getScaleValue());
