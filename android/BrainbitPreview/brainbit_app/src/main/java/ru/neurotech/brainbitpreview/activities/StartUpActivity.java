@@ -16,17 +16,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.neuromd.bleconnection.exceptions.BluetoothAdapterException;
+import com.neuromd.bleconnection.exceptions.BluetoothPermissionException;
+import com.neuromd.common.INotificationCallback;
+import com.neuromd.neurosdk.Device;
+import com.neuromd.neurosdk.DeviceScanner;
+import com.neuromd.neurosdk.parameters.ParameterName;
+import com.neuromd.neurosdk.parameters.types.DeviceState;
+
 import ru.neurotech.brainbitpreview.BrainbitModel;
 import ru.neurotech.brainbitpreview.R;
-
-import ru.neurotech.common.INotificationCallback;
-import ru.neurotech.neurodevices.NeuroConnection;
-import ru.neurotech.neurodevices.ecg.EcgDevice;
-import ru.neurotech.neurodevices.eeg.EegDevice;
-import ru.neurotech.neurodevices.eeg.EegDeviceConnector;
-import ru.neurotech.neurodevices.exceptions.BluetoothAdapterException;
-import ru.neurotech.neurodevices.exceptions.BluetoothPermissionException;
-import ru.neurotech.neurodevices.state.NeuroDeviceState;
 
 public class StartUpActivity extends FragmentActivity implements View.OnClickListener {
     
@@ -49,14 +48,14 @@ public class StartUpActivity extends FragmentActivity implements View.OnClickLis
     public static final String ACTION_FFT_VALUE = "ACTION_FFT_VALUES";
 
 
-    private EegDeviceConnector mEegDeviceScanner;
+    private DeviceScanner mEegDeviceScanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startup);
 
-        mEegDeviceScanner = new EegDeviceConnector(getApplicationContext());
+        mEegDeviceScanner = new DeviceScanner(getApplicationContext());
 
         statusLabel = (TextView) findViewById(R.id.statusLabel);
         frequencyLabel = (TextView) findViewById(R.id.frequency);
@@ -100,36 +99,44 @@ public class StartUpActivity extends FragmentActivity implements View.OnClickLis
             }
         });
 
-        mEegDeviceScanner.deviceFound.subscribe(new INotificationCallback<EegDevice>() {
+        mEegDeviceScanner.deviceFound.subscribe(new INotificationCallback<Device>() {
             @Override
-            public void onNotify(Object o, final EegDevice eegDevice) {
+            public void onNotify(Object o, final Device eegDevice) {
                 Log.d(TAG, "onDeviceFound()");
-                if (!eegDevice.getName().equals("BrainBit")) return;
+                String deviceName = eegDevice.readParam(ParameterName.Name);
+                if (!deviceName.equals("BrainBit")) return;
                 mEegDeviceScanner.stopScan();
-                BrainbitModel.getInstance().setDevice(eegDevice);
-                eegDevice.deviceStateChanged.subscribe(new INotificationCallback<NeuroDeviceState>() {
+                eegDevice.parameterChanged.subscribe(new INotificationCallback<ParameterName>() {
                     @Override
-                    public void onNotify(Object sender, NeuroDeviceState state) {
-                        if (state != NeuroDeviceState.READY && state != NeuroDeviceState.WORKING)
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d(TAG, "onDeviceDisconnected()");
-                                showConnectView();
+                    public void onNotify(Object sender,ParameterName paramName) {
+                        if (paramName == ParameterName.State) {
+                            DeviceState state = eegDevice.readParam(ParameterName.State);
+                            if (state == DeviceState.Disconnected) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(TAG, "onDeviceDisconnected()");
+                                        showConnectView();
+                                    }
+                                });
                             }
-                        });
+                            else{
+                                BrainbitModel.getInstance().setDevice(eegDevice);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        statusLabel.setText(R.string.device_found);
+                                        Log.d(TAG, "onDeviceConnected()");
+                                        showDisconnectView();
+                                        BrainbitModel.getInstance().setDevice(eegDevice);
+                                        battery.setText(String.format("Battery: %d %%", BrainbitModel.getInstance().getBatteryLevel()));
+                                    }
+                                });
+                            }
+                        }
                     }
                 });
-                eegDevice.startReceive();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusLabel.setText(R.string.device_found);
-                        Log.d(TAG, "onDeviceConnected()");
-                        showDisconnectView();
-                        battery.setText(String.format("Battery: %d %%", eegDevice.getBatteryLevel()));
-                    }
-                });
+                eegDevice.connect();
             }
         });
 
@@ -180,7 +187,6 @@ public class StartUpActivity extends FragmentActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mEegDeviceScanner.shutdown();
     }
 
     @Override

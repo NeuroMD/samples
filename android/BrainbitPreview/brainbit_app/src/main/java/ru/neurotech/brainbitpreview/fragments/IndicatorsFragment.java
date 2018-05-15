@@ -14,10 +14,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.neuromd.common.INotificationCallback;
+
 import ru.neurotech.brainbitpreview.BrainbitModel;
 import ru.neurotech.brainbitpreview.R;
 
-import ru.neurotech.common.INotificationCallback;
+
 
 public class IndicatorsFragment extends Fragment implements OnClickListener {
 
@@ -99,7 +101,7 @@ public class IndicatorsFragment extends Fragment implements OnClickListener {
         final TextView tvDeepExcitement = (TextView) host.findViewById(R.id.tvDeepExcitement);
         final int widthLeft = (tvSleep.getWidth() + tvDeepRelaxation.getWidth() + tvRelaxation.getWidth());
         final int widthRight = (tvNormalActivation.getWidth() + tvExcitement.getWidth() + tvDeepExcitement.getWidth());
-        BrainbitModel.getInstance().getDevice().eegStateChanged.subscribe(new INotificationCallback<Integer>() {
+        BrainbitModel.getInstance().eegStateChanged.subscribe(new INotificationCallback<Integer>() {
             @Override
             public void onNotify(Object sender, final Integer nParam) {
                 host.runOnUiThread(new Runnable() {
@@ -156,7 +158,7 @@ public class IndicatorsFragment extends Fragment implements OnClickListener {
                 });
             }
         });
-        BrainbitModel.getInstance().getDevice().stressValueChanged.subscribe(new INotificationCallback<Integer>() {
+        BrainbitModel.getInstance().stressValueChanged.subscribe(new INotificationCallback<Integer>() {
             @Override
             public void onNotify(Object sender, final Integer stress_index) {
                 host.runOnUiThread(new Runnable() {
@@ -167,7 +169,7 @@ public class IndicatorsFragment extends Fragment implements OnClickListener {
                 });
             }
         });
-        BrainbitModel.getInstance().getDevice().attentionValueChanged.subscribe(new INotificationCallback<Integer>() {
+        BrainbitModel.getInstance().attentionValueChanged.subscribe(new INotificationCallback<Integer>() {
             @Override
             public void onNotify(Object sender, final Integer attention_index) {
                 host.runOnUiThread(new Runnable() {
@@ -178,7 +180,7 @@ public class IndicatorsFragment extends Fragment implements OnClickListener {
                 });
             }
         });
-        BrainbitModel.getInstance().getDevice().relaxValueChanged.subscribe(new INotificationCallback<Integer>() {
+        BrainbitModel.getInstance().relaxValueChanged.subscribe(new INotificationCallback<Integer>() {
             @Override
             public void onNotify(Object sender, final Integer relax_index) {
                 host.runOnUiThread(new Runnable() {
@@ -189,7 +191,7 @@ public class IndicatorsFragment extends Fragment implements OnClickListener {
                 });
             }
         });
-        BrainbitModel.getInstance().getDevice().meditationValueChanged.subscribe(new INotificationCallback<Integer>() {
+        BrainbitModel.getInstance().meditationValueChanged.subscribe(new INotificationCallback<Integer>() {
             @Override
             public void onNotify(Object sender, final Integer meditation_index) {
                 host.runOnUiThread(new Runnable() {

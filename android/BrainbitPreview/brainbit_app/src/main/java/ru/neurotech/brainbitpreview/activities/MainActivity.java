@@ -8,14 +8,12 @@ import android.support.v4.view.ViewPager;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.neuromd.common.INotificationCallback;
+import com.neuromd.neurosdk.Device;
 
 import ru.neurotech.brainbitpreview.BrainbitModel;
 import ru.neurotech.brainbitpreview.R;
 import ru.neurotech.brainbitpreview.adapters.MainActivityPagerAdapter;
-
-import ru.neurotech.common.INotificationCallback;
-import ru.neurotech.neurodevices.eeg.EegDevice;
-
 
 public class MainActivity extends FragmentActivity {
 
@@ -42,15 +40,15 @@ public class MainActivity extends FragmentActivity {
 
         final TextView percentTextView = (TextView)findViewById(R.id.percentsTextView);
 
-        BrainbitModel.getInstance().selectedDeviceChanged.subscribe(new INotificationCallback<EegDevice>() {
+        BrainbitModel.getInstance().selectedDeviceChanged.subscribe(new INotificationCallback<Device>() {
             @Override
-            public void onNotify(Object sender, final EegDevice device) {
+            public void onNotify(Object sender, final Device device) {
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (device != null) {
-                            percentTextView.setText(String.format("%d %%", device.getBatteryLevel()));
+                            percentTextView.setText(String.format("%d %%",BrainbitModel.getInstance().getBatteryLevel()));
                         }
                         else{
                             percentTextView.setText("0 %");

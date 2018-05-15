@@ -8,13 +8,13 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.neuromd.neurosdk.channels.eeg.EegChannel;
+
 import ru.neurotech.brainbitpreview.BrainbitModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import ru.neurotech.neurodevices.features.Channel;
 
 
 public class DrawingEngine
@@ -131,24 +131,24 @@ public class DrawingEngine
         //if (surveyDuration==0) return;
         //float time = surveyDuration - hScale;
 
-        Map<String, Channel> channels = BrainbitModel.getInstance().getChannels();
+        Map<String, EegChannel> channels = BrainbitModel.getInstance().getChannels();
 
         if (channels!=null) {
             float y = 0;
             float frameHeight = (float) canvas.getHeight() / 4f;
-            for (Channel channel :channels.values()) {
+            for (EegChannel channel :channels.values()) {
 
-                long dataLength = channel.getTotalDataLength();
+                long dataLength = channel.totalLength();
                 int length = hScale*BrainbitModel.getInstance().getSamplingFrequency();
                 int offset = (int)(dataLength - length);
 
-                double[] signal = channel.getSignalData(offset, length);
+                Double[] signal = channel.readData(offset, length);
 
                 drawGrid(canvas, y, frameHeight);
                 if (signal != null) {
                     Path path = getSimplePath(signal, y, frameHeight, canvasWidth);
                     canvas.drawPath(path, paint);
-                    drawLabel(canvas, y + frameHeight / 2, channel.getName());
+                    drawLabel(canvas, y + frameHeight / 2, channel.info().getName());
                 }
                 y += frameHeight;
             }
@@ -199,7 +199,7 @@ public class DrawingEngine
         canvas.drawLine(0, y, canvas.getWidth(), y, gridPaint);
     }
 
-    private Path getSimplePath(double[] data, float start_y, float height, int width)
+    private Path getSimplePath(Double[] data, float start_y, float height, int width)
     {
         Path path = new Path();
         List<PointF> points = getPoints(data, start_y, height, width);
@@ -216,7 +216,7 @@ public class DrawingEngine
         return path;
     }
 
-    private List<PointF> getPoints(double[] data, float start_y, float height, int width)
+    private List<PointF> getPoints(Double[] data, float start_y, float height, int width)
     {
         List<PointF> points = new ArrayList<>();
         float x = 0;

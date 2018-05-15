@@ -21,6 +21,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.neuromd.neurosdk.channels.SpectrumChannel;
 
 
 import ru.neurotech.brainbitpreview.BrainbitModel;
@@ -28,9 +29,7 @@ import ru.neurotech.brainbitpreview.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import ru.neurotech.neurodevices.eeg.SpectrumData;
-import ru.neurotech.neurodevices.features.Channel;
+import java.util.Map;
 
 public class SpectrumFragment extends Fragment {
 
@@ -147,15 +146,19 @@ public class SpectrumFragment extends Fragment {
 
     private void requestSpectres()
     {
-        int surveyLength = (int)BrainbitModel.getInstance().getTotalDataLength();
+        Map<String, SpectrumChannel> spectrums = BrainbitModel.getInstance().getSpectrums();
+        if (spectrums == null)
+            return;
+        
+        long surveyLength = spectrums.get("T3").totalLength();
 
         int length = 3*BrainbitModel.getInstance().getSamplingFrequency();
-        int offset = surveyLength - length;
+        long offset = surveyLength - length;
 
-        final SpectrumData spectrumDataT3 = BrainbitModel.getInstance().calculateSpectrumForChannel("T3", offset, length);
-        final SpectrumData spectrumDataT4 = BrainbitModel.getInstance().calculateSpectrumForChannel("T4", offset, length);
-        final SpectrumData spectrumDataO1 = BrainbitModel.getInstance().calculateSpectrumForChannel("O1", offset, length);
-        final SpectrumData spectrumDataO2 = BrainbitModel.getInstance().calculateSpectrumForChannel("O2", offset, length);
+        final Double[] spectrumDataT3 = spectrums.get("T3").readData(offset, length);
+        final Double[] spectrumDataT4 = spectrums.get("T4").readData(offset, length);
+        final Double[] spectrumDataO1 = spectrums.get("O1").readData(offset, length);
+        final Double[] spectrumDataO2 = spectrums.get("O2").readData(offset, length);
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -176,16 +179,22 @@ public class SpectrumFragment extends Fragment {
         }, 50);
     }
 
-    private void setChannelGraphics(int channel_number, SpectrumData spectrum)
+    private void setChannelGraphics(int channel_number, Double[] spectrum)
     {
         if (spectrum == null)
             return;
 
         xValues.clear();
-
-        int samplesToDraw = (int)(60.0 / spectrum.getFrequencyStep()); //30 Hz band to draw
-        int alphaStop = (int)(14.0 / spectrum.getFrequencyStep());
-        int alphaStart = (int)(8.0 / spectrum.getFrequencyStep());
+    
+        Map<String, SpectrumChannel> spectrums = BrainbitModel.getInstance().getSpectrums();
+        if (spectrums == null)
+            return;
+    
+        double spectrumStep = spectrums.get("T3").hzPerSpectrumSample();
+        
+        int samplesToDraw = (int)(60.0 / spectrumStep); //30 Hz band to draw
+        int alphaStop = (int)(14.0 / spectrumStep);
+        int alphaStart = (int)(8.0 / spectrumStep);
 
 
         List<Entry> blues = blueEntries.get(channel_number);
@@ -202,15 +211,15 @@ public class SpectrumFragment extends Fragment {
             xValues.add("");
             if (i <= alphaStart)
             {
-                greens.add(new Entry((float) spectrum.getSpectrumData()[i]*1e6f, i));
+                greens.add(new Entry((float)(spectrum[i]*1e6f), i));
             }
             else if(i >= alphaStop)
             {
-                blues.add(new Entry((float) spectrum.getSpectrumData()[i]*1e6f, i));
+                blues.add(new Entry((float)(spectrum[i]*1e6f), i));
             }
             if (i>=alphaStart && i <=alphaStop)
             {
-                reds.add(new Entry((float) spectrum.getSpectrumData()[i]*1e6f, i));
+                reds.add(new Entry((float)(spectrum[i]*1e6f), i));
             }
         }
         LineChart chart = charts.get(channel_number);
