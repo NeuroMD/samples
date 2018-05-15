@@ -123,17 +123,20 @@ public class EcgDrawingEngine implements IDrawerEngine
         for (int i = 0; i < peaks.length; ++i) {
             float peakX = (float) ((float)(peaks[i])/125.0 - mPresenter.getSignalViewTime()) / mPresenter.getHorizontalScale().getScaleValue() * width;
             canvas.drawLine(peakX, 0, peakX, height, mRPeakPaint);
-
-            String prevTimeText = String.format("%.02f", (float)(peaks[i])/125.0);
+        }
+        
+        for (int i = 1; i < peaks.length -1 ; ++i){
+            float peakX = (float) ((float)(peaks[i])/125.0 - mPresenter.getSignalViewTime()) / mPresenter.getHorizontalScale().getScaleValue() * width;
+            String prevTimeText = String.format("%.02f", (float)(peaks[i] - peaks[i-1])/125.0);
             Rect prevTextBounds = new Rect();
             mRulerPaint.getTextBounds(prevTimeText, 0, prevTimeText.length(), prevTextBounds);
             canvas.drawText(prevTimeText, peakX - prevTextBounds.width()-2,
                     prevTextBounds.height() + 1,
                     mRulerPaint
             );
-
-
-            String nextTimeText = String.format("%.02f", (float)(peaks[i])/125.0);
+    
+    
+            String nextTimeText = String.format("%.02f", (float)(peaks[i+1]-peaks[i])/125.0);
             Rect nextTextBounds = new Rect();
             mRulerPaint.getTextBounds(nextTimeText, 0, nextTimeText.length(), nextTextBounds);
             canvas.drawText(nextTimeText,

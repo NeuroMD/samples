@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
+
     }
 
     dependencies {
@@ -41,7 +42,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.neuromd.neurosdk:libneurosdk-ext:0.16'
+    compile 'com.neuromd.neurosdk:neuro-sdk-ext:0.16.3'
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
     }

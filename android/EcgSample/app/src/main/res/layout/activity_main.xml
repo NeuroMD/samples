@@ -44,7 +44,7 @@
         <ListView
             android:id="@+id/deviceListView"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="126dp"
             android:background="@android:color/darker_gray"
             android:isScrollContainer="true"
             android:choiceMode="singleChoice"
@@ -167,33 +167,6 @@
                                 android:layout_marginRight="5dp"
                                 android:layout_weight="1"
                                 android:elevation="1dp"
-                                android:text="ERROR:" />
-
-                            <TextView
-                                android:id="@+id/errorTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="right"
-                                android:text="NO_ERROR"
-                                android:textColor="@color/colorPrimaryDark" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="1dp"
-                            android:layout_weight="1"
-                            android:background="@android:color/darker_gray"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="5dp"
-                                android:layout_weight="1"
-                                android:elevation="1dp"
                                 android:text="HPF:" />
 
                             <TextView
@@ -288,33 +261,6 @@
                                 android:textColor="@color/colorPrimaryDark" />
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_margin="1dp"
-                            android:layout_weight="1"
-                            android:background="@android:color/darker_gray"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="5dp"
-                                android:layout_weight="1"
-                                android:elevation="1dp"
-                                android:text="CHANNELS:" />
-
-                            <TextView
-                                android:id="@+id/channelsTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="right"
-                                android:text="1"
-                                android:textColor="@color/colorPrimaryDark" />
-                        </LinearLayout>
-
                     </LinearLayout>
                 </ScrollView>
 
@@ -341,6 +287,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_margin="1dp"
+                            android:layout_weight="1"
                             android:background="@android:color/darker_gray"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
@@ -348,17 +295,17 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginRight="5dp"
                                 android:layout_weight="1"
-                                android:text="HEART RATE:" />
+                                android:elevation="1dp"
+                                android:text="CHANNEL:"/>
 
-                            <TextView
-                                android:id="@+id/heartRateTextView"
+                            <Spinner
+                                android:id="@+id/spinner"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="right"
-                                android:text="0"
-                                android:textColor="@color/colorPrimaryDark" />
+                                android:layout_weight="1"/>
+
                         </LinearLayout>
 
                         <LinearLayout
@@ -373,31 +320,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="DURATION:" />
-
-                            <TextView
-                                android:id="@+id/surveyDurationTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="right"
-                                android:text="0 s"
-                                android:textColor="@color/colorPrimaryDark" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_margin="1dp"
-                            android:background="@android:color/darker_gray"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="ELECTRODES:" />
+                                android:text="ELECTRODES:"/>
 
                             <TextView
                                 android:id="@+id/electrodesStateTextView"
@@ -406,7 +329,56 @@
                                 android:layout_weight="1"
                                 android:gravity="right"
                                 android:text="DETACHED"
-                                android:textColor="@color/colorPrimaryDark" />
+                                android:textColor="@color/colorPrimaryDark"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:background="@android:color/darker_gray"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="DURATION:"/>
+
+                            <TextView
+                                android:id="@+id/surveyDurationTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="right"
+                                android:text="0 s"
+                                android:textColor="@color/colorPrimaryDark"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:background="@android:color/darker_gray"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="HEART RATE:"/>
+
+                            <TextView
+                                android:id="@+id/heartRateTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="right"
+                                android:text="0"
+                                android:textColor="@color/colorPrimaryDark"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -432,12 +404,6 @@
                                 android:text="0"
                                 android:textColor="@color/colorPrimaryDark" />
                         </LinearLayout>
-
-                        <Button
-                            android:id="@+id/saveButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Save signal" />
 
                     </LinearLayout>
                 </ScrollView>

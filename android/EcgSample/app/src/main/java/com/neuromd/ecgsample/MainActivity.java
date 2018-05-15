@@ -168,14 +168,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final TextView deviceErrorTextView = (TextView)findViewById(R.id.errorTextView);
-        mMainPresenter.deviceErrorTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String errorText) {
-                deviceErrorTextView.setText(errorText);
-            }
-        });
-
         final TextView hpfTextView = (TextView)findViewById(R.id.hardwareHpfStateTextView);
         mMainPresenter.hpfStateTextChanged.subscribe(new INotificationCallback<String>() {
             @Override
@@ -208,13 +200,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final TextView channelsTextView = (TextView)findViewById(R.id.channelsTextView);
-        mMainPresenter.channelsTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String channelsText) {
-                channelsTextView.setText(channelsText);
-            }
-        });
     }
 
     private void initSignalButtons(){
@@ -428,14 +413,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNotify(Object o, String stressIndexText) {
                 stressIndexTextView.setText(stressIndexText);
-            }
-        });
-
-        final Button saveButton = (Button)findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEcgPresenter.onSaveButtonClick();
             }
         });
     }
