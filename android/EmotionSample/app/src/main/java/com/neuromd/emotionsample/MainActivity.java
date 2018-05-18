@@ -15,24 +15,22 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
-import java.util.List;
 
 import com.neuromd.common.INotificationCallback;
 import com.neuromd.emotionsample.drawer.GraphicsView;
 import com.neuromd.emotionsample.drawer.IDrawerEngine;
+import com.neuromd.emotionsample.emotions.IEmotionIndicatorView;
 import com.neuromd.emotionsample.signal.EegDrawerPresenter;
 import com.neuromd.emotionsample.signal.EegDrawingEngine;
-import com.neuromd.neurosdk.Device;
+import com.neuromd.emotionsample.signal.scale.ScaleValue;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IEmotionIndicatorView {
 
     private MainActivityPresenter mMainPresenter;
     private EegParamsPresenter mEcgPresenter;
@@ -57,9 +55,7 @@ public class MainActivity extends AppCompatActivity {
         initScanButtons();
         initSignalButtons();
         initParamsLabels();
-        initDeviceList();
         initScaleControls();
-        initEcgLabels();
     }
 
     @Override
@@ -169,39 +165,6 @@ public class MainActivity extends AppCompatActivity {
                 deviceStateTextView.setText(stateText);
             }
         });
-
-        final TextView hpfTextView = (TextView)findViewById(R.id.hardwareHpfStateTextView);
-        mMainPresenter.hpfStateTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String hpfText) {
-                hpfTextView.setText(hpfText);
-            }
-        });
-
-        final TextView samplingFrequencyTextView = (TextView)findViewById(R.id.samplingFrequencyTextView);
-        mMainPresenter.samplingFrequencyTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String samplingFrequencyText) {
-                samplingFrequencyTextView.setText(samplingFrequencyText);
-            }
-        });
-
-        final TextView gainTextView = (TextView)findViewById(R.id.gainTextView);
-        mMainPresenter.gainTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String gainText) {
-                gainTextView.setText(gainText);
-            }
-        });
-
-        final TextView offsetTextView = (TextView)findViewById(R.id.offsetTextView);
-        mMainPresenter.offsetTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String offsetText) {
-                offsetTextView.setText(offsetText);
-            }
-        });
-
     }
 
     private void initSignalButtons(){
@@ -285,28 +248,6 @@ public class MainActivity extends AppCompatActivity {
         stopScanButton.setEnabled(mMainPresenter.isStopScanButtonEnabled());
     }
 
-    private void initDeviceList(){
-
-        final VisualDeviceAdapter deviceListAdapter = new VisualDeviceAdapter(getApplicationContext(), R.layout.device_layout, mMainPresenter.getDeviceList());
-        final ListView deviceListView = (ListView)findViewById(R.id.deviceListView);
-        mMainPresenter.deviceListChanged.subscribe(new INotificationCallback<List<Device>>() {
-            @Override
-            public void onNotify(Object o, List<Device> devices) {
-                deviceListAdapter.notifyDataSetChanged();
-                deviceListView.clearChoices();
-                deviceListView.requestLayout();
-            }
-        });
-        deviceListView.setAdapter(deviceListAdapter);
-        deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Device device = (Device)parent.getItemAtPosition(position);
-                mMainPresenter.onDeviceListItemSelected(device);
-            }
-        });
-    }
-
     private void initScaleControls(){
         //Vertical scale
         final Button verticalScaleIncrementButton = (Button) findViewById(R.id.vScalePlusButton);
@@ -381,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initEcgLabels(){
+    private void initParamLabels(){
         final TextView signalDurationTextView = (TextView)findViewById(R.id.surveyDurationTextView);
         signalDurationTextView.setText(mEcgPresenter.getSignalDurationText());
         mEcgPresenter.signalDurationTextChanged.subscribe(new INotificationCallback<String>() {
@@ -390,32 +331,26 @@ public class MainActivity extends AppCompatActivity {
                 signalDurationTextView.setText(durationText);
             }
         });
-
-        final TextView electrodesStateTextView = (TextView)findViewById(R.id.electrodesStateTextView);
-        electrodesStateTextView.setText(mEcgPresenter.getElectrodesStateText());
-        mEcgPresenter.electrodesStateTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String electrodesStateText) {
-                electrodesStateTextView.setText(electrodesStateText);
-            }
-        });
-
-        final TextView heartRateTextView = (TextView)findViewById(R.id.heartRateTextView);
-        heartRateTextView.setText(mEcgPresenter.getHeartRateText());
-        mEcgPresenter.heartRateTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String heartRateText) {
-                heartRateTextView.setText(heartRateText);
-            }
-        });
-
-        final TextView stressIndexTextView = (TextView)findViewById(R.id.stressIndexTextView);
-        stressIndexTextView.setText(mEcgPresenter.getStressIndexText());
-        mEcgPresenter.stressIndexTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String stressIndexText) {
-                stressIndexTextView.setText(stressIndexText);
-            }
-        });
     }
+    
+    @Override
+    public void setProductiveRelaxLabel(String text) {
+    
+    }
+    
+    @Override
+    public void setStressLabel(String text) {
+    
+    }
+    
+    @Override
+    public void setAttentionLabel(String text) {
+    
+    }
+    
+    @Override
+    public void setMeditationLabel(String text) {
+    
+    }
+
 }

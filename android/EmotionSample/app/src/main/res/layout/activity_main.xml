@@ -67,9 +67,11 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/indicatorLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_blue_bright">
+            android:layout_height="40dp"
+            android:layout_marginBottom="3dp"
+            android:background="@color/colorPrimaryDark">
 
         </LinearLayout>
 

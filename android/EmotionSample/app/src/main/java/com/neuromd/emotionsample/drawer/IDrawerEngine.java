@@ -7,7 +7,7 @@ public interface IDrawerEngine {
     /**
      * Updates business logic
      */
-    void Update();
+    void Update(int width, int height);
 
     /**
      * Draws all objects according to their parameters

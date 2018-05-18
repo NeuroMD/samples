@@ -18,45 +18,11 @@ public class EegParamsPresenter {
     public EegParamsPresenter(Activity activity, EegDeviceModel model){
         mActivity = activity;
         mModel = model;
-        mSignalStorage = new EcgSignalStorage(model);
-        mSignalStorage.signalFileSaved.subscribe(new INotificationCallback() {
-            @Override
-            public void onNotify(Object o, Object o2) {
-                onSignalSaved();
-            }
-        });
-        mSignalStorage.fileSaveError.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String error) {
-                onSaveError(error);
-            }
-        });
         mModel.signalDurationChanged.subscribe(new INotificationCallback<Double>() {
             @Override
             public void onNotify(Object o, Double signalDuration) {
                 mSignalDurationText = String.format("%.2f s",signalDuration);
                 notifySignalDurationTextChanged();
-            }
-        });
-        mModel.electrodesStateChanged.subscribe(new INotificationCallback<Boolean>() {
-            @Override
-            public void onNotify(Object o, Boolean isAttached) {
-                mElectrodesStateText = isAttached ? "ATTACHED" : "DETACHED";
-                notifyElectrodesStateTextChanged();
-            }
-        });
-        mModel.heartRateChanged.subscribe(new INotificationCallback<Integer>() {
-            @Override
-            public void onNotify(Object o, Integer heartRate) {
-                mHeartRateText = String.valueOf(heartRate);
-                notifyHeartRateTextChanged();
-            }
-        });
-        mModel.stressIndexChanged.subscribe(new INotificationCallback<Double>() {
-            @Override
-            public void onNotify(Object o, Double stressIndex) {
-                mStressIndexText = String.format("%.2f",stressIndex);
-                notifyStressIndexTextChanged();
             }
         });
     }
@@ -70,23 +36,6 @@ public class EegParamsPresenter {
         return mSignalDurationText;
     }
 
-    public String getElectrodesStateText(){
-        return mElectrodesStateText;
-    }
-
-    public String getHeartRateText(){
-        return mHeartRateText;
-    }
-
-    public String getStressIndexText(){
-        return mStressIndexText;
-    }
-
-
-    public void onSaveButtonClick(){
-        mSignalStorage.save();
-    }
-
 
     private void notifySignalDurationTextChanged(){
         mActivity.runOnUiThread(new Runnable() {
@@ -95,41 +44,6 @@ public class EegParamsPresenter {
                 signalDurationTextChanged.sendNotification(this, mSignalDurationText);
             }
         });
-    }
-
-    private void notifyElectrodesStateTextChanged(){
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                electrodesStateTextChanged.sendNotification(this, mElectrodesStateText);
-            }
-        });
-    }
-
-    private void notifyHeartRateTextChanged(){
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                heartRateTextChanged.sendNotification(this, mHeartRateText);
-            }
-        });
-    }
-
-    private void notifyStressIndexTextChanged(){
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                stressIndexTextChanged.sendNotification(this, mStressIndexText);
-            }
-        });
-    }
-
-    private void onSignalSaved(){
-        showTextMessage("Signal data saved");
-    }
-
-    private void onSaveError(String error){
-        showTextMessage(error);
     }
 
     private void showTextMessage(String text){

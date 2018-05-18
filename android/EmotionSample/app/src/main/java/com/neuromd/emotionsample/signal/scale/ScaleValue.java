@@ -1,10 +1,10 @@
-package com.neuromd.emotionsample;
+package com.neuromd.emotionsample.signal.scale;
 
 public class ScaleValue {
     private final String mLabel;
     private final int mScaleValue;
 
-    ScaleValue(String label, int scaleValue) {
+    public ScaleValue(String label, int scaleValue) {
         mLabel = label;
         mScaleValue = scaleValue;
     }
