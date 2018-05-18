@@ -1,1 +1,1 @@
-include ':brainbit_app'
+include ':brainbit_app', ':neuro-sdk-ext'

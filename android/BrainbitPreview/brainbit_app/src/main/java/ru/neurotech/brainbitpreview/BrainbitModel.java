@@ -9,6 +9,7 @@ import com.neuromd.neurosdk.channels.ChannelType;
 import com.neuromd.neurosdk.channels.SignalChannel;
 import com.neuromd.neurosdk.channels.SpectrumChannel;
 import com.neuromd.neurosdk.channels.eeg.EegChannel;
+import com.neuromd.neurosdk.parameters.Command;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,6 +71,7 @@ public class BrainbitModel {
                     });
                 }
             }
+            mSelectedDevice.execute(Command.StartSignal);
         }
         selectedDeviceChanged.sendNotification(this, mSelectedDevice);
     }
