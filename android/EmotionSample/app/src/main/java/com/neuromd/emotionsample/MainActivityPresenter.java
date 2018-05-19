@@ -38,12 +38,6 @@ public class MainActivityPresenter {
                 onScanStateChanged(scanState);
             }
         });
-        mModel.deviceListChanged.subscribe(new INotificationCallback<List<Device>>() {
-            @Override
-            public void onNotify(Object sender, List<Device> ecgDevices) {
-                onDeviceListChanged(ecgDevices);
-            }
-        });
 
         mModel.selectedDeviceChanged.subscribe(new INotificationCallback<Device>() {
             @Override
@@ -66,30 +60,12 @@ public class MainActivityPresenter {
                     notifyRemoveDeviceButtonEnabledChanged();
                     mBatteryStateText = String.format("%s%%", mModel.getBatteryLevel());
                     notifyBatteryStateTextChanged();
-                    mDeviceStateText = mModel.getDeviceState().name();
-                    notifyDeviceStateTextChanged();
-                    mHpfStateText = mModel.isHpfEnabled() ? "ON" : "OFF";
-                    notifyHpfStateTextChanged();
-                    mSamplingFrequencyText = String.format("%d HZ", mModel.getSamplingFrequency());
-                    notifySamplingFrequencyTextChanged();
-                    mGainText = String.valueOf(mModel.getGain());
-                    notifyGainTextChanged();
-                    mOffsetText = String.valueOf(mModel.getOffset());
-                    notifyOffsetTextChanged();
-                    mChannelsText = String.valueOf(mModel.getChannelsCount());
-                    notifyChannelsTextChanged();
+                    
                 }
             }
         });
 
-        mModel.deviceStateChanged.subscribe(new INotificationCallback<DeviceState>() {
-            @Override
-            public void onNotify(Object o, DeviceState neuroDeviceState) {
-                mDeviceStateText = mModel.getDeviceState().name();
-                notifyDeviceStateTextChanged();
-            }
-        });
-
+       
         mModel.batteryStateChanged.subscribe(new INotificationCallback<Integer>() {
             @Override
             public void onNotify(Object o, Integer integer) {
@@ -131,9 +107,6 @@ public class MainActivityPresenter {
     /**
      * Getters
      */
-    public List<Device> getDeviceList(){
-        return mModel.getDeviceList();
-    }
     public boolean isStartScanButtonEnabled() {
         return mStartScanButtonEnabled;
     }

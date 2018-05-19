@@ -11,9 +11,6 @@ public class EegParamsPresenter {
     private final Activity mActivity;
     private final EegDeviceModel mModel;
     private String mSignalDurationText = "0 s";
-    private String mElectrodesStateText = "DETACHED";
-    private String mHeartRateText = "0";
-    private String mStressIndexText = "0";
 
     public EegParamsPresenter(Activity activity, EegDeviceModel model){
         mActivity = activity;

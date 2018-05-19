@@ -9,16 +9,13 @@ import android.graphics.PointF;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EegChannel implements ISignalFieldDrawable {
+public class EegChannel extends NamedFieldDrawable implements ISignalFieldDrawable {
     private Paint mSignalPaint;
     private Paint mGridPaint;
-    private int mLeft;
-    private int mTop;
-    private int mWidth;
-    private int mHeight;
     private float[] mSignal;
     
-    public EegChannel(){
+    public EegChannel(String name){
+        super(name);
         initSignalPaint();
         initGridPaint();
     }
@@ -27,6 +24,11 @@ public class EegChannel implements ISignalFieldDrawable {
     public void draw(Canvas canvas) {
         drawGrid(canvas);
         drawSignal(canvas);
+        drawLabel(canvas, mLeft + 30, mTop / 2);
+    }
+ 
+    public void setSignal(float[] signal){
+        mSignal = signal;
     }
     
     private void initSignalPaint(){

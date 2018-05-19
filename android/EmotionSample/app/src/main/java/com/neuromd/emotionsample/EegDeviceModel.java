@@ -1,6 +1,7 @@
 package com.neuromd.emotionsample;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
 import com.neuromd.bleconnection.exceptions.BluetoothAdapterException;
@@ -13,6 +14,7 @@ import com.neuromd.neurosdk.channels.BatteryChannel;
 import com.neuromd.neurosdk.channels.ChannelInfo;
 import com.neuromd.neurosdk.channels.ChannelType;
 import com.neuromd.neurosdk.channels.SignalChannel;
+import com.neuromd.neurosdk.channels.eeg.EegChannel;
 import com.neuromd.neurosdk.parameters.Command;
 import com.neuromd.neurosdk.parameters.ParameterName;
 import com.neuromd.neurosdk.parameters.types.DeviceState;
@@ -26,8 +28,10 @@ public class EegDeviceModel {
     private Device mDevice = null;
     private BatteryChannel mBatteryChannel = null;
     private DeviceState mDeviceState;
+    private EegChannel mEegChannel;
     private int mBatteryLevel;
     private double mSignalDuration;
+    private int mEmotionValue;
     
     public EegDeviceModel(Context context) {
         
@@ -61,6 +65,28 @@ public class EegDeviceModel {
                 scanStateChanged.sendNotification(this, state);
             }
         });
+    
+        final Handler handler = new Handler();
+        final Runnable indicatorTestRunnable = new Runnable() {
+            int direction = 1;
+            @Override
+            public void run() {
+                if (direction > 0){
+                    mEmotionValue += 1;
+                    if (mEmotionValue >= 10){
+                        direction = -1;
+                    }
+                }else if (direction < 0){
+                    mEmotionValue -= 1;
+                    if (mEmotionValue <= -10){
+                        direction = 1;
+                    }
+                }
+                emotionStateChanged.sendNotification(this, mEmotionValue);
+                handler.postDelayed(this, 500);
+            }
+        };
+        indicatorTestRunnable.run();
     }
     
     
@@ -79,11 +105,6 @@ public class EegDeviceModel {
     public void startScan() {
         
         removeDevice();
-        for (Device device : mDeviceList) {
-            device.disconnect();
-        }
-        mDeviceList.clear();
-        deviceListChanged.sendNotification(this, mDeviceList);
         try {
             mDeviceConnector.startScan(0);
         }
@@ -115,42 +136,19 @@ public class EegDeviceModel {
                 public void onNotify(Object o, ParameterName paramName) {
                     if (paramName == ParameterName.State) {
                         mDeviceState = (DeviceState) mDevice.readParam(paramName);
-                        deviceStateChanged.sendNotification(this, mDeviceState);
+                        //deviceStateChanged.sendNotification(this, mDeviceState);
                     }
                 }
             });
             
-            mSamplingFrequency = (SamplingFrequency) mDevice.readParam(ParameterName.SamplingFrequency);
+            /*mSamplingFrequency = (SamplingFrequency) mDevice.readParam(ParameterName.SamplingFrequency);
             if (mSamplingFrequency != SamplingFrequency.Hz125) {
                 mDevice.setParam(ParameterName.SamplingFrequency, SamplingFrequency.Hz125);
             }
             mSamplingFrequency = (SamplingFrequency) mDevice.readParam(ParameterName.SamplingFrequency);
-            samplingFrequencyChanged.sendNotification(this, mSamplingFrequency);
+            samplingFrequencyChanged.sendNotification(this, mSamplingFrequency);*/
             
-            mElectrodesStateChannel = new ElectrodesStateChannel(mDevice);
-            mElectrodesStateChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
-                @Override
-                public void onNotify(Object o, Long length) {
-                    if (mElectrodesStateChannel == null)
-                        return;
-                    Log.d("ElectrodesStateChannel", String.format("Electrode length changed %d", length));
-                    if (length > 0) {
-                        long offset = length - 1;
-                        ElectrodeState[] data = mElectrodesStateChannel.readData(offset, 1);
-                        mIsElectrodesAttached = data[0] == ElectrodeState.Normal;
-                        electrodesStateChanged.sendNotification(this, mIsElectrodesAttached);
-                    }
-                }
-            });
-            long electrodesStateDataLength = mElectrodesStateChannel.totalLength();
-            if (electrodesStateDataLength > 0) {
-                mIsElectrodesAttached = mElectrodesStateChannel.readData(electrodesStateDataLength - 1, 1)[0] == ElectrodeState.Normal;
-            }
-            else {
-                mIsElectrodesAttached = false;
-            }
-            electrodesStateChanged.sendNotification(this, mIsElectrodesAttached);
-            mElectrodesStateChannel.setSamplingFrequency(2f);
+            
             
             String deviceName = mDevice.readParam(ParameterName.Name);
             if (deviceName.equals("BrainBit")) {
@@ -160,8 +158,7 @@ public class EegDeviceModel {
                     if (info.getType() == ChannelType.Signal) {
                         Log.d("CreateChannel", String.format("Creating channel %s", info.getName()));
                         SignalChannel signalChannel = new SignalChannel(mDevice, info);
-                        mEcgChannel = new EcgChannel(signalChannel);
-                        mRChannel = new RPeakChannel(signalChannel);
+                
                         break;
                     }
                 }
@@ -169,34 +166,9 @@ public class EegDeviceModel {
             else {
                 mDevice.execute(Command.FindMe);
                 SignalChannel signalChannel = new SignalChannel(mDevice);
-                mEcgChannel = new EcgChannel(signalChannel);
-                mRChannel = new RPeakChannel(signalChannel, mElectrodesStateChannel);
-                mHeartRateChannel = new HeartRateChannel(mRChannel);
-                mHeartRateChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
-                    @Override
-                    public void onNotify(Object o, Long length) {
-                        if (mHeartRateChannel == null)
-                            return;
-                        long offset = length - 1;
-                        Integer[] data = mHeartRateChannel.readData(offset, 1);
-                        mHeartRate = data[0];
-                        heartRateChanged.sendNotification(this, mHeartRate);
-                    }
-                });
-                mStressIndexChannel = new StressIndexChannel(mRChannel);
-                mStressIndexChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
-                    @Override
-                    public void onNotify(Object o, Long length) {
-                        if (mStressIndexChannel == null)
-                            return;
-                        long offset = length - 1;
-                        Double[] data = mStressIndexChannel.readData(offset, 1);
-                        mStressIndex = data[0];
-                        stressIndexChanged.sendNotification(this, mStressIndex);
-                    }
-                });
+               
             }
-            mEcgChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
+            /*mEegChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
                 @Override
                 public void onNotify(Object o, Long length) {
                     if (mEcgChannel == null)
@@ -204,7 +176,7 @@ public class EegDeviceModel {
                     mSignalDuration = (double) length / mEcgChannel.samplingFrequency();
                     signalDurationChanged.sendNotification(this, mSignalDuration);
                 }
-            });
+            });*/
             
             mBatteryChannel = new BatteryChannel(mDevice);
             mBatteryChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
@@ -233,7 +205,7 @@ public class EegDeviceModel {
             
             
             mDeviceState = (DeviceState) mDevice.readParam(ParameterName.State);
-            deviceStateChanged.sendNotification(this, mDeviceState);
+            //deviceStateChanged.sendNotification(this, mDeviceState);
 
             /*mHpfEnabled = mDevice.getCallibriDevice().getNeuroDevice().getSignalSubsystem().getHpfEnabled();
             hpfEnabledChanged.sendNotification(this, mHpfEnabled);*/
@@ -268,34 +240,13 @@ public class EegDeviceModel {
             batteryStateChanged.sendNotification(this, mBatteryLevel);
             
             mDeviceState = DeviceState.Disconnected;
-            deviceStateChanged.sendNotification(this, mDeviceState);
+            //deviceStateChanged.sendNotification(this, mDeviceState);
             
-            mHpfEnabled = false;
-            hpfEnabledChanged.sendNotification(this, mHpfEnabled);
             
-            mSamplingFrequency = SamplingFrequency.Hz1000;
-            samplingFrequencyChanged.sendNotification(this, mSamplingFrequency);
-            
-            //mGain = 0;
-            gainChanged.sendNotification(this, mGain);
-            
-            mOffset = 0;
-            offsetChanged.sendNotification(this, mOffset);
-            
-            mChannelsCount = 0;
-            channelsCountChanged.sendNotification(this, mChannelsCount);
-            
-            mHeartRate = 0;
-            heartRateChanged.sendNotification(this, mHeartRate);
-            
-            mStressIndex = 0.0;
-            stressIndexChanged.sendNotification(this, mStressIndex);
             
             mSignalDuration = 0.0;
             signalDurationChanged.sendNotification(this, mSignalDuration);
             
-            mIsElectrodesAttached = false;
-            electrodesStateChanged.sendNotification(this, mIsElectrodesAttached);
         }
         selectedDeviceChanged.sendNotification(this, mDevice);
     }
@@ -318,8 +269,8 @@ public class EegDeviceModel {
         if (mDevice == null)
             return;
         mDevice.disconnect();
-        mDeviceList.remove(mDevice);
-        deviceListChanged.sendNotification(this, mDeviceList);
+        //mDeviceList.remove(mDevice);
+        //deviceListChanged.sendNotification(this, mDeviceList);
         selectDevice(null);
     }
     
@@ -341,7 +292,7 @@ public class EegDeviceModel {
             duration = getTotalDuration();
         }
         
-        float samplingFreq = mEcgChannel.samplingFrequency();
+        float samplingFreq = mEegChannel.samplingFrequency();
         int offset = (int) (time * samplingFreq);
         int length = (int) (duration * samplingFreq);
         
@@ -356,7 +307,7 @@ public class EegDeviceModel {
             return null;
         }
         
-        return mEcgChannel.readData(offset, length);
+        return mEegChannel.readData(offset, length);
     }
     
     public double getTotalDuration() {
@@ -364,29 +315,33 @@ public class EegDeviceModel {
             return 0;
         }
         
-        double length = mEcgChannel.totalLength();
-        double duration = length / mEcgChannel.samplingFrequency();
+        double length = mEegChannel.totalLength();
+        double duration = length / mEegChannel.samplingFrequency();
         
         return duration;
     }
     
     public int getEmotionalValue() {
-    
+        return mEmotionValue;
     }
     
     public int getAttentionValue() {
     
+        return 0;
     }
     
     public int getProductiveRelaxValue() {
     
+        return 0;
     }
     
     public int getStressValue() {
     
+        return 0;
     }
     
     public int getMeditationValue() {
     
+        return 0;
     }
 }

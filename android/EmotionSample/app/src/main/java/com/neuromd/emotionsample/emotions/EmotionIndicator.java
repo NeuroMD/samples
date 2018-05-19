@@ -17,6 +17,7 @@ public class EmotionIndicator extends View implements IEmotionIndicatorView {
         super(context);
     
         initNamePaint();
+        initBlockPaint();
     }
     
     @Override
@@ -40,12 +41,12 @@ public class EmotionIndicator extends View implements IEmotionIndicatorView {
     private void initNamePaint(){
         mNamePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mNamePaint.setColor(Color.DKGRAY);
-        mNamePaint.setTextSize(14);
+        mNamePaint.setTextSize(18);
     }
     
     private void initBlockPaint(){
         mBlockPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBlockPaint.setColor(Color.argb(0, 0, 180, 0));
+        mBlockPaint.setColor(Color.argb(255, 0, 180, 0));
         mBlockPaint.setStyle(Paint.Style.FILL);
     }
     
@@ -55,6 +56,7 @@ public class EmotionIndicator extends View implements IEmotionIndicatorView {
     }
     
     private void drawBar(Canvas canvas){
+        canvas.drawColor(Color.argb(0xFF, 0xFF, 0xFF, 0xBB));
         int middleX = canvas.getWidth() / 2;
         int blockSpanWidth = 3;
         int totalBlockCount = 6;

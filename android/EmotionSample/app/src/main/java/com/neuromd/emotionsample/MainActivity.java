@@ -14,8 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
-import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,17 +22,20 @@ import io.fabric.sdk.android.Fabric;
 
 import com.neuromd.common.INotificationCallback;
 import com.neuromd.emotionsample.drawer.GraphicsView;
-import com.neuromd.emotionsample.drawer.IDrawerEngine;
-import com.neuromd.emotionsample.emotions.IEmotionIndicatorView;
+import com.neuromd.emotionsample.emotions.EmotionIndicator;
+import com.neuromd.emotionsample.emotions.EmotionParametersPresenter;
+import com.neuromd.emotionsample.emotions.IEmotionValuesView;
 import com.neuromd.emotionsample.signal.EegDrawerPresenter;
 import com.neuromd.emotionsample.signal.EegDrawingEngine;
-import com.neuromd.emotionsample.signal.scale.ScaleValue;
+import com.neuromd.emotionsample.signal.scale.ScaleControlView;
+import com.neuromd.emotionsample.signal.scale.ScaleModel;
+import com.neuromd.emotionsample.signal.scale.ScalePresenter;
 
-public class MainActivity extends AppCompatActivity implements IEmotionIndicatorView {
-
-    private MainActivityPresenter mMainPresenter;
-    private EegParamsPresenter mEcgPresenter;
+public class MainActivity extends AppCompatActivity implements IEmotionValuesView {
+    private EmotionParametersPresenter mEmotionParamsPresenter;
+    private EegParamsPresenter mDeviceParamsPresenter;
     private EegDrawerPresenter mEegDrawerPresenter;
+    private ScalePresenter mScalePresenter;
     private VelocityTracker mVelocityTracker;
 
     @Override
@@ -46,18 +47,19 @@ public class MainActivity extends AppCompatActivity implements IEmotionIndicator
         requestPermissions();
         enableBtAndGeolocation();
 
-        EegDeviceModel model = createAndInitModel();
-        mMainPresenter = new MainActivityPresenter(this, model);
-        mEcgPresenter = new EegParamsPresenter(this, model);
-        mEegDrawerPresenter = new EegDrawerPresenter(model);
-
-        initDrawer();
+        EegDeviceModel deviceModel = createAndInitModel();
+        mDeviceParamsPresenter = new EegParamsPresenter(this, deviceModel);
+        ScaleModel scaleModel = new ScaleModel();
+        initScaleView(scaleModel);
+        initDrawer(deviceModel, scaleModel);
+        initParamLabels(deviceModel);
+        initEmotionIndicator(deviceModel);
+        
         initScanButtons();
         initSignalButtons();
         initParamsLabels();
-        initScaleControls();
     }
-
+  
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int index = event.getActionIndex();
@@ -142,15 +144,10 @@ public class MainActivity extends AppCompatActivity implements IEmotionIndicator
         return model;
     }
 
-    private void initDrawer(){
-        IDrawerEngine drawerEngine = new EegDrawingEngine(mEegDrawerPresenter);
-        GraphicsView drawerView = new GraphicsView(this, drawerEngine);
-        LinearLayout drawLayout = (LinearLayout) findViewById(R.id.drawLayout);
-        drawLayout.addView(drawerView);
-    }
+    
 
     private void initParamsLabels(){
-        final TextView batteryTextView = (TextView)findViewById(R.id.batteryTextView);
+       /* final TextView batteryTextView = (TextView)findViewById(R.id.batteryTextView);
         mMainPresenter.batteryStateTextChanged.subscribe(new INotificationCallback<String>() {
             @Override
             public void onNotify(Object o, String batteryText) {
@@ -164,11 +161,11 @@ public class MainActivity extends AppCompatActivity implements IEmotionIndicator
             public void onNotify(Object o, String stateText) {
                 deviceStateTextView.setText(stateText);
             }
-        });
+        });*/
     }
 
     private void initSignalButtons(){
-        final Button startSignalButton = (Button)findViewById(R.id.startSignalButton);
+        /*final Button startSignalButton = (Button)findViewById(R.id.startSignalButton);
         startSignalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,11 +210,11 @@ public class MainActivity extends AppCompatActivity implements IEmotionIndicator
                 removeDeviceButton.setEnabled(isEnabled);
             }
         });
-        removeDeviceButton.setEnabled(mMainPresenter.isRemoveDeviceButtonEnabled());
+        removeDeviceButton.setEnabled(mMainPresenter.isRemoveDeviceButtonEnabled());*/
     }
 
     private void initScanButtons(){
-        final Button startScanButton = (Button)findViewById(R.id.startScanButton);
+       /* final Button startScanButton = (Button)findViewById(R.id.startScanButton);
         startScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -245,92 +242,33 @@ public class MainActivity extends AppCompatActivity implements IEmotionIndicator
                 stopScanButton.setEnabled(isEnabled);
             }
         });
-        stopScanButton.setEnabled(mMainPresenter.isStopScanButtonEnabled());
+        stopScanButton.setEnabled(mMainPresenter.isStopScanButtonEnabled());*/
     }
 
-    private void initScaleControls(){
-        //Vertical scale
-        final Button verticalScaleIncrementButton = (Button) findViewById(R.id.vScalePlusButton);
-        verticalScaleIncrementButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEegDrawerPresenter.incrementVerticalScale();
-            }
-        });
-        mEegDrawerPresenter.verticalScaleIncrementButtonEnabledChanged.subscribe(new INotificationCallback<Boolean>() {
-            @Override
-            public void onNotify(Object sender, Boolean isEnabled) {
-                verticalScaleIncrementButton.setEnabled(isEnabled);
-            }
-        });
-        final Button verticalScaleDecrementButton = (Button) findViewById(R.id.vScaleMinusButton);
-        verticalScaleDecrementButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEegDrawerPresenter.decrementVerticalScale();
-            }
-        });
-        mEegDrawerPresenter.verticalScaleDecrementButtonEnabledChanged.subscribe(new INotificationCallback<Boolean>() {
-            @Override
-            public void onNotify(Object sender, Boolean isEnabled) {
-                verticalScaleDecrementButton.setEnabled(isEnabled);
-            }
-        });
-        final TextView verticalTextView = (TextView)findViewById(R.id.vScaleTextView);
-        verticalTextView.setText(mEegDrawerPresenter.getVerticalScale().getLabel());
-        mEegDrawerPresenter.verticalScaleChanged.subscribe(new INotificationCallback<ScaleValue>() {
-            @Override
-            public void onNotify(Object sender, ScaleValue scaleValue) {
-                verticalTextView.setText(scaleValue.getLabel());
-            }
-        });
-
-        //Horizontal scale
-        final Button horizontalScaleIncrementButton = (Button) findViewById(R.id.hScalePlusButton);
-        horizontalScaleIncrementButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEegDrawerPresenter.incrementHorizontalScale();
-            }
-        });
-        mEegDrawerPresenter.horizontalScaleIncrementButtonEnabledChanged.subscribe(new INotificationCallback<Boolean>() {
-            @Override
-            public void onNotify(Object sender, Boolean isEnabled) {
-                horizontalScaleIncrementButton.setEnabled(isEnabled);
-            }
-        });
-        final Button horizontalScaleDecrementButton = (Button) findViewById(R.id.hScaleMinusButton);
-        horizontalScaleDecrementButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEegDrawerPresenter.decrementHorizontalScale();
-            }
-        });
-        mEegDrawerPresenter.horizontalScaleDecrementButtonEnabledChanged.subscribe(new INotificationCallback<Boolean>() {
-            @Override
-            public void onNotify(Object sender, Boolean isEnabled) {
-                horizontalScaleDecrementButton.setEnabled(isEnabled);
-            }
-        });
-        final TextView horizontalTextView = (TextView)findViewById(R.id.hScaleTextView);
-        horizontalTextView.setText(mEegDrawerPresenter.getHorizontalScale().getLabel());
-        mEegDrawerPresenter.horizontalScaleChanged.subscribe(new INotificationCallback<ScaleValue>() {
-            @Override
-            public void onNotify(Object sender, ScaleValue scaleValue) {
-                horizontalTextView.setText(scaleValue.getLabel());
-            }
-        });
+    private void initParamLabels(EegDeviceModel deviceModel){
+    
     }
-
-    private void initParamLabels(){
-        final TextView signalDurationTextView = (TextView)findViewById(R.id.surveyDurationTextView);
-        signalDurationTextView.setText(mEcgPresenter.getSignalDurationText());
-        mEcgPresenter.signalDurationTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String durationText) {
-                signalDurationTextView.setText(durationText);
-            }
-        });
+    
+    private void initScaleView(ScaleModel model){
+        LinearLayout scaleLayout = findViewById(R.id.scaleControlsLayout);
+        ScaleControlView scaleView = new ScaleControlView(this);
+        mScalePresenter = new ScalePresenter(model, scaleView);
+        scaleLayout.addView(scaleView);
+    }
+    
+    private void initDrawer(EegDeviceModel deviceModel, ScaleModel scaleModel){
+        EegDrawingEngine drawerEngine = new EegDrawingEngine();
+        mEegDrawerPresenter = new EegDrawerPresenter(deviceModel, scaleModel, drawerEngine);
+        GraphicsView drawerView = new GraphicsView(this, drawerEngine);
+        LinearLayout drawLayout = findViewById(R.id.drawLayout);
+        drawLayout.addView(drawerView);
+    }
+    
+    private void initEmotionIndicator(EegDeviceModel deviceModel) {
+        LinearLayout indicatorLayout = findViewById(R.id.indicatorLayout);
+        EmotionIndicator indicatorView = new EmotionIndicator(this);
+        mEmotionParamsPresenter = new EmotionParametersPresenter(deviceModel, indicatorView, this);
+        indicatorLayout.addView(indicatorView);
     }
     
     @Override
@@ -352,5 +290,4 @@ public class MainActivity extends AppCompatActivity implements IEmotionIndicator
     public void setMeditationLabel(String text) {
     
     }
-
 }

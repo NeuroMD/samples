@@ -3,22 +3,26 @@ package com.neuromd.emotionsample.signal;
 import android.os.Handler;
 import com.neuromd.common.SubscribersNotifier;
 import com.neuromd.emotionsample.EegDeviceModel;
+import com.neuromd.emotionsample.signal.scale.ScaleModel;
 import com.neuromd.neurosdk.parameters.types.DeviceState;
 
 
 public class EegDrawerPresenter {
     
     private final int mRulerHeight = 25;
-    private EegDeviceModel mModel;
+    private EegDeviceModel mDeviceModel;
+    private ScaleModel mScaleModel;
     private float[] mSignalBuffer;
 
     private double mSignalStartTime;
     private double mViewTime;
     private double mScrollVelocity = 0.0;
 
-    EegDrawerPresenter(EegDeviceModel model){
+    public EegDrawerPresenter(EegDeviceModel deviceModel, ScaleModel scaleModel, EegDrawer signalDrawer){
 
-        mModel = model;
+        mDeviceModel = deviceModel;
+        mScaleModel = scaleModel;
+        
         final Handler handler = new Handler();
         final Runnable scrollVelocityRunnable = new Runnable() {
             @Override
@@ -48,7 +52,7 @@ public class EegDrawerPresenter {
     
     public void updateSignalData(){
 
-        if (mModel.getDeviceState() != DeviceState.Connected){
+        /*if (mDeviceModel.getDeviceState() != DeviceState.Connected){
             mSignalStartTime = 0.0;
             mViewTime = 0.0;
             mSignalBuffer = null;
@@ -56,13 +60,13 @@ public class EegDrawerPresenter {
             return;
         }
 
-        double signalTime = mModel.getTotalDuration() - mHorizontalScale.getScaleValue();
+        double signalTime = mDeviceModel.getTotalDuration() - mHorizontalScale.getScaleValue();
         if (mViewTime == mSignalStartTime){
             mViewTime = signalTime;
         }
         mSignalStartTime = signalTime;
 
-        Double[] signalData = mModel.getSignalData(mViewTime, mHorizontalScale.getScaleValue());
+        Double[] signalData = mDeviceModel.getSignalData(mViewTime, mHorizontalScale.getScaleValue());
         if (signalData == null || signalData.length==0){
             mSignalStartTime = 0.0;
             mViewTime = 0.0;
@@ -79,7 +83,7 @@ public class EegDrawerPresenter {
             }
         }
 
-        mSignalBuffer = buffer;
+        mSignalBuffer = buffer;*/
     }
 
     public float[] getSignalBuffer(){
@@ -91,7 +95,8 @@ public class EegDrawerPresenter {
     }
 
     public int getRequestedSamplesCount(){
-        return mModel.getSamplingFrequency()*mHorizontalScale.getScaleValue();
+       // return mModel.getSamplingFrequency() * mHorizontalScale.getScaleValue();
+        return 0;
     }
 
     public void setScrollVelocity(double xVelocity) {

@@ -68,21 +68,21 @@ public class EmotionParametersPresenter {
     
     private void setAttentionText(){
         int attentionValue = mModel.getAttentionValue();    
-        mValuesView.setAttentionLabel(String.format("%d %", attentionValue));
+        mValuesView.setAttentionLabel(String.format("%d %%", attentionValue));
     }
     
     private void setProductiveRelaxText(){
         int productiveRelaxValue = mModel.getProductiveRelaxValue();
-        mValuesView.setProductiveRelaxLabel(String.format("%d %", productiveRelaxValue));
+        mValuesView.setProductiveRelaxLabel(String.format("%d %%", productiveRelaxValue));
     }
     
     private void setStressText(){
         int stressValue = mModel.getStressValue();
-        mValuesView.setStressLabel(String.format("%d %", stressValue));
+        mValuesView.setStressLabel(String.format("%d %%", stressValue));
     }
     
     private void setMeditationText(){
         int meditationValue = mModel.getMeditationValue();
-        mValuesView.setMeditationLabel(String.format("%d %", meditationValue));
+        mValuesView.setMeditationLabel(String.format("%d %%", meditationValue));
     }
 }
