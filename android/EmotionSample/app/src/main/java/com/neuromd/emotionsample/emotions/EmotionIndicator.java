@@ -58,17 +58,78 @@ public class EmotionIndicator extends View implements IEmotionIndicatorView {
     private void drawBar(Canvas canvas){
         canvas.drawColor(Color.argb(0xFF, 0xFF, 0xFF, 0xBB));
         int middleX = canvas.getWidth() / 2;
-        int blockSpanWidth = 3;
+        int blockSpanWidth = 6;
         int totalBlockCount = 6;
-        int centralBlockWidth = 6;
+        int centralBlockWidth = 8;
+        int margin = 6;
         int fullBlockWidth = (int)(((float)canvas.getWidth() -
                 centralBlockWidth -
-                totalBlockCount * blockSpanWidth) / totalBlockCount);
+                totalBlockCount * blockSpanWidth - margin * 2) / totalBlockCount);
         Rect centralRect = new Rect(middleX - centralBlockWidth / 2,
-                                    0,
+                                    margin,
                                     middleX + centralBlockWidth / 2,
-                                    canvas.getHeight());
+                                    canvas.getHeight() - margin);
         canvas.drawRect(centralRect, mBlockPaint);
+        if (mValue == 0)
+            return;
+    
+        int blockCount = 0;
+        int lastBlockParts = 4;
+        int lastBlockState = 0;
+        
+        if (mValue < 0){
+            if (mValue >= -4){
+                blockCount = 1;
+                lastBlockState = -mValue;
+            }
+            else if (mValue >= -8){
+                blockCount = 2;
+                lastBlockState = -mValue - 4;
+            }
+            else{
+                blockCount = 3;
+                lastBlockParts = 2;
+                lastBlockState = -mValue - 8;
+            }
+            
+            int firstX = centralRect.right + blockSpanWidth;
+            for (int i = 0; i < blockCount - 1; ++i){
+                int x = firstX + i*(fullBlockWidth + blockSpanWidth);
+                Rect blockRect = new Rect(x, margin, x + fullBlockWidth, canvas.getHeight()-margin);
+                canvas.drawRect(blockRect, mBlockPaint);
+            }
+            int lastX = firstX + (blockCount - 1)*(fullBlockWidth + blockSpanWidth);
+            int width = fullBlockWidth * lastBlockState / lastBlockParts;
+            Rect lastBlockRect = new Rect(lastX, margin, lastX + width, canvas.getHeight()-margin);
+            canvas.drawRect(lastBlockRect, mBlockPaint);
+        }
+        else{
+            if (mValue <= 4){
+                blockCount = 1;
+                lastBlockState = mValue;
+            }
+            else if (mValue <= 8){
+                blockCount = 2;
+                lastBlockState = mValue - 4;
+            }
+            else{
+                blockCount = 3;
+                lastBlockParts = 2;
+                lastBlockState = mValue - 8;
+            }
+            int firstRight = centralRect.left - blockSpanWidth;
+            for (int i = 0; i < blockCount - 1; ++i){
+                int right = firstRight - i*(fullBlockWidth + blockSpanWidth);
+                Rect blockRect = new Rect(right - fullBlockWidth, margin, right, canvas.getHeight()-margin);
+                canvas.drawRect(blockRect, mBlockPaint);
+            }
+            int lastRight = firstRight - (blockCount - 1)*(fullBlockWidth + blockSpanWidth);
+            int width = fullBlockWidth * lastBlockState / lastBlockParts;
+            Rect lastBlockRect = new Rect(lastRight - width, margin, lastRight, canvas.getHeight()-margin);
+            canvas.drawRect(lastBlockRect, mBlockPaint);
+        }
+        
+        
     }
     
     private void drawName(Canvas canvas){

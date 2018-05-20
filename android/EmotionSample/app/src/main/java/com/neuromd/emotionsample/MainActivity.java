@@ -14,26 +14,38 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 
 import com.neuromd.common.INotificationCallback;
+import com.neuromd.emotionsample.device.DeviceControlsPresenter;
+import com.neuromd.emotionsample.device.EegDeviceModel;
+import com.neuromd.emotionsample.device.IDeviceControlsView;
 import com.neuromd.emotionsample.drawer.GraphicsView;
 import com.neuromd.emotionsample.emotions.EmotionIndicator;
 import com.neuromd.emotionsample.emotions.EmotionParametersPresenter;
 import com.neuromd.emotionsample.emotions.IEmotionValuesView;
+import com.neuromd.emotionsample.params.EegParamsPresenter;
+import com.neuromd.emotionsample.params.IDeviceParamsView;
+import com.neuromd.emotionsample.signal.ChannelsModel;
 import com.neuromd.emotionsample.signal.EegDrawerPresenter;
 import com.neuromd.emotionsample.signal.EegDrawingEngine;
 import com.neuromd.emotionsample.signal.scale.ScaleControlView;
 import com.neuromd.emotionsample.signal.scale.ScaleModel;
 import com.neuromd.emotionsample.signal.scale.ScalePresenter;
 
-public class MainActivity extends AppCompatActivity implements IEmotionValuesView {
+public class MainActivity extends AppCompatActivity implements IEmotionValuesView,
+                                                                IDeviceControlsView,
+                                                                IDeviceParamsView {
     private EmotionParametersPresenter mEmotionParamsPresenter;
     private EegParamsPresenter mDeviceParamsPresenter;
+    private DeviceControlsPresenter mDeviceControlsPresenter;
     private EegDrawerPresenter mEegDrawerPresenter;
     private ScalePresenter mScalePresenter;
     private VelocityTracker mVelocityTracker;
@@ -45,19 +57,17 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
         setContentView(R.layout.activity_main);
 
         requestPermissions();
-        enableBtAndGeolocation();
-
-        EegDeviceModel deviceModel = createAndInitModel();
-        mDeviceParamsPresenter = new EegParamsPresenter(this, deviceModel);
+        enableBluetooth();
+    
+        EegDeviceModel deviceModel = new EegDeviceModel(getApplicationContext());
+        ChannelsModel channelsModel = new ChannelsModel();
         ScaleModel scaleModel = new ScaleModel();
+        initDeviceControls(deviceModel, channelsModel);
         initScaleView(scaleModel);
-        initDrawer(deviceModel, scaleModel);
-        initParamLabels(deviceModel);
-        initEmotionIndicator(deviceModel);
-        
-        initScanButtons();
+        initDrawer(channelsModel, scaleModel);
+        initEmotionIndicator(channelsModel);
+        initDeviceButtons();
         initSignalButtons();
-        initParamsLabels();
     }
   
     @Override
@@ -87,81 +97,6 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
                 break;
         }
         return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults)
-    {
-        if (requestCode == 1)
-        {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
-            {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Functionality limited");
-                builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
-                builder.setPositiveButton(android.R.string.ok, null);
-                builder.setOnDismissListener(new DialogInterface.OnDismissListener()
-                {
-                    @Override
-                    public void onDismiss(DialogInterface dialog)
-                    {
-
-                    }
-                });
-                builder.show();
-            }
-        }
-    }
-
-    private void requestPermissions(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
-    }
-
-    private void enableBtAndGeolocation(){
-        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(enableBtIntent, 1);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
-            if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-                Intent enableGeoIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivityForResult(enableGeoIntent, 1);
-            }
-        }
-    }
-
-    private EegDeviceModel createAndInitModel(){
-        EegDeviceModel model = new EegDeviceModel(getApplicationContext());
-        model.bluetoothAdapterEnableNeeded.subscribe(new INotificationCallback() {
-            @Override
-            public void onNotify(Object sender, Object param/*null*/) {
-                enableBtAndGeolocation();
-            }
-        });
-
-        return model;
-    }
-
-    
-
-    private void initParamsLabels(){
-       /* final TextView batteryTextView = (TextView)findViewById(R.id.batteryTextView);
-        mMainPresenter.batteryStateTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String batteryText) {
-                batteryTextView.setText(batteryText);
-            }
-        });
-
-        final TextView deviceStateTextView = (TextView)findViewById(R.id.stateTextView);
-        mMainPresenter.deviceStateTextChanged.subscribe(new INotificationCallback<String>() {
-            @Override
-            public void onNotify(Object o, String stateText) {
-                deviceStateTextView.setText(stateText);
-            }
-        });*/
     }
 
     private void initSignalButtons(){
@@ -213,14 +148,8 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
         removeDeviceButton.setEnabled(mMainPresenter.isRemoveDeviceButtonEnabled());*/
     }
 
-    private void initScanButtons(){
-       /* final Button startScanButton = (Button)findViewById(R.id.startScanButton);
-        startScanButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMainPresenter.onStartScanButtonClick();
-            }
-        });
+    private void initDeviceButtons(){
+       /*
         mMainPresenter.startScanButtonEnabledChanged.subscribe(new INotificationCallback<Boolean>() {
             @Override
             public void onNotify(Object sender, Boolean isEnabled) {
@@ -244,10 +173,6 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
         });
         stopScanButton.setEnabled(mMainPresenter.isStopScanButtonEnabled());*/
     }
-
-    private void initParamLabels(EegDeviceModel deviceModel){
-    
-    }
     
     private void initScaleView(ScaleModel model){
         LinearLayout scaleLayout = findViewById(R.id.scaleControlsLayout);
@@ -256,19 +181,24 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
         scaleLayout.addView(scaleView);
     }
     
-    private void initDrawer(EegDeviceModel deviceModel, ScaleModel scaleModel){
+    private void initDrawer(ChannelsModel channelsModel, ScaleModel scaleModel){
         EegDrawingEngine drawerEngine = new EegDrawingEngine();
-        mEegDrawerPresenter = new EegDrawerPresenter(deviceModel, scaleModel, drawerEngine);
+        mEegDrawerPresenter = new EegDrawerPresenter(channelsModel, scaleModel, drawerEngine);
         GraphicsView drawerView = new GraphicsView(this, drawerEngine);
         LinearLayout drawLayout = findViewById(R.id.drawLayout);
         drawLayout.addView(drawerView);
     }
     
-    private void initEmotionIndicator(EegDeviceModel deviceModel) {
+    private void initEmotionIndicator(ChannelsModel channelsModel) {
         LinearLayout indicatorLayout = findViewById(R.id.indicatorLayout);
         EmotionIndicator indicatorView = new EmotionIndicator(this);
-        mEmotionParamsPresenter = new EmotionParametersPresenter(deviceModel, indicatorView, this);
+        mEmotionParamsPresenter = new EmotionParametersPresenter(channelsModel, indicatorView, this);
         indicatorLayout.addView(indicatorView);
+    }
+    
+    private void initDeviceControls(EegDeviceModel deviceModel, ChannelsModel channelsModel){
+        mDeviceControlsPresenter = new DeviceControlsPresenter(deviceModel, channelsModel, this);
+        mDeviceParamsPresenter = new EegParamsPresenter(channelsModel, this);
     }
     
     @Override
@@ -289,5 +219,93 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
     @Override
     public void setMeditationLabel(String text) {
     
+    }
+    
+    @Override
+    public void setDurationText(String text) {
+    
+    }
+    
+    @Override
+    public void setBatteryLevelText(String text) {
+    
+    }
+    
+    @Override
+    public void setDeviceText(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView deviceTextView = findViewById(R.id.deviceTextView);
+                deviceTextView.setText(text);
+            }
+        });
+    }
+    
+    @Override
+    public void setProgressVisible(final boolean isVisible) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ProgressBar connectionProgressBar = findViewById(R.id.connectionProgressBar);
+                connectionProgressBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+    
+    @Override
+    public void setReconnectButtonEnabled(final boolean isEnabled) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Button reconnectButton = findViewById(R.id.reconnectButton);
+                reconnectButton.setEnabled(isEnabled);
+            }
+        });
+    }
+    
+    @Override
+    public void enableBluetooth() {
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, 1);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
+            if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                Intent enableGeoIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(enableGeoIntent, 1);
+            }
+        }
+    }
+    
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults)
+    {
+        if (requestCode == 1)
+        {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
+            {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Functionality limited");
+                builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener()
+                {
+                    @Override
+                    public void onDismiss(DialogInterface dialog)
+                    {
+                    
+                    }
+                });
+                builder.show();
+            }
+        }
+    }
+    
+    @Override
+    public void requestPermissions(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
     }
 }

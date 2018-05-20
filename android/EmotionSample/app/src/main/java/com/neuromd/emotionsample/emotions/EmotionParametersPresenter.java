@@ -1,14 +1,14 @@
 package com.neuromd.emotionsample.emotions;
 
 import com.neuromd.common.INotificationCallback;
-import com.neuromd.emotionsample.EegDeviceModel;
+import com.neuromd.emotionsample.signal.ChannelsModel;
 
 public class EmotionParametersPresenter {
-    private final EegDeviceModel mModel;
+    private final ChannelsModel mModel;
     private final IEmotionIndicatorView mIndicatorView;
     private final IEmotionValuesView mValuesView;
     
-    public EmotionParametersPresenter(EegDeviceModel model,
+    public EmotionParametersPresenter(ChannelsModel model,
                                       IEmotionIndicatorView indicatorView,
                                       IEmotionValuesView valuesView){
     

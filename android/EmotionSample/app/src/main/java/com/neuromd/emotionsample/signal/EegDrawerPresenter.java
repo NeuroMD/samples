@@ -1,16 +1,15 @@
 package com.neuromd.emotionsample.signal;
 
 import android.os.Handler;
-import com.neuromd.common.SubscribersNotifier;
-import com.neuromd.emotionsample.EegDeviceModel;
+
+import com.neuromd.emotionsample.device.EegDeviceModel;
 import com.neuromd.emotionsample.signal.scale.ScaleModel;
-import com.neuromd.neurosdk.parameters.types.DeviceState;
 
 
 public class EegDrawerPresenter {
     
     private final int mRulerHeight = 25;
-    private EegDeviceModel mDeviceModel;
+    private ChannelsModel mChannelsModel;
     private ScaleModel mScaleModel;
     private float[] mSignalBuffer;
 
@@ -18,9 +17,9 @@ public class EegDrawerPresenter {
     private double mViewTime;
     private double mScrollVelocity = 0.0;
 
-    public EegDrawerPresenter(EegDeviceModel deviceModel, ScaleModel scaleModel, EegDrawer signalDrawer){
+    public EegDrawerPresenter(ChannelsModel channelsModel, ScaleModel scaleModel, EegDrawer signalDrawer){
 
-        mDeviceModel = deviceModel;
+        mChannelsModel = channelsModel;
         mScaleModel = scaleModel;
         
         final Handler handler = new Handler();

@@ -1,15 +1,11 @@
-package com.neuromd.emotionsample;
+package com.neuromd.emotionsample.signal;
 
-import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-import com.neuromd.bleconnection.exceptions.BluetoothAdapterException;
-import com.neuromd.bleconnection.exceptions.BluetoothPermissionException;
 import com.neuromd.common.INotificationCallback;
 import com.neuromd.common.SubscribersNotifier;
 import com.neuromd.neurosdk.Device;
-import com.neuromd.neurosdk.DeviceScanner;
 import com.neuromd.neurosdk.channels.BatteryChannel;
 import com.neuromd.neurosdk.channels.ChannelInfo;
 import com.neuromd.neurosdk.channels.ChannelType;
@@ -19,12 +15,7 @@ import com.neuromd.neurosdk.parameters.Command;
 import com.neuromd.neurosdk.parameters.ParameterName;
 import com.neuromd.neurosdk.parameters.types.DeviceState;
 
-import java.util.List;
-
-
-public class EegDeviceModel {
-    
-    private final DeviceScanner mDeviceConnector;
+public class ChannelsModel {
     private Device mDevice = null;
     private BatteryChannel mBatteryChannel = null;
     private DeviceState mDeviceState;
@@ -33,39 +24,7 @@ public class EegDeviceModel {
     private double mSignalDuration;
     private int mEmotionValue;
     
-    public EegDeviceModel(Context context) {
-        
-        mDeviceConnector = new DeviceScanner(context);
-        mDeviceConnector.deviceFound.subscribe(new INotificationCallback<Device>() {
-            @Override
-            public void onNotify(Object o, final Device device) {
-                DeviceState state = (DeviceState) device.readParam(ParameterName.State);
-                if (state == DeviceState.Connected) {
-                }
-                else {
-                    device.parameterChanged.subscribe(new INotificationCallback<ParameterName>() {
-                        @Override
-                        public void onNotify(Object o, ParameterName parameterName) {
-                            if (parameterName == ParameterName.State) {
-                                DeviceState state = (DeviceState) device.readParam(ParameterName.State);
-                                if (state == DeviceState.Connected) {
-                                    device.parameterChanged.unsubscribe();
-                                }
-                            }
-                        }
-                    });
-                    device.connect();
-                }
-    
-            }
-        });
-        mDeviceConnector.scanStateChanged.subscribe(new INotificationCallback<Boolean>() {
-            @Override
-            public void onNotify(Object o, Boolean state) {
-                scanStateChanged.sendNotification(this, state);
-            }
-        });
-    
+    public ChannelsModel(){
         final Handler handler = new Handler();
         final Runnable indicatorTestRunnable = new Runnable() {
             int direction = 1;
@@ -90,10 +49,6 @@ public class EegDeviceModel {
     }
     
     
-    public SubscribersNotifier bluetoothAdapterEnableNeeded = new SubscribersNotifier<>();
-    public SubscribersNotifier bluetoothPermissionsNeeded = new SubscribersNotifier<>();
-    public SubscribersNotifier<Boolean> scanStateChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<Device> selectedDeviceChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Integer> batteryStateChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Double> signalDurationChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Integer> emotionStateChanged = new SubscribersNotifier<>();
@@ -102,27 +57,7 @@ public class EegDeviceModel {
     public SubscribersNotifier<Integer> stressValueChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Integer> meditationValueChanged = new SubscribersNotifier<>();
     
-    public void startScan() {
-        
-        removeDevice();
-        try {
-            mDeviceConnector.startScan(0);
-        }
-        catch (BluetoothAdapterException e) {
-            stopScan();
-            bluetoothAdapterEnableNeeded.sendNotification(this, null);
-        }
-        catch (BluetoothPermissionException e) {
-            stopScan();
-            bluetoothPermissionsNeeded.sendNotification(this, null);
-        }
-    }
-    
-    public void stopScan() {
-        mDeviceConnector.stopScan();
-    }
-    
-    public void selectDevice(Device device) {
+    public void setDevice(Device device) {
         
         if (mDevice != null) {
             mDevice.parameterChanged.unsubscribe();
@@ -158,7 +93,7 @@ public class EegDeviceModel {
                     if (info.getType() == ChannelType.Signal) {
                         Log.d("CreateChannel", String.format("Creating channel %s", info.getName()));
                         SignalChannel signalChannel = new SignalChannel(mDevice, info);
-                
+                        
                         break;
                     }
                 }
@@ -166,7 +101,7 @@ public class EegDeviceModel {
             else {
                 mDevice.execute(Command.FindMe);
                 SignalChannel signalChannel = new SignalChannel(mDevice);
-               
+                
             }
             /*mEegChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
                 @Override
@@ -248,7 +183,15 @@ public class EegDeviceModel {
             signalDurationChanged.sendNotification(this, mSignalDuration);
             
         }
-        selectedDeviceChanged.sendNotification(this, mDevice);
+    }
+    
+    public void removeDevice() {
+        if (mDevice == null)
+            return;
+        mDevice.disconnect();
+        //mDeviceList.remove(mDevice);
+        //deviceListChanged.sendNotification(this, mDeviceList);
+        setDevice(null);
     }
     
     public void signalStart() {
@@ -264,16 +207,6 @@ public class EegDeviceModel {
         
         mDevice.execute(Command.StopSignal);
     }
-    
-    public void removeDevice() {
-        if (mDevice == null)
-            return;
-        mDevice.disconnect();
-        //mDeviceList.remove(mDevice);
-        //deviceListChanged.sendNotification(this, mDeviceList);
-        selectDevice(null);
-    }
-    
     public Device getSelectedDevice() {
         return mDevice;
     }
@@ -320,28 +253,27 @@ public class EegDeviceModel {
         
         return duration;
     }
-    
     public int getEmotionalValue() {
         return mEmotionValue;
     }
     
     public int getAttentionValue() {
-    
+        
         return 0;
     }
     
     public int getProductiveRelaxValue() {
-    
+        
         return 0;
     }
     
     public int getStressValue() {
-    
+        
         return 0;
     }
     
     public int getMeditationValue() {
-    
+        
         return 0;
     }
 }
