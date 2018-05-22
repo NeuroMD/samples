@@ -9,12 +9,12 @@ import android.graphics.PointF;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EegChannel extends NamedFieldDrawable implements ISignalFieldDrawable {
+public class DrawableChannel extends NamedFieldDrawable implements ISignalFieldDrawable {
     private Paint mSignalPaint;
     private Paint mGridPaint;
     private float[] mSignal;
     
-    public EegChannel(String name){
+    public DrawableChannel(String name){
         super(name);
         initSignalPaint();
         initGridPaint();
@@ -24,7 +24,7 @@ public class EegChannel extends NamedFieldDrawable implements ISignalFieldDrawab
     public void draw(Canvas canvas) {
         drawGrid(canvas);
         drawSignal(canvas);
-        drawLabel(canvas, mLeft + 30, mTop / 2);
+        drawLabel(canvas, mLeft + 30, mTop + mHeight / 2);
     }
  
     public void setSignal(float[] signal){
@@ -54,15 +54,21 @@ public class EegChannel extends NamedFieldDrawable implements ISignalFieldDrawab
     
     private Path getSimplePathFromPoints(List<PointF> points) {
         Path path = new Path();
-        path.moveTo(points.get(0).x, points.get(0).y);
-        for (int i = 1; i < points.size(); ++i) {
-            path.lineTo(points.get(i).x, points.get(i).y);
+        if (points.size() > 0) {
+            path.moveTo(points.get(0).x, points.get(0).y);
+            for (int i = 1; i < points.size(); ++i) {
+                path.lineTo(points.get(i).x, points.get(i).y);
+            }
         }
         return path;
     }
     
     private List<PointF> getPoints(float[] data, float left, float top, float width, float height) {
         List<PointF> points = new ArrayList<>();
+        if (data == null){
+            return points;
+        }
+        
         float x = left;
         for (float rawY : data) {
             float y = height / 2 - rawY * height + top;
@@ -76,6 +82,6 @@ public class EegChannel extends NamedFieldDrawable implements ISignalFieldDrawab
     }
     
     private void drawGrid(Canvas canvas){
-        canvas.drawLine(0, mHeight / 2f, canvas.getWidth(), mHeight / 2f, mGridPaint);
+        canvas.drawLine(0, mTop + mHeight / 2f, canvas.getWidth(), mTop + mHeight / 2f, mGridPaint);
     }
 }

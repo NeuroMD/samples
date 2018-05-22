@@ -42,7 +42,7 @@ public class EegDrawingEngine extends EegDrawer implements IDrawerEngine {
     @Override
     public void Draw(Canvas canvas) {
         canvas.drawColor(Color.argb(0xFF, 0xFF, 0xFF, 0xBB));
-        if (mDrawables != null && mDrawables.length > 0) {
+        if (mDrawables != null && mDrawables.size() > 0) {
             for (ISignalFieldDrawable drawable : mDrawables) {
                 drawable.draw(canvas);
             }

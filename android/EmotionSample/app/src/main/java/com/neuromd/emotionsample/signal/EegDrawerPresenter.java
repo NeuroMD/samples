@@ -2,26 +2,85 @@ package com.neuromd.emotionsample.signal;
 
 import android.os.Handler;
 
-import com.neuromd.emotionsample.device.EegDeviceModel;
+import com.neuromd.common.INotificationCallback;
+import com.neuromd.emotionsample.signal.drawables.DrawableChannel;
+import com.neuromd.emotionsample.signal.drawables.ISignalFieldDrawable;
+import com.neuromd.emotionsample.signal.drawables.Ruler;
 import com.neuromd.emotionsample.signal.scale.ScaleModel;
+import com.neuromd.neurosdk.Device;
+import com.neuromd.neurosdk.channels.eeg.EegChannel;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class EegDrawerPresenter {
-    
     private final int mRulerHeight = 25;
-    private ChannelsModel mChannelsModel;
-    private ScaleModel mScaleModel;
-    private float[] mSignalBuffer;
+    private final ChannelsModel mChannelsModel;
+    private final ScaleModel mScaleModel;
+    private final EegDrawer mEegDrawer;
 
-    private double mSignalStartTime;
-    private double mViewTime;
+    private Map<String, DrawableChannel> mChannels;
+    private Ruler mRuler;
+    private float mSignalStartTime;
+    private float mViewTime;
     private double mScrollVelocity = 0.0;
+    private int mDrawableAreaWidth = 0;
+    private int mDrawableAreaHeight = 0;
 
     public EegDrawerPresenter(ChannelsModel channelsModel, ScaleModel scaleModel, EegDrawer signalDrawer){
 
         mChannelsModel = channelsModel;
         mScaleModel = scaleModel;
+        mEegDrawer = signalDrawer;
+    
+        enableSignalScrolling();
         
+        mChannelsModel.selectedDeviceChanged.subscribe(new INotificationCallback<Device>() {
+            @Override
+            public void onNotify(Object o, Device device) {
+                if (device == null){
+                    resetDrawableArea();
+                }
+                else {
+                    createDrawableArea();
+                }
+            }
+        });
+        mEegDrawer.updatePending.subscribe(new INotificationCallback<UpdatePendingArgs>() {
+            @Override
+            public void onNotify(Object o, UpdatePendingArgs updatePendingArgs) {
+                //if (mDrawableAreaWidth != updatePendingArgs.width ||
+                 //       mDrawableAreaHeight != updatePendingArgs.height) {
+                    mDrawableAreaWidth = updatePendingArgs.width;
+                    mDrawableAreaHeight = updatePendingArgs.height;
+                    onDrawableAreaSizeChanged();
+                //}
+            }
+        });
+    }
+    
+    private void onDrawableAreaSizeChanged() {
+        if (mChannels != null){
+            int topY = 0;
+            int channelHeight = (int)((float)(mDrawableAreaHeight - mRulerHeight) / mChannels.size());
+            for (DrawableChannel channel : mChannels.values()){
+                channel.setPosition(0, topY);
+                channel.setSize(mDrawableAreaWidth, channelHeight);
+                topY += channelHeight;
+            }
+        }
+        if (mRuler != null){
+            mRuler.setViewTime(mViewTime);
+            mRuler.setSecondCount(mScaleModel.getHorizontalScale().getScaleValue());
+            mRuler.setPosition(0, mDrawableAreaHeight - mRulerHeight);
+            mRuler.setSize(mDrawableAreaWidth, mRulerHeight);
+        }
+    }
+    
+    private void enableSignalScrolling() {
         final Handler handler = new Handler();
         final Runnable scrollVelocityRunnable = new Runnable() {
             @Override
@@ -34,68 +93,49 @@ public class EegDrawerPresenter {
                 if (Math.abs(mScrollVelocity) < 0.1) {
                     mScrollVelocity = 0.0;
                 }
-
+            
                 if (mViewTime>=0.0) {
                     mViewTime -= mScrollVelocity;
-                    if (mViewTime < 0.0)
-                        mViewTime = 0.0;
+                    if (mViewTime < 0.0f)
+                        mViewTime = 0.0f;
                     else if (mViewTime > mSignalStartTime)
                         mViewTime = mSignalStartTime;
                 }
-
+            
                 handler.postDelayed(this, 50);
             }
         };
         scrollVelocityRunnable.run();
     }
     
-    public void updateSignalData(){
-
-        /*if (mDeviceModel.getDeviceState() != DeviceState.Connected){
-            mSignalStartTime = 0.0;
-            mViewTime = 0.0;
-            mSignalBuffer = null;
-            //mRPeaks = null;
-            return;
+    private void createDrawableArea(){
+        List<EegChannel> eegChannels = mChannelsModel.getChannels();
+        List<ISignalFieldDrawable> drawables = new ArrayList<>();
+        mChannels = new HashMap<>();
+        for (final EegChannel channel : eegChannels){
+            DrawableChannel drawChannel = new DrawableChannel(channel.info().getName());
+            mChannels.put(channel.info().getName(), drawChannel);
+            channel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
+                @Override
+                public void onNotify(Object o, Long length) {
+                    int seconds = mScaleModel.getHorizontalScale().getScaleValue();
+                    mSignalStartTime = (float)length / 250f;
+                    mRuler.setViewTime(mViewTime);
+                }
+            });
+            drawables.add(drawChannel);
         }
-
-        double signalTime = mDeviceModel.getTotalDuration() - mHorizontalScale.getScaleValue();
-        if (mViewTime == mSignalStartTime){
-            mViewTime = signalTime;
-        }
-        mSignalStartTime = signalTime;
-
-        Double[] signalData = mDeviceModel.getSignalData(mViewTime, mHorizontalScale.getScaleValue());
-        if (signalData == null || signalData.length==0){
-            mSignalStartTime = 0.0;
-            mViewTime = 0.0;
-            mSignalBuffer = null;
-            return;
-        }
-        
-        int requestedDataLength = getRequestedSamplesCount();
-        float[] buffer = new float[requestedDataLength];
-        int start = requestedDataLength - signalData.length;
-        if (start >= 0) {
-            for (int i = start; i < requestedDataLength; ++i) {
-                buffer[i] = (float) (signalData[i - start] * 1e6);
-            }
-        }
-
-        mSignalBuffer = buffer;*/
+        mRuler = new Ruler();
+        mRuler.setSecondCount(mScaleModel.getHorizontalScale().getScaleValue());
+        mRuler.setViewTime(mViewTime);
+        drawables.add(mRuler);
+        mEegDrawer.setDrawables(drawables);
     }
-
-    public float[] getSignalBuffer(){
-        return mSignalBuffer;
-    }
-
-    public double getSignalViewTime(){
-        return mViewTime;
-    }
-
-    public int getRequestedSamplesCount(){
-       // return mModel.getSamplingFrequency() * mHorizontalScale.getScaleValue();
-        return 0;
+    
+    private void resetDrawableArea(){
+        mEegDrawer.setDrawables(null);
+        mChannels = null;
+        mRuler = null;
     }
 
     public void setScrollVelocity(double xVelocity) {

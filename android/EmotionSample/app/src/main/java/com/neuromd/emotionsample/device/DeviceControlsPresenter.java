@@ -33,7 +33,7 @@ public class DeviceControlsPresenter {
                 }
                 else {
                     String deviceAddress = device.readParam(ParameterName.Address);
-                    deviceText = String.format("[%s]", deviceAddress);
+                    deviceText = String.format("Connected to [%s]", deviceAddress);
                     mDeviceView.setReconnectButtonEnabled(true);
                 }
                 mDeviceView.setDeviceText(deviceText);
@@ -65,6 +65,11 @@ public class DeviceControlsPresenter {
             }
         });
         
+        mDeviceModel.findDevice();
+    }
+    
+    public void onReconnectClicked() {
+        mChannelsModel.removeDevice();
         mDeviceModel.findDevice();
     }
 }

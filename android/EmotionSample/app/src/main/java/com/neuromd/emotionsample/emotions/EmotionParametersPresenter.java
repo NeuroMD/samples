@@ -20,6 +20,10 @@ public class EmotionParametersPresenter {
         subscribeModelEvents();
     }
     
+    public void onStartCalcClicked(){
+        mModel.startCalculations();
+    }
+    
     private void setInitialValues(){
         setEmotionalIndicatorValue();
         setAttentionText();
