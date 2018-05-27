@@ -69,7 +69,8 @@ public class DeviceControlsPresenter {
     }
     
     public void onReconnectClicked() {
-        mChannelsModel.removeDevice();
-        mDeviceModel.findDevice();
+        mChannelsModel.stopCalculations();
+        ///mChannelsModel.removeDevice();
+        ///mDeviceModel.findDevice();
     }
 }

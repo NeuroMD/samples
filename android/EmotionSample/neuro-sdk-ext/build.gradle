@@ -1,2 +1,2 @@
 configurations.maybeCreate("default")
-artifacts.add("default", file('neuro-sdk-ext-release.aar'))
+artifacts.add("default", file('neuro-sdk-ext-debug.aar'))

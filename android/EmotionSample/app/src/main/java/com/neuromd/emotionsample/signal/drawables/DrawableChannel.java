@@ -12,7 +12,7 @@ import java.util.List;
 public class DrawableChannel extends NamedFieldDrawable implements ISignalFieldDrawable {
     private Paint mSignalPaint;
     private Paint mGridPaint;
-    private float[] mSignal;
+    private Path mSignalPath;
     
     public DrawableChannel(String name){
         super(name);
@@ -28,7 +28,8 @@ public class DrawableChannel extends NamedFieldDrawable implements ISignalFieldD
     }
  
     public void setSignal(float[] signal){
-        mSignal = signal;
+        List<PointF> points = getPoints(signal, mLeft, mTop, mWidth, mHeight);
+       mSignalPath = getSimplePathFromPoints(points);
     }
     
     private void initSignalPaint(){
@@ -47,9 +48,9 @@ public class DrawableChannel extends NamedFieldDrawable implements ISignalFieldD
     }
     
     private void drawSignal(Canvas canvas){
-        List<PointF> points = getPoints(mSignal, mLeft, mTop, mWidth, mHeight);
-        Path path = getSimplePathFromPoints(points);
-        canvas.drawPath(path, mSignalPaint);
+        if (mSignalPath!=null) {
+            canvas.drawPath(mSignalPath, mSignalPaint);
+        }
     }
     
     private Path getSimplePathFromPoints(List<PointF> points) {
@@ -71,9 +72,9 @@ public class DrawableChannel extends NamedFieldDrawable implements ISignalFieldD
         
         float x = left;
         for (float rawY : data) {
-            float y = height / 2 - rawY * height + top;
-            if (y >= height) y = height - 1;
-            else if (y <= 0) y = 1;
+            float y = top + height / 2 - rawY * height;
+            if (y >= top + height) y = top + height - 1;
+            else if (y <= top) y = top;
             PointF newPoint = new PointF(x, y);
             x += width / data.length;
             points.add(newPoint);

@@ -117,6 +117,8 @@ public class ScaleModel {
         mVerticalScales.add(new ScaleValue("25 mV", 25000));
         mVerticalScales.add(new ScaleValue("50 mV", 50000));
         mVerticalScales.add(new ScaleValue("100 mV", 100000));
+        mVerticalScales.add(new ScaleValue("1000 mV", 1000000));
+        mVerticalScales.add(new ScaleValue("10000 mV", 10000000));
         mVerticalScaleIterator = mVerticalScales.listIterator(6);
         mVerticalScale = mVerticalScales.get(6);
     }
