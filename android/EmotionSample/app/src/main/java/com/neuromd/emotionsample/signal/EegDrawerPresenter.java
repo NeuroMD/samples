@@ -9,8 +9,7 @@ import com.neuromd.emotionsample.signal.drawables.Ruler;
 import com.neuromd.emotionsample.signal.scale.ScaleModel;
 import com.neuromd.emotionsample.signal.scale.ScaleValue;
 import com.neuromd.neurosdk.Device;
-import com.neuromd.neurosdk.channels.SignalChannel;
-//import com.neuromd.neurosdk.channels.eeg.EegChannel;
+import com.neuromd.neurosdk.channels.eeg.EegChannel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,6 +146,10 @@ public class EegDrawerPresenter {
                     onSignalLoaded(loadedSignals);
                 }
             });
+            mSignalLoader.onHorizontalScaleChanged(mScaleModel.getHorizontalScale().getScaleValue());
+            mSignalLoader.onVerticalScaleChanged(mScaleModel.getVerticalScale().getScaleValue());
+            int channelHeight = (int)((float)(mDrawableAreaHeight) / mChannels.size());
+            mSignalLoader.onChannelHeightChanged(channelHeight);
         }
     }
     
@@ -183,9 +186,9 @@ public class EegDrawerPresenter {
     private void createDrawableArea(){
         List<ISignalFieldDrawable> drawables = new ArrayList<>();
     
-        List<SignalChannel> eegChannels = mChannelsModel.getChannels();
+        List<EegChannel> eegChannels = mChannelsModel.getChannels();
         mChannels = new HashMap<>();
-        for (SignalChannel channel : eegChannels){
+        for (EegChannel channel : eegChannels){
             DrawableChannel drawChannel = new DrawableChannel(channel.info().getName());
             mChannels.put(channel.info().getName(), drawChannel);
             drawables.add(drawChannel);

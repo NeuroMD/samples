@@ -10,19 +10,18 @@ import com.neuromd.neurosdk.channels.BatteryChannel;
 import com.neuromd.neurosdk.channels.ChannelInfo;
 import com.neuromd.neurosdk.channels.ChannelType;
 import com.neuromd.neurosdk.channels.SignalChannel;
-//import com.neuromd.neurosdk.channels.eeg.EegChannel;
+import com.neuromd.neurosdk.channels.eeg.EegChannel;
 import com.neuromd.neurosdk.parameters.Command;
 import com.neuromd.neurosdk.parameters.ParameterName;
 import com.neuromd.neurosdk.parameters.types.DeviceState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ChannelsModel {
     private Device mDevice = null;
     private BatteryChannel mBatteryChannel = null;
-    private List<SignalChannel> mEegChannelCollection;
+    private List<EegChannel> mEegChannelCollection;
     private int mBatteryLevel;
     private long mSignalLength;
     private int mEmotionValue;
@@ -68,7 +67,7 @@ public class ChannelsModel {
             mDevice.parameterChanged.unsubscribe();
             mBatteryChannel.dataLengthChanged.unsubscribe();
             mDevice.execute(Command.StopSignal);
-            for (SignalChannel chan : mEegChannelCollection){
+            for (EegChannel chan : mEegChannelCollection){
                 chan.dataLengthChanged.unsubscribe();
             }
         }
@@ -94,7 +93,8 @@ public class ChannelsModel {
                 if (info.getType() == ChannelType.Signal) {
                     Log.d("CreateChannel", String.format("Creating channel %s", info.getName()));
                     SignalChannel signalChannel = new SignalChannel(mDevice, info);
-                    signalChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
+                    EegChannel eegChannel = new EegChannel(signalChannel);
+                    eegChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
                         @Override
                         public void onNotify(Object o, Long length) {
                             if (length > mSignalLength) {
@@ -103,9 +103,7 @@ public class ChannelsModel {
                             }
                         }
                     });
-                    //EegChannel eegChannel = new EegChannel(signalChannel);
-                    mEegChannelCollection.add(signalChannel);
-                    //break;
+                    mEegChannelCollection.add(eegChannel);
                 }
                 else if (info.getType() == ChannelType.Battery) {
                     mBatteryChannel = new BatteryChannel(mDevice);
@@ -179,7 +177,7 @@ public class ChannelsModel {
         return lengthToDuration(mSignalLength);
     }
     
-    public List<SignalChannel> getChannels(){
+    public List<EegChannel> getChannels(){
         return mEegChannelCollection;
     }
     
