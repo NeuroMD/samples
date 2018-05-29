@@ -60,7 +60,7 @@ public class DeviceControlsPresenter {
             public void onNotify(Object o, Device device) {
                 mChannelsModel.setDevice(device);
                 String deviceAddress = device.readParam(ParameterName.Address);
-                mDeviceView.setDeviceText(String.format("[%s]", deviceAddress));
+                mDeviceView.setDeviceText(String.format("Connected to [%s]", deviceAddress));
                 mDeviceView.setReconnectButtonEnabled(true);
             }
         });
@@ -69,8 +69,8 @@ public class DeviceControlsPresenter {
     }
     
     public void onReconnectClicked() {
-        mChannelsModel.stopCalculations();
-        ///mChannelsModel.removeDevice();
-        ///mDeviceModel.findDevice();
+       // mChannelsModel.stopCalculations();
+        mChannelsModel.removeDevice();
+        mDeviceModel.findDevice();
     }
 }

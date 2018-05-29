@@ -3,12 +3,12 @@ package com.neuromd.emotionsample.signal;
 import com.neuromd.common.SubscribersNotifier;
 import com.neuromd.neurosdk.channels.eeg.EegChannel;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SignalLoader {
-    private final List<EegChannel> mChannels;
+    private final Collection<EegChannel> mChannels;
     
     private float mViewTime;
     private int mVerticalScale;
@@ -23,7 +23,7 @@ public class SignalLoader {
     
     public SubscribersNotifier<Map<String, float[]>> signalLoaded = new SubscribersNotifier<>();
     
-    public SignalLoader(List<EegChannel> channels){
+    public SignalLoader(Collection<EegChannel> channels){
         mRunning = true;
         mChannels = channels;
         startWorkers();

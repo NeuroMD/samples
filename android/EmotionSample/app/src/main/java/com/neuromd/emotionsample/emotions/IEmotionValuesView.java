@@ -5,4 +5,5 @@ public interface IEmotionValuesView {
     void setStressLabel(String text);
     void setAttentionLabel(String text);
     void setMeditationLabel(String text);
+    void setCalculationButtonText(String text);
 }

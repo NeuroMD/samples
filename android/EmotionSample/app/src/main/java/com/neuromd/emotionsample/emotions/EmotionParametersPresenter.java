@@ -1,12 +1,16 @@
 package com.neuromd.emotionsample.emotions;
 
 import com.neuromd.common.INotificationCallback;
+import com.neuromd.common.SubscribersNotifier;
 import com.neuromd.emotionsample.signal.ChannelsModel;
+import com.neuromd.neurosdk.channels.eeg.EmotionalState;
 
 public class EmotionParametersPresenter {
     private final ChannelsModel mModel;
     private final IEmotionIndicatorView mIndicatorView;
     private final IEmotionValuesView mValuesView;
+    
+    public SubscribersNotifier<Boolean> calculationStateChanged = new SubscribersNotifier<>();
     
     public EmotionParametersPresenter(ChannelsModel model,
                                       IEmotionIndicatorView indicatorView,
@@ -16,77 +20,49 @@ public class EmotionParametersPresenter {
         mIndicatorView = indicatorView;
         mValuesView = valuesView;
         
-        setInitialValues();
+        setEmotionLabelsText();
         subscribeModelEvents();
     }
     
-    public void onStartCalcClicked(){
-        mModel.startCalculations();
-    }
-    
-    private void setInitialValues(){
-        setEmotionalIndicatorValue();
-        setAttentionText();
-        setMeditationText();
-        setProductiveRelaxText();
-        setStressText();
+    public void onStartStopCalcClicked(){
+        if (mModel.isCalculationInProc()){
+            mModel.stopCalculations();
+        }
+        else{
+            mModel.startCalculations();
+        }
     }
     
     private void subscribeModelEvents(){
-        mModel.emotionStateChanged.subscribe(new INotificationCallback<Integer>() {
+        mModel.calculationStateChanged.subscribe(new INotificationCallback<Boolean>() {
             @Override
-            public void onNotify(Object o, Integer value) {
-                setEmotionalIndicatorValue();
+            public void onNotify(Object o, Boolean isCalculating) {
+                mValuesView.setCalculationButtonText(isCalculating ? "STOP CALCULATION" : "START CALCULATION");
             }
         });
-        mModel.attentionValueChanged.subscribe(new INotificationCallback<Integer>() {
+        mModel.emotionStateChanged.subscribe(new INotificationCallback<EmotionalState>() {
             @Override
-            public void onNotify(Object o, Integer value) {
-                setAttentionText();
-            }
-        });
-        mModel.meditationValueChanged.subscribe(new INotificationCallback<Integer>() {
-            @Override
-            public void onNotify(Object o, Integer value) {
-                setMeditationText();
-            }
-        });
-        mModel.productiveRelaxValueChanged.subscribe(new INotificationCallback<Integer>() {
-            @Override
-            public void onNotify(Object o, Integer value) {
-                setProductiveRelaxText();
-            }
-        });
-        mModel.stressValueChanged.subscribe(new INotificationCallback<Integer>() {
-            @Override
-            public void onNotify(Object o, Integer value) {
-                setStressText();
+            public void onNotify(Object o, EmotionalState state) {
+                setEmotionLabelsText();
             }
         });
     }
     
-    private void setEmotionalIndicatorValue(){
-        int emotionValue = mModel.getEmotionalValue();
-        mIndicatorView.setValue(emotionValue);
-    }
-    
-    private void setAttentionText(){
-        int attentionValue = mModel.getAttentionValue();    
-        mValuesView.setAttentionLabel(String.format("%d %%", attentionValue));
-    }
-    
-    private void setProductiveRelaxText(){
-        int productiveRelaxValue = mModel.getProductiveRelaxValue();
-        mValuesView.setProductiveRelaxLabel(String.format("%d %%", productiveRelaxValue));
-    }
-    
-    private void setStressText(){
-        int stressValue = mModel.getStressValue();
-        mValuesView.setStressLabel(String.format("%d %%", stressValue));
-    }
-    
-    private void setMeditationText(){
-        int meditationValue = mModel.getMeditationValue();
-        mValuesView.setMeditationLabel(String.format("%d %%", meditationValue));
+    private void setEmotionLabelsText(){
+        EmotionalState emotionValue = mModel.getEmotionState();
+        if (emotionValue != null) {
+            mIndicatorView.setValue(emotionValue.State);
+            mValuesView.setAttentionLabel(String.format("%d %%", emotionValue.Attention));
+            mValuesView.setProductiveRelaxLabel(String.format("%d %%", emotionValue.Relax));
+            mValuesView.setStressLabel(String.format("%d %%", emotionValue.Stress));
+            mValuesView.setMeditationLabel(String.format("%d %%", emotionValue.Meditation));
+        }
+        else{
+            mIndicatorView.setValue(0);
+            mValuesView.setAttentionLabel(String.format("%d %%", 0));
+            mValuesView.setProductiveRelaxLabel(String.format("%d %%", 0));
+            mValuesView.setStressLabel(String.format("%d %%", 0));
+            mValuesView.setMeditationLabel(String.format("%d %%", 0));
+        }
     }
 }

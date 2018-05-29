@@ -12,6 +12,7 @@ import com.neuromd.neurosdk.Device;
 import com.neuromd.neurosdk.channels.eeg.EegChannel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,6 +155,9 @@ public class EegDrawerPresenter {
     }
     
     private void onSignalLoaded(Map<String, float[]> loadedSignals) {
+        if (mChannels == null || loadedSignals == null){
+            return;
+        }
         for(String channel : loadedSignals.keySet()){
             mChannels.get(channel).setSignal(loadedSignals.get(channel));
         }
@@ -185,8 +189,7 @@ public class EegDrawerPresenter {
     
     private void createDrawableArea(){
         List<ISignalFieldDrawable> drawables = new ArrayList<>();
-    
-        List<EegChannel> eegChannels = mChannelsModel.getChannels();
+        Collection<EegChannel> eegChannels = mChannelsModel.getChannels();
         mChannels = new HashMap<>();
         for (EegChannel channel : eegChannels){
             DrawableChannel drawChannel = new DrawableChannel(channel.info().getName());

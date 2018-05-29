@@ -27,7 +27,7 @@ public class DisplayThread extends Thread {
         while (mIsOnRun) {
             //locking the canvas
             Canvas canvas = mSurfaceHolder.lockCanvas(null);
-    
+            
             if (canvas != null) {
                 //Updates the game objects business logic
                 mEngine.Update(canvas.getWidth(), canvas.getHeight());

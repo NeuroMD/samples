@@ -23,8 +23,6 @@ import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 
-import com.neuromd.common.INotificationCallback;
-import com.neuromd.common.SubscribersNotifier;
 import com.neuromd.emotionsample.device.DeviceControlsPresenter;
 import com.neuromd.emotionsample.device.EegDeviceModel;
 import com.neuromd.emotionsample.device.IDeviceControlsView;
@@ -119,6 +117,13 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
         EmotionIndicator indicatorView = new EmotionIndicator(this);
         mEmotionParamsPresenter = new EmotionParametersPresenter(channelsModel, indicatorView, this);
         indicatorLayout.addView(indicatorView);
+        Button calculationButton = findViewById(R.id.startStopCalcButton);
+        calculationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEmotionParamsPresenter.onStartStopCalcClicked();
+            }
+        });
     }
     
     private void initDeviceControls(EegDeviceModel deviceModel, ChannelsModel channelsModel) {
@@ -134,23 +139,53 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
     }
     
     @Override
-    public void setProductiveRelaxLabel(String text) {
-    
+    public void setProductiveRelaxLabel(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView prudcutiveRelaxLabel = findViewById(R.id.relaxTextView);
+                prudcutiveRelaxLabel.setText(text);
+            }
+        });
     }
     
     @Override
-    public void setStressLabel(String text) {
-    
+    public void setStressLabel(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView stressLabel = findViewById(R.id.stressTextView);
+                stressLabel.setText(text);
+            }
+        });
     }
     
     @Override
-    public void setAttentionLabel(String text) {
-    
+    public void setAttentionLabel(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView attentionLabel = findViewById(R.id.attentionTextView);
+                attentionLabel.setText(text);
+            }
+        });
     }
     
     @Override
-    public void setMeditationLabel(String text) {
+    public void setMeditationLabel(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView meditationLabel = findViewById(R.id.meditationTextView);
+                meditationLabel.setText(text);
+            }
+        });
+    }
     
+    @Override
+    public void setCalculationButtonText(String text) {
+        Button calcButton = findViewById(R.id.startStopCalcButton);
+        calcButton.setText(text);
     }
     
     @Override

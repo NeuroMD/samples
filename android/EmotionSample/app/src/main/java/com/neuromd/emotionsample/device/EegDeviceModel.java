@@ -14,6 +14,7 @@ import com.neuromd.neurosdk.parameters.types.DeviceState;
 
 public class EegDeviceModel {
     private final DeviceScanner mDeviceConnector;
+    private boolean mDeviceFound;
     
     public EegDeviceModel(Context context) {
         mDeviceConnector = new DeviceScanner(context);
@@ -29,6 +30,7 @@ public class EegDeviceModel {
                 DeviceState state = device.readParam(ParameterName.State);
                 if (state == DeviceState.Connected) {
                     mDeviceConnector.stopScan();
+                    mDeviceFound = true;
                     deviceFound.sendNotification(this, device);
                 }
                 else {
@@ -40,6 +42,7 @@ public class EegDeviceModel {
                                 if (state == DeviceState.Connected) {
                                     device.parameterChanged.unsubscribe();
                                     mDeviceConnector.stopScan();
+                                    mDeviceFound = true;
                                     deviceFound.sendNotification(this, device);
                                 }
                             }
@@ -51,8 +54,13 @@ public class EegDeviceModel {
         });
         mDeviceConnector.scanStateChanged.subscribe(new INotificationCallback<Boolean>() {
             @Override
-            public void onNotify(Object o, Boolean state) {
-                scanStateChanged.sendNotification(this, state);
+            public void onNotify(Object o, Boolean isScanning) {
+                if (!isScanning && !mDeviceFound) {
+                    findDevice();
+                }
+                else{
+                    scanStateChanged.sendNotification(this, isScanning);
+                }
             }
         });
     }
@@ -64,7 +72,8 @@ public class EegDeviceModel {
     
     public void findDevice() {
         try {
-            mDeviceConnector.startScan(0);
+            mDeviceFound = false;
+            mDeviceConnector.startScan(5000);
         }
         catch (BluetoothAdapterException e) {
             mDeviceConnector.stopScan();

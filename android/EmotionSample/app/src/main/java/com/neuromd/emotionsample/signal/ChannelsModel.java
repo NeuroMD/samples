@@ -1,6 +1,5 @@
 package com.neuromd.emotionsample.signal;
 
-import android.os.Handler;
 import android.util.Log;
 
 import com.neuromd.common.INotificationCallback;
@@ -11,63 +10,39 @@ import com.neuromd.neurosdk.channels.ChannelInfo;
 import com.neuromd.neurosdk.channels.ChannelType;
 import com.neuromd.neurosdk.channels.SignalChannel;
 import com.neuromd.neurosdk.channels.eeg.EegChannel;
+import com.neuromd.neurosdk.channels.eeg.EmotionalStateChannel;
+import com.neuromd.neurosdk.channels.eeg.EmotionalState;
 import com.neuromd.neurosdk.parameters.Command;
 import com.neuromd.neurosdk.parameters.ParameterName;
 import com.neuromd.neurosdk.parameters.types.DeviceState;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChannelsModel {
     private Device mDevice = null;
     private BatteryChannel mBatteryChannel = null;
-    private List<EegChannel> mEegChannelCollection;
+    private Map<String, EegChannel> mEegChannelCollection;
+    private EmotionalStateChannel mEmotionChannel;
     private int mBatteryLevel;
     private long mSignalLength;
-    private int mEmotionValue;
-    
-    public ChannelsModel(){
-        final Handler handler = new Handler();
-        final Runnable indicatorTestRunnable = new Runnable() {
-            int direction = 1;
-            @Override
-            public void run() {
-                if (direction > 0){
-                    mEmotionValue += 1;
-                    if (mEmotionValue >= 10){
-                        direction = -1;
-                    }
-                }else if (direction < 0){
-                    mEmotionValue -= 1;
-                    if (mEmotionValue <= -10){
-                        direction = 1;
-                    }
-                }
-                emotionStateChanged.sendNotification(this, mEmotionValue);
-                handler.postDelayed(this, 500);
-            }
-        };
-        indicatorTestRunnable.run();
-    }
+    private EmotionalState mEmotionState;
     
     public SubscribersNotifier<Device> selectedDeviceChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Integer> batteryStateChanged = new SubscribersNotifier<>();
     public SubscribersNotifier<Double> signalDurationChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<Integer> emotionStateChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<Integer> attentionValueChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<Integer> productiveRelaxValueChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<Integer> stressValueChanged = new SubscribersNotifier<>();
-    public SubscribersNotifier<Integer> meditationValueChanged = new SubscribersNotifier<>();
-    
-    private Object mSync = new Object();
+    public SubscribersNotifier<Boolean> calculationStateChanged = new SubscribersNotifier<>();
+    public SubscribersNotifier<EmotionalState> emotionStateChanged = new SubscribersNotifier<>();
     
     public void setDevice(Device device) {
     
         if (mDevice != null) {
+            stopCalculations();
             mDevice.parameterChanged.unsubscribe();
             mBatteryChannel.dataLengthChanged.unsubscribe();
             mDevice.execute(Command.StopSignal);
-            for (EegChannel chan : mEegChannelCollection){
+            for (EegChannel chan : mEegChannelCollection.values()){
                 chan.dataLengthChanged.unsubscribe();
             }
         }
@@ -87,7 +62,7 @@ public class ChannelsModel {
                 }
             });
     
-            mEegChannelCollection = new ArrayList<>();
+            mEegChannelCollection = new HashMap<>();
             ChannelInfo[] channelInfo = mDevice.channels();
             for (ChannelInfo info : channelInfo) {
                 if (info.getType() == ChannelType.Signal) {
@@ -103,7 +78,7 @@ public class ChannelsModel {
                             }
                         }
                     });
-                    mEegChannelCollection.add(eegChannel);
+                    mEegChannelCollection.put(eegChannel.info().getName(), eegChannel);
                 }
                 else if (info.getType() == ChannelType.Battery) {
                     mBatteryChannel = new BatteryChannel(mDevice);
@@ -155,11 +130,42 @@ public class ChannelsModel {
     }
     
     public void startCalculations() {
-    
+        if (mEmotionChannel != null){
+            return;
+        }
+        
+        EegChannel t3 = mEegChannelCollection.get("T3");
+        EegChannel t4 = mEegChannelCollection.get("T4");
+        EegChannel o1 = mEegChannelCollection.get("O1");
+        EegChannel o2 = mEegChannelCollection.get("O2");
+        
+        if (t3 == null || t4 == null || o1 == null || o2 == null){
+            Log.w("ChannelsModel", "Failed start calculations: one of the channels is null");
+            return;
+        }
+        
+        mEmotionChannel = new EmotionalStateChannel(t3, t4, o1, o2);
+        mEmotionChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
+            @Override
+            public void onNotify(Object o, Long length) {
+                if (length > 0) {
+                    mEmotionState = mEmotionChannel.readData(length - 1, 1)[0];
+                }
+                else {
+                    mEmotionState = null;
+                }
+                emotionStateChanged.sendNotification(this, mEmotionState);
+            }
+        });
+        calculationStateChanged.sendNotification(this, true);
     }
     
     public void stopCalculations() {
-        mDevice.execute(Command.StopSignal);
+        if (mEmotionChannel != null){
+            mEmotionChannel.dataLengthChanged.unsubscribe();
+        }
+        mEmotionChannel = null;
+        calculationStateChanged.sendNotification(this, false);
     }
     
     public Device getSelectedDevice() {
@@ -177,32 +183,16 @@ public class ChannelsModel {
         return lengthToDuration(mSignalLength);
     }
     
-    public List<EegChannel> getChannels(){
-        return mEegChannelCollection;
+    public Collection<EegChannel> getChannels(){
+        return mEegChannelCollection.values();
     }
     
-    public int getEmotionalValue() {
-        return mEmotionValue;
+    public boolean isCalculationInProc() {
+        return mEmotionChannel != null;
     }
     
-    public int getAttentionValue() {
-        
-        return 0;
-    }
-    
-    public int getProductiveRelaxValue() {
-        
-        return 0;
-    }
-    
-    public int getStressValue() {
-        
-        return 0;
-    }
-    
-    public int getMeditationValue() {
-        
-        return 0;
+    public EmotionalState getEmotionState() {
+        return mEmotionState;
     }
     
     private double lengthToDuration(long length){
