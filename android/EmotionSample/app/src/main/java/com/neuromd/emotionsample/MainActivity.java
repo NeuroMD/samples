@@ -35,6 +35,7 @@ import com.neuromd.emotionsample.params.IDeviceParamsView;
 import com.neuromd.emotionsample.signal.ChannelsModel;
 import com.neuromd.emotionsample.signal.EegDrawerPresenter;
 import com.neuromd.emotionsample.signal.EegDrawingEngine;
+import com.neuromd.emotionsample.signal.ViewMode;
 import com.neuromd.emotionsample.signal.scale.ScaleControlView;
 import com.neuromd.emotionsample.signal.scale.ScaleModel;
 import com.neuromd.emotionsample.signal.scale.ScalePresenter;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
         initScaleView(scaleModel);
         initDrawer(channelsModel, scaleModel);
         initEmotionIndicator(channelsModel);
+        initModeButtons();
     }
     
     @Override
@@ -95,6 +97,24 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
                 break;
         }
         return true;
+    }
+    
+    private void initModeButtons(){
+        Button signalButton = findViewById(R.id.signalButton);
+        signalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEegDrawerPresenter.setViewMode(ViewMode.Signal);
+            }
+        });
+        
+        Button spectrumButton = findViewById(R.id.spectrumButton);
+        spectrumButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEegDrawerPresenter.setViewMode(ViewMode.Spectrum);
+            }
+        });
     }
     
     private void initScaleView(ScaleModel model) {
@@ -183,9 +203,14 @@ public class MainActivity extends AppCompatActivity implements IEmotionValuesVie
     }
     
     @Override
-    public void setCalculationButtonText(String text) {
-        Button calcButton = findViewById(R.id.startStopCalcButton);
-        calcButton.setText(text);
+    public void setCalculationButtonText(final String text) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Button calcButton = findViewById(R.id.startStopCalcButton);
+                calcButton.setText(text);
+            }
+        });
     }
     
     @Override

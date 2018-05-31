@@ -72,7 +72,7 @@ public class DrawableChannel extends NamedFieldDrawable implements ISignalFieldD
         
         float x = left;
         for (float rawY : data) {
-            float y = top + height / 2 - rawY * height;
+            float y = top + height / 2 - rawY;
             if (y >= top + height) y = top + height - 1;
             else if (y <= top) y = top;
             PointF newPoint = new PointF(x, y);

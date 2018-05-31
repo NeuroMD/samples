@@ -66,7 +66,7 @@ public class ChannelsModel {
             ChannelInfo[] channelInfo = mDevice.channels();
             for (ChannelInfo info : channelInfo) {
                 if (info.getType() == ChannelType.Signal) {
-                    Log.d("CreateChannel", String.format("Creating channel %s", info.getName()));
+                    Log.d("CreateChannel", String.format("Creating channel %s, index: %d", info.getName(), info.getIndex()));
                     SignalChannel signalChannel = new SignalChannel(mDevice, info);
                     EegChannel eegChannel = new EegChannel(signalChannel);
                     eegChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
@@ -184,6 +184,9 @@ public class ChannelsModel {
     }
     
     public Collection<EegChannel> getChannels(){
+        if (mEegChannelCollection == null){
+            return null;
+        }
         return mEegChannelCollection.values();
     }
     
