@@ -79,7 +79,7 @@ public class SpectrumDrawable extends NamedFieldDrawable implements ISignalField
         
         float x = left;
         for (float rawY : data) {
-            float y = top + height - rawY*100;
+            float y = top + height - rawY*10;
             if (y >= top + height) y = top + height - 1;
             else if (y <= top) y = top;
             PointF newPoint = new PointF(x, y);
