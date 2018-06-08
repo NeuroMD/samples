@@ -1,1 +1,1 @@
-include ':app', ':neuro-sdk-ext'
+include ':app'

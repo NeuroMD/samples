@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/EmotionSample.iml" filepath="$PROJECT_DIR$/EmotionSample.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/neuro-sdk-ext/neuro-sdk-ext.iml" filepath="$PROJECT_DIR$/neuro-sdk-ext/neuro-sdk-ext.iml" />
     </modules>
   </component>
 </project>

@@ -17,10 +17,6 @@ allprojects {
     repositories {
         jcenter()
         mavenLocal()
-        maven {
-            url 'https://jitpack.io'
-            credentials { username 'jp_flqrumt16pi46rt7hb2ij6ipjn' }
-        }
         google()
     }
 }
