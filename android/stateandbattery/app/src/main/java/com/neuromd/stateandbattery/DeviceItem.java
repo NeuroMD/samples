@@ -1,10 +1,13 @@
 package com.neuromd.stateandbattery;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 
+import com.neuromd.common.INotificationCallback;
+import com.neuromd.common.SubscribersNotifier;
 import com.neuromd.neurosdk.Device;
+import com.neuromd.neurosdk.channels.BatteryChannel;
 import com.neuromd.neurosdk.parameters.ParameterName;
+import com.neuromd.neurosdk.parameters.types.DeviceState;
 
 public class DeviceItem {
 
@@ -15,13 +18,13 @@ public class DeviceItem {
     private int mColor = Color.BLACK;
     private int mBatteryLevel = 0;
 
+    public SubscribersNotifier deviceParamsChanged = new SubscribersNotifier();
+
     public DeviceItem(Device device){
         mDevice = device;
         parseNameAndColor();
         parseAddress();
         subscribeDeviceState();
-        subscribeBatteryLevel();
-        device.connect();
     }
 
     public String name(){
@@ -42,6 +45,10 @@ public class DeviceItem {
 
     public int color(){
         return mColor;
+    }
+
+    public void close(){
+        mDevice.disconnect();
     }
 
     private void parseNameAndColor(){
@@ -97,7 +104,38 @@ public class DeviceItem {
         mAddress = deviceAddress;
     }
 
-    private void syncBatteryLevel(){
+    private void subscribeDeviceState(){
+        DeviceState state = mDevice.readParam(ParameterName.State);
+        mStateString = state.toString();
+        mDevice.parameterChanged.subscribe(new INotificationCallback<ParameterName>() {
+            @Override
+            public void onNotify(Object o, ParameterName parameterName) {
+                if (parameterName == ParameterName.State) {
+                    DeviceState state = mDevice.readParam(ParameterName.State);
+                    mStateString = state.toString();
+                    deviceParamsChanged.sendNotification(this, null);
+                    if (state == DeviceState.Connected){
+                        subscribeBatteryLevel();
+                    }
+                }
+            }
+        });
+        if (state != DeviceState.Connected){
+            mDevice.connect();
+        }
+        else{
+            subscribeBatteryLevel();
+        }
+    }
 
+    private void subscribeBatteryLevel(){
+        final BatteryChannel batteryChannel = new BatteryChannel(mDevice);
+        batteryChannel.dataLengthChanged.subscribe(new INotificationCallback<Long>() {
+            @Override
+            public void onNotify(Object sender, Long length) {
+                mBatteryLevel = batteryChannel.readData(length - 1, 1)[0];
+                deviceParamsChanged.sendNotification(this, null);
+            }
+        });
     }
 }
