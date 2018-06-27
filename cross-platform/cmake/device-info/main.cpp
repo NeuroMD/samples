@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "device_scanner.h"
+#include "device_scanner/scanner_factory.h"
 #include "device/param_values.h"
 
 std::vector<std::shared_ptr<Neuro::Device>> FoundDevices;
