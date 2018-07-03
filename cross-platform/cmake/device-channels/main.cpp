@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "device_scanner.h"
+#include "device_scanner/scanner_factory.h"
 #include "device/param_values.h"
 
 std::vector<std::shared_ptr<Neuro::Device>> FoundDevices;
@@ -30,7 +30,6 @@ void displayDeviceFeatures(T&& device_ptr){
     }
 	std::cout << std::endl;
 }
-
 
 template <typename T>
 void connectDevice(T&& device_ptr){

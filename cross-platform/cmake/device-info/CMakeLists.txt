@@ -17,8 +17,10 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release;")
 set(CMAKE_CXX_FLAGS "-std=c++14")
 
 add_executable (device-info main.cpp)
-target_link_libraries(device-info ws2_32)
 target_link_libraries(device-info debug neurosdkd)
 target_link_libraries(device-info optimized neurosdk)
 
-
+add_custom_command(TARGET device-info POST_BUILD        
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
+        "$ENV{NEUROSDK}/neurosdk.dll"      
+        $<TARGET_FILE_DIR:device-info>)  
