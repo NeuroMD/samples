@@ -5,16 +5,20 @@ VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceInfo", "DeviceInfo\DeviceInfo.csproj", "{BA715A69-7910-4138-AB5C-94EB31922975}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelData", "ChannelData\ChannelData.csproj", "{53F1E233-35FD-4BE5-AF29-FB6EF8BFD126}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BA715A69-7910-4138-AB5C-94EB31922975}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA715A69-7910-4138-AB5C-94EB31922975}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA715A69-7910-4138-AB5C-94EB31922975}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA715A69-7910-4138-AB5C-94EB31922975}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA715A69-7910-4138-AB5C-94EB31922975}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{BA715A69-7910-4138-AB5C-94EB31922975}.Release|Any CPU.ActiveCfg = Release|x86
+		{53F1E233-35FD-4BE5-AF29-FB6EF8BFD126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53F1E233-35FD-4BE5-AF29-FB6EF8BFD126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53F1E233-35FD-4BE5-AF29-FB6EF8BFD126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53F1E233-35FD-4BE5-AF29-FB6EF8BFD126}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
