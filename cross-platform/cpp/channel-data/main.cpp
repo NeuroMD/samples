@@ -9,35 +9,33 @@ template <typename T>
 void displayDeviceFeatures(T&& device_ptr){
     using Neuro::to_string;
 
-    std::cout << "Device can execute:" << std::endl;
+    std::cout << "Device can execute:" << "\n";
     auto commands = device_ptr->commands();
     for (auto& cmd : commands){
-        std::cout << "-" << to_string(cmd) << std::endl;
+        std::cout << "-" << to_string(cmd) << "\n";
     }
-	std::cout << std::endl;
+	std::cout << "\n";
 
-    std::cout << "Device has parameters:" << std::endl;
+    std::cout << "Device has parameters:" << "\n";
     auto params = device_ptr->parameters();
     for (auto& paramPair : params){
-        std::cout << "-" << to_string(paramPair.first) << " {" << to_string(paramPair.second) << "}" <<std::endl;
+        std::cout << "-" << to_string(paramPair.first) << " {" << to_string(paramPair.second) << "}" << "\n";
     }
-	std::cout << std::endl;
+	std::cout << "\n";
 
-    std::cout << "Device has channels:" << std::endl;
+    std::cout << "Device has channels:" << "\n";
     auto channels = device_ptr->channels();
     for (auto& channel : channels){
-        std::cout << "-" << channel.getName() << std::endl;
+        std::cout << "-" << channel.getName() << "\n";
     }
 	std::cout << std::endl;
 }
-
 
 template <typename T>
 void connectDevice(T&& device_ptr){
     using Neuro::Parameter;
 	std::cout << "Connecting device [" 
-			  << device_ptr->readParam<Parameter::Address>() 
-			  << "]" << std::endl;
+              << device_ptr->readParam<Parameter::Address>()<< "]" << "\n";
 
 	using device_t = typename std::remove_reference_t<decltype(device_ptr)>::element_type;
 	auto weakDevice = std::weak_ptr<device_t>(device_ptr);
@@ -49,7 +47,7 @@ void connectDevice(T&& device_ptr){
 				if (state == Neuro::DeviceState::Connected) {
 					std::cout << "Device ["
 						<< device->readParam<Parameter::Address>()
-						<< "] connected" << std::endl;
+						<< "] connected" << "\n";
 					displayDeviceFeatures(device);
 				}
 			}
@@ -71,7 +69,7 @@ void onDeviceFound(T&& device_ptr){
     std::cout << deviceName
               << " [" << deviceAddress << "] "
               << to_string(deviceState)
-              << std::endl;
+              << "\n";
 
 	using device_t = typename std::remove_reference_t<decltype(device_ptr)>::element_type;
 	auto sharedDevice = std::shared_ptr<device_t>(std::forward<T>(device_ptr));
@@ -85,7 +83,7 @@ void onDeviceFound(T&& device_ptr){
 
 int main(int argc, char *argv[]){
     auto scanner = Neuro::createDeviceScanner();
-    scanner->subscribeDeviceFound([](auto&& device_ptr){
+    scanner->subscribeDeviceFound([&](auto&& device_ptr){
         onDeviceFound(std::forward<decltype(device_ptr)>(device_ptr));
     });
     scanner->startScan(0);//zero timeout for infinity

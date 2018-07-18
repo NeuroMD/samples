@@ -16,7 +16,7 @@ namespace ChannelData
 
         static void Main(string[] args)
         {
-            DeviceScanner scanner = new DeviceScanner();
+            var scanner = new DeviceScanner();
             scanner.DeviceFound += Scanner_DeviceFound;
             scanner.StartScan();
             Console.ReadLine();
