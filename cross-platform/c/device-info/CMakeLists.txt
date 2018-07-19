@@ -37,9 +37,17 @@ target_link_libraries(device-info optimized c-neurosdk)
 
 add_custom_command(TARGET device-info POST_BUILD        
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "$ENV{NEUROSDK}/${TARGET_PLATFORM}/c-neurosdkd.dll"      
+        "$ENV{NEUROSDK}/wrappers/c/${TARGET_PLATFORM}/c-neurosdkd.dll"      
         $<TARGET_FILE_DIR:device-info>)
 add_custom_command(TARGET device-info POST_BUILD        
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "$ENV{NEUROSDK}/${TARGET_PLATFORM}/c-neurosdk.dll"      
+        "$ENV{NEUROSDK}/wrappers/c/${TARGET_PLATFORM}/c-neurosdk.dll"      
+        $<TARGET_FILE_DIR:device-info>)
+add_custom_command(TARGET device-info POST_BUILD        
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
+        "$ENV{NEUROSDK}/${TARGET_PLATFORM}/neurosdkd.dll"      
+        $<TARGET_FILE_DIR:device-info>)
+add_custom_command(TARGET device-info POST_BUILD        
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
+        "$ENV{NEUROSDK}/${TARGET_PLATFORM}/neurosdk.dll"      
         $<TARGET_FILE_DIR:device-info>)

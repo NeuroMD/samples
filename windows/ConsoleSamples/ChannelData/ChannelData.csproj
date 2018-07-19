@@ -53,6 +53,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="net-neurosdk">
+      <HintPath>..\..\..\..\share\wrappers\.net\x64\Debug\net-neurosdk.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -68,12 +71,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\neuro-sdk\wrappers\windows\neurosdk\Neurosdk.csproj">
-      <Project>{8d53f3ae-8b09-4fca-99d1-dfaacbc71adb}</Project>
-      <Name>Neurosdk</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
