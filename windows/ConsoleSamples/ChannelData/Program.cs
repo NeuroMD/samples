@@ -25,6 +25,12 @@ namespace ChannelData
         private static void Scanner_DeviceFound(object sender, Device device)
         {
             (sender as DeviceScanner)?.StopScan();
+
+            DeviceName = device.ReadParam<string>(Parameter.Name);
+            DeviceAddress = device.ReadParam<string>(Parameter.Address);
+            ConnectionState = device.ReadParam<DeviceState>(Parameter.State);
+            Console.WriteLine($"Found device {DeviceName} [{DeviceAddress}], state: {ConnectionState}");
+
             device.ParameterChanged += Device_ParameterChanged;
             ConnectionState = device.ReadParam<DeviceState>(Parameter.State);
             if (ConnectionState != DeviceState.Connected)
@@ -39,8 +45,7 @@ namespace ChannelData
 
         private static void OnDeviceConnected(Device device)
         {
-            DeviceName = device.ReadParam<string>(Parameter.Name);
-            DeviceAddress = device.ReadParam<string>(Parameter.Address);
+            Console.WriteLine("Device connected");
             Frequency = device.ReadParam<SamplingFrequency>(Parameter.SamplingFrequency);
             Rewrite();
             var batteryChannel = new BatteryChannel(device);

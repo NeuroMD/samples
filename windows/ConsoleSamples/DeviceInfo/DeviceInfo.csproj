@@ -26,7 +26,7 @@
     <OutputPath>bin\x64\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -53,6 +53,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="net-neurosdk">
+      <HintPath>$(NEUROSDK)\wrappers\.net\x64\$(ConfigurationName)\net-neurosdk.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -70,10 +73,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\neuro-sdk\wrappers\windows\neurosdk\Neurosdk.csproj">
-      <Project>{8d53f3ae-8b09-4fca-99d1-dfaacbc71adb}</Project>
-      <Name>Neurosdk</Name>
-    </ProjectReference>
+    <Content Include="$(NEUROSDK)\wrappers\.net\$(PlatformName)\$(ConfigurationName)\c-neurosdk.dll" Condition="'$(Configuration)' == 'Release'">
+      <Link>c-neurosdk.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(NEUROSDK)\wrappers\.net\$(PlatformName)\$(ConfigurationName)\c-neurosdkd.dll" Condition="'$(Configuration)' == 'Debug'">
+      <Link>c-neurosdkd.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(NEUROSDK)\wrappers\.net\$(PlatformName)\$(ConfigurationName)\neurosdk.dll" Condition="'$(Configuration)' == 'Release'">
+      <Link>neurosdk.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(NEUROSDK)\wrappers\.net\$(PlatformName)\$(ConfigurationName)\neurosdkd.dll" Condition="'$(Configuration)' == 'Debug'">
+      <Link>neurosdkd.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

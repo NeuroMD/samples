@@ -45,9 +45,9 @@ add_custom_command(TARGET device-info POST_BUILD
         $<TARGET_FILE_DIR:device-info>)
 add_custom_command(TARGET device-info POST_BUILD        
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "$ENV{NEUROSDK}/${TARGET_PLATFORM}/neurosdkd.dll"      
+        "$ENV{NEUROSDK}/wrappers/c/${TARGET_PLATFORM}/neurosdkd.dll"      
         $<TARGET_FILE_DIR:device-info>)
 add_custom_command(TARGET device-info POST_BUILD        
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "$ENV{NEUROSDK}/${TARGET_PLATFORM}/neurosdk.dll"      
+        "$ENV{NEUROSDK}/wrappers/c/${TARGET_PLATFORM}/neurosdk.dll"      
         $<TARGET_FILE_DIR:device-info>)
