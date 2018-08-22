@@ -130,8 +130,7 @@ public class SignalActivity extends AppCompatActivity {
     }
 
     private void startReceiveSignal(Device device) {
-        Filter[] filters = createFilters(device);
-        List<SignalChannel> signalChannelsCollection = createChannels(device, filters);
+        List<SignalChannel> signalChannelsCollection = createChannels(device);
         if (signalChannelsCollection.size() <= 0) {
             TextView signalValueTextView = findViewById(R.id.signalValueTextView);
             signalValueTextView.setText("Device does not have signal channels.");
@@ -153,34 +152,12 @@ public class SignalActivity extends AppCompatActivity {
         device.execute(Command.StartSignal);
     }
 
-    private Filter[] createFilters(Device device) {
-        List<Filter> filters = new ArrayList<>();
-        //We need filters to get signal more clean
-        //If we unable to set filters, signal will be noisy
-        try {
-            SamplingFrequency frequency = device.readParam(ParameterName.SamplingFrequency);
-            if (frequency != SamplingFrequency.Hz250) {
-                device.setParam(ParameterName.SamplingFrequency, SamplingFrequency.Hz250);
-            }
-            //Second check is to ensure that sampling frequency been set correctly
-            if (device.readParam(ParameterName.SamplingFrequency) == SamplingFrequency.Hz250) {
-                filters.add(Filter.HighPass_2Hz_SF250);
-                filters.add(Filter.LowPass_30Hz_SF250);
-                filters.add(Filter.BandStop_45_55Hz_SF250);
-            }
-        } catch (Exception e) {
-            return (Filter[]) filters.toArray();
-        }
-
-        return filters.toArray(new Filter[filters.size()]);
-    }
-
-    private List<SignalChannel> createChannels(Device device, Filter[] filters) {
+    private List<SignalChannel> createChannels(Device device) {
         ChannelInfo[] deviceChannels = device.channels();
         List<SignalChannel> signalChannelsCollection = new ArrayList<>();
         for (ChannelInfo channel : deviceChannels) {
             if (channel.getType() == ChannelType.Signal) {
-                signalChannelsCollection.add(new SignalChannel(device, filters, channel));
+                signalChannelsCollection.add(new SignalChannel(device, channel));
             }
         }
 
