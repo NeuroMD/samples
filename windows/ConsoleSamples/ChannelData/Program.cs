@@ -50,9 +50,9 @@ namespace ChannelData
             Rewrite();
             var batteryChannel = new BatteryChannel(device);
             batteryChannel.LengthChanged += BatteryChannel_LengthChanged;
-            if (Frequency != SamplingFrequency.Hz125)
+            if (Frequency != SamplingFrequency.Hz250)
             {
-                device.SetParam(Parameter.SamplingFrequency, SamplingFrequency.Hz125);
+                device.SetParam(Parameter.SamplingFrequency, SamplingFrequency.Hz250);
             }
             var signalChannel = new SignalChannel(device, new []{Filter.LowPass_30Hz_SF250, Filter.HighPass_2Hz_SF250});
             signalChannel.LengthChanged += SignalChannel_LengthChanged;
@@ -61,7 +61,7 @@ namespace ChannelData
 
         private static void SignalChannel_LengthChanged(object sender, int length)
         {
-            Duration = (double) (length) / 125;
+            Duration = (double) (length) / 250;
             Rewrite();
         }
 
