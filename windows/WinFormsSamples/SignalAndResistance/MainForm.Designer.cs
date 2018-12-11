@@ -48,6 +48,7 @@ namespace SignalAndResistance
             //_signalChart
             //
             this._signalChart.Dock = DockStyle.Fill;
+            this._signalChart.ScaleX = 18;
             // 
             // toolStrip1
             // 

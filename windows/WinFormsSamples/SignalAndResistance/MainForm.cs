@@ -66,12 +66,24 @@ namespace SignalAndResistance
             });
         }
 
+        private static SignalChannel CreateChannelForDevice(Device device, ChannelInfo info)
+        {
+            var deviceName = device.ReadParam<string>(Parameter.Name);
+            if (deviceName.Equals("Brainbit") || deviceName.Equals("BrainBit"))
+            {
+                var filters = new[]
+                    {Filter.LowPass_30Hz_SF250, Filter.HighPass_2Hz_SF250, Filter.BandStop_45_55Hz_SF250};
+                return new SignalChannel(device, info, filters);
+            }
+            return new SignalChannel(device, info);
+        }
+
         private static IEnumerable<ChannelAdapter<double>> CreateChannels(Device device)
         {
             var channels = new List<ChannelAdapter<double>>();
             foreach (var channelInfo in DeviceTraits.GetChannelsWithType(device, ChannelType.Signal))
             {
-                var signalChannel = new SignalChannel(device, channelInfo);
+                var signalChannel = CreateChannelForDevice(device, channelInfo);
                 channels.Add(new ChannelAdapter<double>(signalChannel));
             }
             return channels;
