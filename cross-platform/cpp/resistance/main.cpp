@@ -1,15 +1,19 @@
 #include <iostream>
 #include <vector>
+#include <memory>
+#include "device/device.h"
+#include "channels/device_channel.h"
 #include "device_scanner/scanner_factory.h"
 #include "device/param_values.h"
-#include "channels/resistance_channel.h"
-#include "channels/electrode_state_channel.h"
+
+using ResistanceChannelType = Neuro::DeviceChannel<Neuro::ChannelInfo::Type::Resistance>;
+using ElectrodeStateChannelType = Neuro::DeviceChannel<Neuro::ChannelInfo::Type::ElectrodesState>;
 
 std::vector<std::shared_ptr<Neuro::Device>> FoundDevices;
-std::vector<std::unique_ptr<Neuro::ResistanceChannel>> ResistanceChannels;
-std::vector<Neuro::CommonChannelInterface::length_listener_ptr> ResistanceLengthListeners;
-std::unique_ptr<Neuro::ElectrodeStateChannel> ElectrodeStateChannel;
-Neuro::CommonChannelInterface::length_listener_ptr ElectrodeStateLengthListener;
+std::vector<std::shared_ptr<ResistanceChannelType>> ResistanceChannels;
+std::vector<ResistanceChannelType::LengthListenerType> ResistanceLengthListeners;
+std::shared_ptr<ElectrodeStateChannelType> ElectrodeStateChannel;
+ElectrodeStateChannelType::LengthListenerType ElectrodeStateLengthListener;
 
 void redrawResist() {
 	std::cout << "\r";
@@ -30,9 +34,7 @@ void redrawResist() {
 		}
 	}
 }
-
-template <typename T>
-void startResistMeasure(T&& device_ptr){
+void startResistMeasure(std::shared_ptr<Neuro::Device> device_ptr){
 	ResistanceChannels.clear();
 	ResistanceLengthListeners.clear();
 	std::cout << std::endl;
@@ -40,7 +42,7 @@ void startResistMeasure(T&& device_ptr){
 	bool hasResistance = false;
 	for (auto& info : deviceChannels) {
 		if (info.getType() == Neuro::ChannelInfo::Type::Resistance) {
-			ResistanceChannels.push_back(std::make_unique<Neuro::ResistanceChannel>(device_ptr, info));
+			ResistanceChannels.push_back(std::make_shared<ResistanceChannelType>(device_ptr, info));
 			auto listener = ResistanceChannels.back()->subscribeLengthChanged([](auto length) {
 				redrawResist();
 			});
@@ -48,7 +50,7 @@ void startResistMeasure(T&& device_ptr){
 			hasResistance = true;
 		}
 		else if (info.getType() == Neuro::ChannelInfo::Type::ElectrodesState) {
-			ElectrodeStateChannel = std::make_unique<Neuro::ElectrodeStateChannel>(device_ptr);
+			ElectrodeStateChannel = std::make_shared<ElectrodeStateChannelType>(device_ptr);
 			ElectrodeStateLengthListener = ElectrodeStateChannel->subscribeLengthChanged([](auto length) {
 				redrawResist();
 			});
@@ -59,8 +61,7 @@ void startResistMeasure(T&& device_ptr){
 	}
 }
 
-template <typename T>
-void connectDevice(T&& device_ptr){
+void connectDevice(std::shared_ptr<Neuro::Device> device_ptr){
     using Neuro::Parameter;
 	std::cout << "Connecting device [" 
               << device_ptr->readParam<Parameter::Address>()<< "]" << "\n";
@@ -85,8 +86,7 @@ void connectDevice(T&& device_ptr){
 	FoundDevices.push_back(device_ptr);
 }
 
-template <typename T>
-void onDeviceFound(T&& device_ptr){
+void onDeviceFound(Neuro::DeviceUniquePtr device_ptr){
     using Neuro::Parameter;
     using Neuro::DeviceState;
     using Neuro::to_string;
@@ -100,7 +100,7 @@ void onDeviceFound(T&& device_ptr){
               << "\n";
 
 	using device_t = typename std::remove_reference_t<decltype(device_ptr)>::element_type;
-	auto sharedDevice = std::shared_ptr<device_t>(std::forward<T>(device_ptr));
+	auto sharedDevice = std::shared_ptr<device_t>(std::move(device_ptr));
 	if (deviceState != DeviceState::Connected) {
 		connectDevice(sharedDevice);
 	}
@@ -111,9 +111,10 @@ void onDeviceFound(T&& device_ptr){
 }
 
 int main(int argc, char *argv[]){
+	LoggerFactory::getCurrentPlatformLogger()->setLogLevel(LogLevel::Info);
     auto scanner = Neuro::createDeviceScanner();
-    scanner->subscribeDeviceFound([&](auto&& device_ptr){
-        onDeviceFound(std::forward<decltype(device_ptr)>(device_ptr));
+    scanner->subscribeDeviceFound([&](Neuro::DeviceUniquePtr device_ptr){
+        onDeviceFound(std::move(device_ptr));
     });
     scanner->startScan(0);//zero timeout for infinity
     while (std::cin.get() != '\n');

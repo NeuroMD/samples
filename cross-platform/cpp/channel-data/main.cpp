@@ -1,38 +1,33 @@
 #include <iostream>
 #include <vector>
 #include "device_scanner/scanner_factory.h"
+#include "device/device.h"
 #include "device/param_values.h"
+#include "channels/device_channel.h"
+#include "logger.h"
+
+using BatteryChannel = Neuro::DeviceChannel<Neuro::ChannelInfo::Type::Battery>;
+
 
 std::vector<std::shared_ptr<Neuro::Device>> FoundDevices;
+std::vector<std::shared_ptr<BatteryChannel>> BatteryChannels;
+std::vector<BatteryChannel::LengthListenerType> BatteryListeners;
 
-template <typename T>
-void displayDeviceFeatures(T&& device_ptr){
+void createBatteryChannel(Neuro::DeviceSharedPtr device_ptr){
     using Neuro::to_string;
 
-    std::cout << "Device can execute:" << "\n";
-    auto commands = device_ptr->commands();
-    for (auto& cmd : commands){
-        std::cout << "-" << to_string(cmd) << "\n";
-    }
-	std::cout << "\n";
-
-    std::cout << "Device has parameters:" << "\n";
-    auto params = device_ptr->parameters();
-    for (auto& paramPair : params){
-        std::cout << "-" << to_string(paramPair.first) << " {" << to_string(paramPair.second) << "}" << "\n";
-    }
-	std::cout << "\n";
-
-    std::cout << "Device has channels:" << "\n";
-    auto channels = device_ptr->channels();
-    for (auto& channel : channels){
-        std::cout << "-" << channel.getName() << "\n";
-    }
-	std::cout << std::endl;
+	auto batteryChannelPtr = std::make_shared<BatteryChannel>(device_ptr);
+	auto listener = batteryChannelPtr->subscribeLengthChanged([batteryChannelPtr, device_ptr](auto batteryChannelLength) {
+		const auto deviceName = device_ptr->readParam<Neuro::Parameter::Name>();
+		const auto deviceAddress = device_ptr->readParam<Neuro::Parameter::Address>();
+		const auto batteryLevel = batteryChannelPtr->readData(batteryChannelLength - 1, 1)[0];
+		std::cout << deviceName << " [" << deviceAddress << "] battery level: " << batteryLevel << std::endl;
+	});
+	BatteryChannels.push_back(batteryChannelPtr);
+	BatteryListeners.push_back(listener);
 }
 
-template <typename T>
-void connectDevice(T&& device_ptr){
+void connectDevice(Neuro::DeviceSharedPtr device_ptr){
     using Neuro::Parameter;
 	std::cout << "Connecting device [" 
               << device_ptr->readParam<Parameter::Address>()<< "]" << "\n";
@@ -48,7 +43,7 @@ void connectDevice(T&& device_ptr){
 					std::cout << "Device ["
 						<< device->readParam<Parameter::Address>()
 						<< "] connected" << "\n";
-					displayDeviceFeatures(device);
+					createBatteryChannel(device);
 				}
 			}
         }
@@ -57,33 +52,27 @@ void connectDevice(T&& device_ptr){
 	FoundDevices.push_back(device_ptr);
 }
 
-template <typename T>
-void onDeviceFound(T&& device_ptr){
+void onDeviceFound(Neuro::DeviceUniquePtr device_ptr){
     using Neuro::Parameter;
     using Neuro::DeviceState;
     using Neuro::to_string;
 
-    auto deviceName = device_ptr->readParam<Parameter::Name>();
-    auto deviceAddress = device_ptr->readParam<Parameter::Address>();
-    auto deviceState = device_ptr->readParam<Parameter::State>();
-    std::cout << deviceName
-              << " [" << deviceAddress << "] "
-              << to_string(deviceState)
-              << "\n";
 
+    auto deviceState = device_ptr->readParam<Parameter::State>();
 	using device_t = typename std::remove_reference_t<decltype(device_ptr)>::element_type;
-	auto sharedDevice = std::shared_ptr<device_t>(std::forward<T>(device_ptr));
+	auto sharedDevice = std::shared_ptr<device_t>(std::move(device_ptr));
 	if (deviceState != DeviceState::Connected) {
 		connectDevice(sharedDevice);
 	}
 	else{
-		displayDeviceFeatures(sharedDevice);
+		createBatteryChannel(sharedDevice);
 	}
 }
 
 int main(int argc, char *argv[]){
+	LoggerFactory::getCurrentPlatformLogger()->setLogLevel(LogLevel::Info);
     auto scanner = Neuro::createDeviceScanner();
-    scanner->subscribeDeviceFound([&](auto&& device_ptr){
+    scanner->subscribeDeviceFound([&](Neuro::DeviceUniquePtr device_ptr){
         onDeviceFound(std::forward<decltype(device_ptr)>(device_ptr));
     });
     scanner->startScan(0);//zero timeout for infinity

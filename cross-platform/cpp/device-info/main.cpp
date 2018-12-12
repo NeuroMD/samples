@@ -82,6 +82,7 @@ void onDeviceFound(T&& device_ptr) {
 }
 
 int main(int argc, char *argv[]) {
+	LoggerFactory::getCurrentPlatformLogger()->setLogLevel(LogLevel::Info);
 	auto scanner = Neuro::createDeviceScanner();
 	scanner->subscribeDeviceFound([&](auto&& device_ptr) {
 		onDeviceFound(std::forward<decltype(device_ptr)>(device_ptr));

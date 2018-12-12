@@ -16,10 +16,12 @@ endif (WIN32)
 
 if (WIN32)
     if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
-		set (TARGET_PLATFORM "x86")
-	else ()
-		set (TARGET_PLATFORM "x64")
-	endif()
+        set (TARGET_PLATFORM "x86")     
+        SET (NEUROSDK $ENV{NEUROSDK_86})
+    else ()
+        set (TARGET_PLATFORM "x64")     
+        SET (NEUROSDK $ENV{NEUROSDK_64})
+    endif() 
 endif (WIN32)
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
@@ -28,8 +30,8 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release;")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 if (WIN32)
-    include_directories($ENV{NEUROSDK}/include)
-    link_directories($ENV{NEUROSDK}/${TARGET_PLATFORM})
+    include_directories(${NEUROSDK}/include)
+    link_directories(${NEUROSDK})
 endif (WIN32)
 
 add_executable (device-info main.cpp)
@@ -38,9 +40,9 @@ target_link_libraries(device-info optimized neurosdk)
 
 add_custom_command(TARGET device-info POST_BUILD        
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "$ENV{NEUROSDK}/${TARGET_PLATFORM}/neurosdkd.dll"      
+        "${NEUROSDK}/neurosdkd.dll"      
         $<TARGET_FILE_DIR:device-info>)
 add_custom_command(TARGET device-info POST_BUILD        
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "$ENV{NEUROSDK}/${TARGET_PLATFORM}/neurosdk.dll"      
+        "${NEUROSDK}/neurosdk.dll"      
         $<TARGET_FILE_DIR:device-info>)
