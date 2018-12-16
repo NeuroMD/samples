@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Biofeedback.Spectrum;
 using Neuro;
 
 namespace Biofeedback
@@ -8,10 +10,14 @@ namespace Biofeedback
     public partial class MainForm : Form
     {
         private readonly DeviceModel _deviceModel;
+        private IEnumerable<SpectrumChannel> _spectrumChannels;
 
         public MainForm()
         {
             InitializeComponent();
+            _indicesListView.Items.Clear();
+            SetIndexControls(EegStandardIndices.Alpha);
+            SetIndexControlsEnabled(false);
             _deviceModel = new DeviceModel();
             _deviceModel.DeviceFound += _deviceModel_DeviceFound;
             _deviceModel.DeviceLost += _deviceModel_DeviceLost;
@@ -41,6 +47,8 @@ namespace Biofeedback
         {
             Invoke((MethodInvoker)delegate
             {
+                _spectrumChannels = null;
+                _indicesListView.Items.Clear();
                 _startSignalButton.Enabled = false;
                 _stopButton.Enabled = false;
             });
@@ -52,23 +60,42 @@ namespace Biofeedback
 
             Invoke((MethodInvoker)delegate
             {
+                _indicesListView.Items.Clear();
                 _deviceLabel.Text = device.ReadParam<string>(Parameter.Name);
                 _startSignalButton.Enabled = DeviceTraits.HasChannelsWithType(device, ChannelType.Signal);
                 _stopButton.Enabled = _startSignalButton.Enabled;
                 var channels = CreateChannels(device);
                 _channelsListBox.Items.AddRange(channels.ToArray());
+                _spectrumChannels = CreateSpectrumChannels(channels);
+                foreach (var spectrumChannel in _spectrumChannels)
+                {
+                    _spectrumChart.FStep = spectrumChannel.HzPerSpectrumSample;
+                    spectrumChannel.LengthChanged += ((channel, length) =>
+                    {
+                        if (channel is SpectrumChannel spectrum)
+                        {
+                            var readLength = (int)(spectrum.SamplingFrequency * 8);
+                            if (length < readLength)
+                                return;
+                            var spectrumData = spectrum.ReadData(length - readLength, readLength);
+                            Invoke((MethodInvoker) delegate
+                            {
+                                _spectrumChart.SetSpectrumList(spectrum.Info.Name, spectrumData);
+                            });
+                        }
+                    });
+                }
             });
         }
 
-        private static IEnumerable<ChannelAdapter<double>> CreateChannels(Device device)
+        private static IEnumerable<ChannelAdapter> CreateChannels(Device device)
         {
-            var channels = new List<ChannelAdapter<double>>();
-            foreach (var channelInfo in DeviceTraits.GetChannelsWithType(device, ChannelType.Signal))
-            {
-                var signalChannel = new EegChannel(device, channelInfo);
-                channels.Add(new ChannelAdapter<double>(signalChannel));
-            }
-            return channels;
+            return DeviceTraits.GetChannelsWithType(device, ChannelType.Signal).Select(channelInfo => new ChannelAdapter(device, channelInfo));
+        }
+
+        private static IEnumerable<SpectrumChannel> CreateSpectrumChannels(IEnumerable<ChannelAdapter> channels)
+        {
+            return channels.Select(x => new SpectrumChannel(x));
         }
 
         private void _startSignalButton_Click(object sender, System.EventArgs e)
@@ -88,17 +115,98 @@ namespace Biofeedback
 
         private void _customIndexRadio_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (_customIndexRadio.Checked)
+            {
+                SetIndexControlsEnabled(true);
+            }
+        }
 
+        private void _alphaRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_alphaRadio.Checked)
+            {
+                SetIndexControls(EegStandardIndices.Alpha);
+                SetIndexControlsEnabled(false);
+            }
+        }
+
+        private void _betaRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_betaRadio.Checked)
+            {
+                SetIndexControls(EegStandardIndices.Beta);
+                SetIndexControlsEnabled(false);
+            }
+        }
+
+        private void _deltaRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_deltaRadio.Checked)
+            {
+                SetIndexControls(EegStandardIndices.Delta);
+                SetIndexControlsEnabled(false);
+            }
+        }
+
+        private void _thetaRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_thetaRadio.Checked)
+            {
+                SetIndexControls(EegStandardIndices.Theta);
+                SetIndexControlsEnabled(false);
+            }
+        }
+
+        private void SetIndexControlsEnabled(bool isEnabled)
+        {
+            _startFrequencyTextBox.Enabled = isEnabled;
+            _stopFrequencyTextBox.Enabled = isEnabled;
+            _indexNameTextBox.Enabled = isEnabled;
+        }
+
+        private void SetIndexControls(EegIndex index)
+        {
+            _startFrequencyTextBox.Text = index.FrequencyBottom.ToString("F4");
+            _stopFrequencyTextBox.Text = index.FrequencyTop.ToString("F4");
+            _indexNameTextBox.Text = index.Name;
         }
 
         private void _createIndexButton_Click(object sender, System.EventArgs e)
         {
+            if (!float.TryParse(_startFrequencyTextBox.Text, out var startFreq))
+            {
+                MessageBox.Show("Wrong low frequency value", "Index creation", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
 
+            if (!float.TryParse(_stopFrequencyTextBox.Text, out var stopFreq))
+            {
+                MessageBox.Show("Wrong high frequency value", "Index creation", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            if (stopFreq <= startFreq)
+            {
+                MessageBox.Show("Wrong frequencies: high frequency must be greater than low", "Index creation", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            var index = new EegIndex {Name = _indexNameTextBox.Text, FrequencyBottom = startFreq, FrequencyTop = stopFreq};
+            var checkedChannels = _channelsListBox.CheckedItems.OfType<ChannelAdapter>();
+            var indexChannel = new EegIndexChannel(index, checkedChannels);
+            _indicesListView.Items.Add(new IndexListItem(this, indexChannel, index, checkedChannels.Select(x=>x.ToString())));
         }
 
         private void _removeIndexButton_Click(object sender, System.EventArgs e)
         {
-
+            var selectedIndices = _indicesListView.SelectedItems;
+            foreach (ListViewItem selectedIndex in selectedIndices)
+            {
+                _indicesListView.Items.Remove(selectedIndex);
+            }
         }
     }
 }

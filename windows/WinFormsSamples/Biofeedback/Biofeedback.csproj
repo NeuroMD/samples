@@ -69,7 +69,6 @@
       <HintPath>$(NEUROSDK_EXT_86)\net-sdk-extensionsd.dll</HintPath>
       <Private>True</Private>
     </Reference>
-
     <Reference Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="net-neurosdk">
       <HintPath>$(NEUROSDK_64)\net-neurosdk.dll</HintPath>
       <Private>True</Private>
@@ -101,6 +100,7 @@
   <ItemGroup>
     <Compile Include="ChannelAdapter.cs" />
     <Compile Include="DeviceModel.cs" />
+    <Compile Include="IndexListItem.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,6 +109,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spectrum\Rhythm.cs" />
+    <Compile Include="Spectrum\SpectrumChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -121,6 +125,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Spectrum\SpectrumChart.resx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -169,7 +174,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <Content Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="$(NEUROSDK_EXT_64)\c-neurosdk-extensions.dll">
       <Link>c-neurosdk-extensions.dll</Link>
@@ -203,5 +207,11 @@
       <Link>sdk-extensionsd.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SignalView\SignalView.csproj">
+      <Project>{9C76705A-F52A-40E6-9F28-7CABCFB2A864}</Project>
+      <Name>SignalView</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
