@@ -10,7 +10,8 @@ namespace Biofeedback
     public partial class MainForm : Form
     {
         private readonly DeviceModel _deviceModel;
-        private IEnumerable<SpectrumChannel> _spectrumChannels;
+        private readonly Timer _timer = new Timer();
+        private SpectrumChartController _spectrumChartController;
 
         public MainForm()
         {
@@ -18,11 +19,19 @@ namespace Biofeedback
             _indicesListView.Items.Clear();
             SetIndexControls(EegStandardIndices.Alpha);
             SetIndexControlsEnabled(false);
+            _timer.Interval = 20;
+            _timer.Tick += _timer_Tick;
+            _timer.Start();
             _deviceModel = new DeviceModel();
             _deviceModel.DeviceFound += _deviceModel_DeviceFound;
             _deviceModel.DeviceLost += _deviceModel_DeviceLost;
             _deviceModel.SearchStateChanged += _deviceModel_SearchStateChanged;
             _deviceModel.Reconnect();
+        }
+
+        private void _timer_Tick(object sender, EventArgs e)
+        {
+            _spectrumChartController?.Redraw();
         }
 
         private void _deviceModel_SearchStateChanged(object sender, bool isScanning)
@@ -47,7 +56,7 @@ namespace Biofeedback
         {
             Invoke((MethodInvoker)delegate
             {
-                _spectrumChannels = null;
+                _spectrumChartController = null;
                 _indicesListView.Items.Clear();
                 _startSignalButton.Enabled = false;
                 _stopButton.Enabled = false;
@@ -58,54 +67,52 @@ namespace Biofeedback
         {
             if (device == null) return;
 
+            var channels = CreateChannels(device);
+            _spectrumChartController = new SpectrumChartController(_spectrumChart, _timeTrackBar, _scaleTrackBar, new SpectrumModel(CreateSpectrumChannels(channels)));
             Invoke((MethodInvoker)delegate
             {
                 _indicesListView.Items.Clear();
                 _deviceLabel.Text = device.ReadParam<string>(Parameter.Name);
                 _startSignalButton.Enabled = DeviceTraits.HasChannelsWithType(device, ChannelType.Signal);
                 _stopButton.Enabled = _startSignalButton.Enabled;
-                var channels = CreateChannels(device);
                 _channelsListBox.Items.AddRange(channels.ToArray());
-                _spectrumChannels = CreateSpectrumChannels(channels);
-                foreach (var spectrumChannel in _spectrumChannels)
-                {
-                    _spectrumChart.FStep = spectrumChannel.HzPerSpectrumSample;
-                    spectrumChannel.LengthChanged += ((channel, length) =>
-                    {
-                        if (channel is SpectrumChannel spectrum)
-                        {
-                            var readLength = (int)(spectrum.SamplingFrequency * 8);
-                            if (length < readLength)
-                                return;
-                            var spectrumData = spectrum.ReadData(length - readLength, readLength);
-                            Invoke((MethodInvoker) delegate
-                            {
-                                _spectrumChart.SetSpectrumList(spectrum.Info.Name, spectrumData);
-                            });
-                        }
-                    });
-                }
             });
         }
 
-        private static IEnumerable<ChannelAdapter> CreateChannels(Device device)
+        private static IList<ChannelAdapter> CreateChannels(Device device)
         {
-            return DeviceTraits.GetChannelsWithType(device, ChannelType.Signal).Select(channelInfo => new ChannelAdapter(device, channelInfo));
+            return DeviceTraits.GetChannelsWithType(device, ChannelType.Signal).Select(channelInfo => new ChannelAdapter(device, channelInfo)).ToList();
         }
 
-        private static IEnumerable<SpectrumChannel> CreateSpectrumChannels(IEnumerable<ChannelAdapter> channels)
+        private static IList<SpectrumChannel> CreateSpectrumChannels(IList<ChannelAdapter> channels)
         {
-            return channels.Select(x => new SpectrumChannel(x));
+            return channels.Select(x => new SpectrumChannel(x)).ToList();
         }
 
         private void _startSignalButton_Click(object sender, System.EventArgs e)
         {
-            _deviceModel.Device?.Execute(Command.StartSignal);
+            try
+            {
+                _deviceModel.Device?.Execute(Command.StartSignal);
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Cannot start signal receiving: {exc.Message}", "Start signal", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private void _stopButton_Click(object sender, System.EventArgs e)
         {
-            _deviceModel.Device?.Execute(Command.StopSignal);
+            try
+            {
+                _deviceModel.Device?.Execute(Command.StopSignal);
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Cannot stop signal receiving: {exc.Message}", "Stop signal", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private void _reconnectButton_Click(object sender, System.EventArgs e)

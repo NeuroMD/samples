@@ -1,4 +1,6 @@
-﻿namespace Biofeedback
+﻿using Biofeedback.Spectrum;
+
+namespace Biofeedback
 {
     partial class MainForm
     {
@@ -60,9 +62,12 @@
             this._removeIndexButton = new System.Windows.Forms.Button();
             this._indexNameTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this._spectrumChart = new Biofeedback.Spectrum.SpectrumChart();
+            this._scaleTrackBar = new System.Windows.Forms.TrackBar();
+            this._timeTrackBar = new System.Windows.Forms.TrackBar();
+            this._spectrumChart = new SpectrumChart();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._scaleTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -123,9 +128,10 @@
             // 
             // _channelsListBox
             // 
-            this._channelsListBox.Dock = System.Windows.Forms.DockStyle.Left;
+            this._channelsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                                                                                 | System.Windows.Forms.AnchorStyles.Left)));
             this._channelsListBox.FormattingEnabled = true;
-            this._channelsListBox.Location = new System.Drawing.Point(0, 25);
+            this._channelsListBox.Location = new System.Drawing.Point(240, 30);
             this._channelsListBox.Name = "_channelsListBox";
             this._channelsListBox.Size = new System.Drawing.Size(120, 316);
             this._channelsListBox.TabIndex = 1;
@@ -245,7 +251,7 @@
             // 
             // _indicesListView
             // 
-            this._indicesListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this._indicesListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this._indicesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.IndexColumn,
@@ -306,22 +312,46 @@
             this.label3.TabIndex = 11;
             this.label3.Text = "Name";
             // 
-            // _spectrumChart
+            // _scaleTrackBar
             // 
-            this._spectrumChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this._spectrumChart.FStep = 0D;
-            this._spectrumChart.Location = new System.Drawing.Point(126, 25);
-            this._spectrumChart.Name = "_spectrumChart";
-            this._spectrumChart.SigScale = 20;
-            this._spectrumChart.Size = new System.Drawing.Size(231, 316);
+            this._scaleTrackBar.LargeChange = 10;
+            this._scaleTrackBar.Location = new System.Drawing.Point(5, 25);
+            this._scaleTrackBar.Maximum = 100;
+            this._scaleTrackBar.Minimum = 1;
+            this._scaleTrackBar.Name = "_scaleTrackBar";
+            this._scaleTrackBar.Size = new System.Drawing.Size(233, 45);
+            this._scaleTrackBar.TabIndex = 12;
+            this._scaleTrackBar.Value = 50;
+            // 
+            // _timeTrackBar
+            // 
+            this._timeTrackBar.LargeChange = 2;
+            this._timeTrackBar.Location = new System.Drawing.Point(5, 70);
+            this._timeTrackBar.Maximum = 16;
+            this._timeTrackBar.Minimum = 3;
+            this._timeTrackBar.Name = "_timeTrackBar";
+            this._timeTrackBar.Size = new System.Drawing.Size(233, 45);
+            this._timeTrackBar.TabIndex = 12;
+            this._timeTrackBar.Value = 8;
+            // 
+            // spectrumChart1
+            //
+            this._spectrumChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this._spectrumChart.FrequencyStep = 0D;
+            this._spectrumChart.Location = new System.Drawing.Point(5, 105);
+            this._spectrumChart.Name = "spectrumChart1";
+            this._spectrumChart.SigScale = 100;
+            this._spectrumChart.Size = new System.Drawing.Size(227, 330);
             this._spectrumChart.TabIndex = 12;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(734, 341);
+            this.ClientSize = new System.Drawing.Size(734, 461);
+            this.Controls.Add(this._timeTrackBar);
+            this.Controls.Add(this._scaleTrackBar);
             this.Controls.Add(this._spectrumChart);
             this.Controls.Add(this.label3);
             this.Controls.Add(this._indexNameTextBox);
@@ -342,6 +372,7 @@
             this.toolStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._scaleTrackBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -376,6 +407,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ColumnHeader ChannelsColumn;
         private Spectrum.SpectrumChart _spectrumChart;
+        private System.Windows.Forms.TrackBar _scaleTrackBar;
+        private System.Windows.Forms.TrackBar _timeTrackBar;
     }
 }
 

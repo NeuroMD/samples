@@ -9,56 +9,30 @@ namespace Biofeedback.Spectrum
 {
 	public class SpectrumChart : UserControl
 	{
-        // двойная буфферизация
-        private BufferedGraphicsContext screenContext = new BufferedGraphicsContext();
-		private BufferedGraphics screenBG;
+        private readonly BufferedGraphicsContext _screenContext = new BufferedGraphicsContext();
+		private BufferedGraphics _screenBg;
         Graphics _screen;
-		int screenWidth;
-		int screenHeight;
-
-
-		private Dictionary<string, double[]> spList = new Dictionary<string, double[]>();				// спектр для отображения
-		private IList<EEGRhythm> rhythmList;
-
-
+        private IList<EEGRhythm> rhythmList;
+        
 		#region Масштаб и развертка
-		private int sigScale;
+		private int _sigScale;
 		public int SigScale 				// чувствительность в микровольтах на один канал ЭЭГ (+/-)
 		{
-			get
+			get => _sigScale;
+		    set
 			{
-				return sigScale;
-			}
-			set
-			{
-				if (sigScale != value)
+				if (_sigScale != value)
 				{
-					sigScale = value;
-					Redraw();
+					_sigScale = value;
 				}
 			}
 		}
         #endregion
 
-	    public double FStep { get; set; }
-		double chHeight;								// длина и ширина каждого спектра
-		double chWidth;
-		int columns;									// число колонок
-		//int hoveredCh;									// канал, на который навели мышкой
-		//RectangleF allChannelRect = new RectangleF();
-		//bool allChannelHover = false;
-
-		double pixelsPeruV;                     // пикселей на 1 В входных ЭЭГ данных 
-//		double pixelsPerPOLYnv;                     // пикселей на 1 нВ входных ПОЛИ данных 
-		double pixelsPerHz;							// пикселей на 1 ГЦ
+	    public double FrequencyStep { get; set; }
 
 		public int VRulerWidth = 25;				// ширина вертикальной линейки
 		public int HRulerHeight = 42;				// высота горизонтальной линейки
-
-		double highFreq;							// верхняя частота спектра
-		double lowFreq;								// нижняя частота спектра
-		int lowFreqIndex;							// идекс нижней частоты во входном массиве
-		int sCount;									// количество шагов частоты в спектре
 
 		Brush nameBrush = new SolidBrush(Color.Black);
 		Brush backBrush = new SolidBrush(Color.LightYellow);
@@ -107,12 +81,12 @@ namespace Biofeedback.Spectrum
 					rhythmPen = null;
 
 
-					if (screenBG != null)
+					if (_screenBg != null)
 					{
-						screenBG.Dispose();
-						screenBG = null;
+						_screenBg.Dispose();
+						_screenBg = null;
 					}
-					screenContext.Dispose();
+					_screenContext.Dispose();
 				}
 				disposed = true;
 			}
@@ -128,7 +102,7 @@ namespace Biofeedback.Spectrum
 			    new EEGRhythm(EegStandardIndices.Alpha, Color.DodgerBlue, "α"),
 			    new EEGRhythm(EegStandardIndices.Beta, Color.DarkOliveGreen, "β")
             };
-			sigScale = 100;
+			_sigScale = 100;
 			// создаем кисти для ритмов
 			rhythmBrush = new Brush[rhythmList.Count];
 			rhythmPen = new Pen[rhythmList.Count];
@@ -144,25 +118,15 @@ namespace Biofeedback.Spectrum
 			
 			gridPen.DashPattern = new float[] { 4.0F, 6.0F };
 			gridPen.DashStyle = DashStyle.Custom;
+            Resize += SpectrumChart_Resize;
 		}
 
+        private void SpectrumChart_Resize(object sender, EventArgs e)
+        {
+            RecreateBuffers();
+        }
 
-		/// <summary>
-		/// Активирует контрол - подключает все события, пересоздает буферы
-		/// Сделано для подавления многократного вызова перерисовки при инициализации
-		/// </summary>
-		private void Activate()
-		{
-			Resize += new EventHandler(OnResize);
-			/*this.MouseClick += new MouseEventHandler(OnMouseClick);
-			this.MouseDown += new MouseEventHandler(OnMouseDown);
-			this.MouseUp += new MouseEventHandler(OnMouseUp);
-			*/
-
-			RecreateBuffers();
-		}
-
-		private void RecreateBuffers()
+        private void RecreateBuffers()
 		{
 			if ((Height <= 0) || (Width <= 0))
 				return;
@@ -172,55 +136,50 @@ namespace Biofeedback.Spectrum
 			// domain.  Any allocation requests for a buffer larger 
 			// than this will create a temporary buffered graphics 
 			// context to host the graphics buffer.
-			screenContext.MaximumBuffer = new Size(Width + 1, Height + 1);
-			screenWidth = Width;
-			screenHeight = Height;
+			_screenContext.MaximumBuffer = new Size(Width + 1, Height + 1);
 
-			if (screenBG != null)
+			if (_screenBg != null)
 			{
-				screenBG.Dispose();
-				screenBG = null;
+				_screenBg.Dispose();
+				_screenBg = null;
 			}
 			// Allocates a graphics buffer the size of this form
 			// using the pixel format of the Graphics created by 
 			// the Form.CreateGraphics() method, which returns a 
 			// Graphics object that matches the pixel format of the form.
-			screenBG = screenContext.Allocate(CreateGraphics(), new Rectangle(0, 0, screenWidth, screenHeight));
-            _screen = screenBG.Graphics;
+			_screenBg = _screenContext.Allocate(CreateGraphics(), new Rectangle(0, 0, Width, Height));
+            _screen = _screenBg.Graphics;
 		}
 
-		public void SetSpectrumList(string channel, double[] spectrum)
+		public void DrawSpectrumList(IList<Spectrum> spectrumData)
 		{
-			if (screenBG == null)
-				Activate();
-		    spList[channel] = spectrum;
+			if (_screenBg == null)
+				RecreateBuffers();
+
 			// необходимые переменные
-			highFreq = rhythmList[rhythmList.Count - 1].FreqEnd;		// верхняя частота спектра
-			lowFreq = rhythmList[0].FreqBegin;								// нижняя частота спектра
-			lowFreqIndex = Convert.ToInt32(Math.Round(lowFreq / FStep));			// идекс нижней частоты во входном массиве
-			sCount = Convert.ToInt32(Math.Round(highFreq / FStep));		// количество шагов частоты в спектре
+			var highFreq = rhythmList[rhythmList.Count - 1].FreqEnd;		// верхняя частота спектра
+			var lowFreq = rhythmList[0].FreqBegin;								// нижняя частота спектра
+			var lowFreqIndex = Convert.ToInt32(Math.Round(lowFreq / FrequencyStep));			// идекс нижней частоты во входном массиве
+			var sCount = Convert.ToInt32(Math.Round(highFreq / FrequencyStep));		// количество шагов частоты в спектре
 
-			Redraw();
-		}
-
-	    private void DrawSpectrum(Graphics screen, int left, int top, int width, int height)
-	    {
-            screen.Clear(Color.LightYellow);
+		    _screen.Clear(Color.LightYellow);
 	        // вычисляем размеры каждого Chart
-	        columns = 0;
+	        var columns = 0;
+	        var chHeight = 0.0;
+	        var chWidth = 0.0;
 	        do
 	        {
 	            columns++;
-	            chHeight = (double) (height - HRulerHeight - top*2)/spList.Count*columns;
-	            chWidth = (double) (width - left*2)/columns - VRulerWidth;
+	            chHeight = (double) (Height - HRulerHeight)/spectrumData.Count*columns;
+	            chWidth = (double) (Width)/columns - VRulerWidth;
 	        } while (((double) chWidth/chHeight) > 4);
 
 
 	        double pixelsPerSample = (double) chWidth/sCount; // пикселей на один отсчет спектра
-	        pixelsPeruV = chHeight/sigScale; // разрешение экрана по оси Y в пикселах на нановольт для ЭЭГ каналов
+	        var pixelsPeruV = chHeight/_sigScale; // разрешение экрана по оси Y в пикселах на нановольт для ЭЭГ каналов
 	        //				pixelsPerPOLYnv = chHeight / sigScale / 1000;		// разрешение экрана по оси Y в пикселах на нановольт для ПОЛИ каналов
 
-	        pixelsPerHz = pixelsPerSample/FStep; // пикселей на один Герц
+	        var pixelsPerHz = pixelsPerSample/FrequencyStep; // пикселей на один Герц
 
 	        SizeF textSize;
 	        RectangleF rect = new RectangleF(); // рамка спектра канала
@@ -235,91 +194,78 @@ namespace Biofeedback.Spectrum
 	        // заполняем фон
 	        for (int col = 0; col < columns; col++)
 	        {
-	            rect.X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth + left);
-	            rect.Y = top;
+	            rect.X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth);
+	            rect.Y = 0;
 	            rect.Width = (float) (chWidth);
-	            rect.Height = height - HRulerHeight - top*2;
-	            screen.FillRectangle(backBrush, rect); // фон спектра
-	            screen.FillRectangle(rulerBrush, rect.X - VRulerWidth, rect.Y, VRulerWidth, rect.Height); // фон линейки
+	            rect.Height = Height - HRulerHeight;
+	            _screen.FillRectangle(backBrush, rect); // фон спектра
+	            _screen.FillRectangle(rulerBrush, rect.X - VRulerWidth, rect.Y, VRulerWidth, rect.Height); // фон линейки
 	        }
 
 	        int ch = 0;
-	        foreach (var spListKey in spList.Keys)
+	        foreach (var spectrum in spectrumData)
 	        {
 	            int index = lowFreqIndex;
 
-	            rect.X = (float) ((ch%columns)*(chWidth + VRulerWidth) + VRulerWidth + left);
-	            rect.Y = (float) ((ch/columns)*chHeight) + top;
+	            rect.X = (float) ((ch%columns)*(chWidth + VRulerWidth) + VRulerWidth);
+	            rect.Y = (float) ((ch/columns)*chHeight);
 	            rect.Width = (float) (chWidth);
 	            rect.Height = (float) (chHeight);
-	            if (spList[spListKey] != null)
+	            if (spectrum.Data.Length > 0)
 	            {
 	                for (int r = 0; r < rhythmList.Count; r++)
 	                {
 	                    // Заполняем X и Y у всех точек
 	                    int len = 3 +
 	                              Convert.ToInt32(
-	                                  Math.Round((rhythmList[r].FreqEnd - rhythmList[r].FreqBegin)/
-	                                             FStep));
+	                                  Math.Round((rhythmList[r].FreqEnd - rhythmList[r].FreqBegin) /
+	                                             FrequencyStep));
 	                    points = new PointF[len];
 
-	                    points[0].X = (float) (rect.X + rhythmList[r].FreqBegin*pixelsPerHz);
+	                    points[0].X = (float) (rect.X + rhythmList[r].FreqBegin * pixelsPerHz);
 	                    points[0].Y = rect.Bottom;
 	                    for (int p = 1; p < len - 1; p++)
 	                    {
-	                        points[p].X = (float) (points[0].X + (p - 1)*pixelsPerSample);
-	                        points[p].Y = rect.Bottom - (float) (spList[spListKey][index]*pixelsPeruV*1000);
+	                        points[p].X = (float) (points[0].X + (p - 1) * pixelsPerSample);
+	                        points[p].Y = rect.Bottom - (float) (spectrum.Data[index] * pixelsPeruV * 1000);
 	                        if (points[p].Y < (rect.Bottom - chHeight))
 	                            points[p].Y = (float) (rect.Bottom - chHeight);
 	                        index++;
 	                    }
+
 	                    index--;
-	                    points[len - 1].X = (float) (rect.X + rhythmList[r].FreqEnd*pixelsPerHz);
+	                    points[len - 1].X = (float) (rect.X + rhythmList[r].FreqEnd * pixelsPerHz);
 	                    points[len - 1].Y = rect.Bottom;
 
 	                    path = new GraphicsPath();
 	                    path.AddLines(points);
-	                    screen.FillPath(rhythmBrush[r], path);
-	                    screen.DrawPath(rhythmPen[r], path);
+	                    _screen.FillPath(rhythmBrush[r], path);
+	                    _screen.DrawPath(rhythmPen[r], path);
 	                }
 	            }
 
 	            // рисуем название каналов
-	            textSize = screen.MeasureString(spListKey, nameFont);
-	            screen.DrawString(spListKey, nameFont, nameBrush,
+	            textSize = _screen.MeasureString(spectrum.Name, nameFont);
+	            _screen.DrawString(spectrum.Name, nameFont, nameBrush,
 	                rect.Right - textSize.Width - 5, rect.Top + textSize.Height - 5);
 
-	            /*if (SelectedChannel != -1)
-					{
-						allChannelRect.Y = textSize.Height * 2;
-						allChannelRect.Size = SizeF.Add(
-							screen.MeasureString(Properties.Resources.SpectrumChartAllChannels, rulerFont), 
-							new SizeF(5, 5));
-						allChannelRect.X = rect.Right - allChannelRect.Size.Width - 2;
-						screen.DrawString(Properties.Resources.SpectrumChartAllChannels, 
-							rulerFont, nameBrush, allChannelRect, sf);
-						if (allChannelHover == true)
-							screen.DrawRectangle(rulerPenThin, allChannelRect.X, allChannelRect.Y,
-								allChannelRect.Width, allChannelRect.Height);
-					}*/
-
 	            // рисуем вертикальную линейку
-	            screen.DrawLine(rulerPenThin, rect.X, rect.Y, rect.X, rect.Bottom);
+	            _screen.DrawLine(rulerPenThin, rect.X, rect.Y, rect.X, rect.Bottom);
 	            //for (float y = 0; y < chHeight; y += (float)(chHeight / 4))
-	            screen.DrawLine(rulerPenThick, rect.X, rect.Bottom - 1, rect.X - 6, rect.Bottom - 1);
+	            _screen.DrawLine(rulerPenThick, rect.X, rect.Bottom - 1, rect.X - 6, rect.Bottom - 1);
 	            // короткие черточки и подписи
 	            double sc = 0;
 	            Y = rect.Bottom;
 	            for (int ry = 0; ry < 3; ry++)
 	            {
 	                Y = Y - (float) (chHeight/4);
-	                sc = sc + sigScale/4;
+	                sc = sc + _sigScale/4;
 
 	                //screen.DrawLine(gridPen, rect.X, Y, (float)(rect.X + chWidth), Y);
-	                screen.DrawLine(rulerPenThin, rect.X, Y, rect.X - 4, Y);
-	                textSize = screen.MeasureString(sc.ToString(), rulerFont);
+	                _screen.DrawLine(rulerPenThin, rect.X, Y, rect.X - 4, Y);
+	                textSize = _screen.MeasureString(sc.ToString(), rulerFont);
 	                //if (sc != scaleString)
-	                screen.DrawString(sc.ToString(), rulerFont, nameBrush, rect.X - textSize.Width - 1,
+	                _screen.DrawString(sc.ToString(), rulerFont, nameBrush, rect.X - textSize.Width - 1,
 	                    Y - textSize.Height/2);
 	            }
 
@@ -330,22 +276,22 @@ namespace Biofeedback.Spectrum
 	        //------------------------------------------
 	        // рисуем горизонтальную линейку
 	        // у каждого столбца своя линейка
-	        screen.FillRectangle(rulerBrush, left, height - HRulerHeight - top, width - left*2, HRulerHeight);
+	        _screen.FillRectangle(rulerBrush, 0, Height - HRulerHeight, Width, HRulerHeight);
 	        //StringFormat sfv = new StringFormat(StringFormatFlags.DirectionVertical);
 	        for (int col = 0; col < columns; col++)
 	        {
 	            int freq = 0;
-	            X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth + left);
-	            Y = height - HRulerHeight - top;
-	            screen.DrawLine(rulerPenThin, X, Y, (float) (X + chWidth), Y);
+	            X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth);
+	            Y = Height - HRulerHeight;
+	            _screen.DrawLine(rulerPenThin, X, Y, (float) (X + chWidth), Y);
 	            // длинные линии и надписи рядом с ними
 	            do
 	            {
-	                screen.DrawLine(rulerPenThick, X, Y, X, Y + 8);
+	                _screen.DrawLine(rulerPenThick, X, Y, X, Y + 8);
 	                if (freq != 0)
-	                    screen.DrawLine(gridPen, X, top, X, Y);
-	                textSize = screen.MeasureString(freq.ToString(), rulerFont);
-	                screen.DrawString(freq.ToString(), rulerFont, nameBrush, X + 1 - textSize.Width/2, Y + 8);
+	                    _screen.DrawLine(gridPen, X, 0, X, Y);
+	                textSize = _screen.MeasureString(freq.ToString(), rulerFont);
+	                _screen.DrawString(freq.ToString(), rulerFont, nameBrush, X + 1 - textSize.Width/2, Y + 8);
 	                X += (float) (5*pixelsPerHz);
 	                freq += 5;
 	                //time = time.Add(new TimeSpan(0, 0, 1));
@@ -353,73 +299,47 @@ namespace Biofeedback.Spectrum
 
 	            // короткие линии
 	            freq = 0;
-	            X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth + left);
+	            X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth);
 	            do
 	            {
-	                screen.DrawLine(rulerPenThin, X, Y, X, Y + 4);
+	                _screen.DrawLine(rulerPenThin, X, Y, X, Y + 4);
 	                freq++;
 	                X += (float) (pixelsPerHz);
 	            } while (freq < highFreq);
 
 	            // Герцы
-	            X = (float) (col*(chWidth + VRulerWidth) + left);
-	            textSize = screen.MeasureString("Hz", nameFont);
-	            screen.DrawString("Hz", dimensionFont, nameBrush, X + 6, Y + 15);
+	            X = (float) (col*(chWidth + VRulerWidth));
+	            textSize = _screen.MeasureString("Hz", nameFont);
+	            _screen.DrawString("Hz", dimensionFont, nameBrush, X + 6, Y + 15);
 
 	            // Микровольты
-	            textSize = screen.MeasureString("Hz", nameFont);
-	            screen.TranslateTransform(X, Y + 16);
-	            screen.RotateTransform(270);
+	            textSize = _screen.MeasureString("Hz", nameFont);
+	            _screen.TranslateTransform(X, Y + 16);
+	            _screen.RotateTransform(270);
 
-	            screen.DrawString("Hz", dimensionFont, nameBrush, 0, 0);
-	            screen.ResetTransform();
+	            _screen.DrawString("Hz", dimensionFont, nameBrush, 0, 0);
+	            _screen.ResetTransform();
 
 	            // рисуем ритмы
-	            X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth + left);
+	            X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth);
 	            rect.Y = Y + 22;
 	            rect.Height = 16;
 	            for (int i = 0; i < rhythmList.Count; i++)
 	            {
 	                rect.X = (float) (X + rhythmList[i].FreqBegin*pixelsPerHz);
 	                rect.Width = (float) ((rhythmList[i].FreqEnd - rhythmList[i].FreqBegin)*pixelsPerHz);
-	                screen.FillRectangle(rhythmBrush[i], rect);
-	                screen.DrawString(rhythmList[i].Symbol, nameFont, nameBrush, rect, sf);
+	                _screen.FillRectangle(rhythmBrush[i], rect);
+	                _screen.DrawString(rhythmList[i].Symbol, nameFont, nameBrush, rect, sf);
 	            }
 	        }
-	    }
+		    _screenBg.Render(Graphics.FromHwnd(Handle));
+        }
 
-	    private void Redraw()
-        {
-            if ((spList != null) && (screenBG != null))
-            {
-
-                DrawSpectrum(_screen, 0, 0, screenWidth, screenHeight);
-				screenBG.Render(Graphics.FromHwnd(Handle));
-			}
-		}
-
-		#region События
-		/// <summary>
-		/// Изменение размеров компонента, изменяем размеры панелей
-		/// </summary>
-		private void OnResize(object sender, EventArgs e)
-		{
-			// пересоздать графические буферы
-			RecreateBuffers();
-			Redraw();
-		}
-		/// <summary>
-		/// Событие Paint - перерисовать контрол из буфера
-		/// </summary>
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			if (screenBG!=null)
-				screenBG.Render(e.Graphics);
+		    _screenBg?.Render(e.Graphics);
 		}
-
-		#endregion
-
-	}
+    }
 }
 
 

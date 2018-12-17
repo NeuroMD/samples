@@ -26,7 +26,7 @@ namespace Biofeedback
             var newIndexValue = _indexChannel.ReadData(length - 1, 1)[0];
             _context.Invoke((MethodInvoker)delegate
             {
-                SubItems[3].Text = newIndexValue.ToString("F4");
+                SubItems[3].Text = (newIndexValue * 1000).ToString("F4");
             });
         }
     }
