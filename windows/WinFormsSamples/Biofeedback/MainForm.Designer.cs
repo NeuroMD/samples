@@ -59,9 +59,14 @@ namespace Biofeedback
             this.ChannelsColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.FrequencyColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ValueColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.WindowColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this._removeIndexButton = new System.Windows.Forms.Button();
             this._indexNameTextBox = new System.Windows.Forms.TextBox();
+            this._indexWindowTextBox = new System.Windows.Forms.TextBox();
+            this._indexWindowOverlapTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this._scaleTrackBar = new System.Windows.Forms.TrackBar();
             this._timeTrackBar = new System.Windows.Forms.TrackBar();
             this._spectrumChart = new SpectrumChart();
@@ -133,18 +138,28 @@ namespace Biofeedback
             this._channelsListBox.FormattingEnabled = true;
             this._channelsListBox.Location = new System.Drawing.Point(240, 30);
             this._channelsListBox.Name = "_channelsListBox";
-            this._channelsListBox.Size = new System.Drawing.Size(120, 316);
+            this._channelsListBox.Size = new System.Drawing.Size(120, 405);
             this._channelsListBox.TabIndex = 1;
             // 
             // _createIndexButton
             // 
-            this._createIndexButton.Location = new System.Drawing.Point(363, 295);
+            this._createIndexButton.Location = new System.Drawing.Point(363, 375);
             this._createIndexButton.Name = "_createIndexButton";
             this._createIndexButton.Size = new System.Drawing.Size(76, 23);
             this._createIndexButton.TabIndex = 2;
             this._createIndexButton.Text = "Create index";
             this._createIndexButton.UseVisualStyleBackColor = true;
             this._createIndexButton.Click += new System.EventHandler(this._createIndexButton_Click);
+            // 
+            // _removeIndexButton
+            // 
+            this._removeIndexButton.Location = new System.Drawing.Point(363, 403);
+            this._removeIndexButton.Name = "_removeIndexButton";
+            this._removeIndexButton.Size = new System.Drawing.Size(76, 23);
+            this._removeIndexButton.TabIndex = 9;
+            this._removeIndexButton.Text = "Remove index";
+            this._removeIndexButton.UseVisualStyleBackColor = true;
+            this._removeIndexButton.Click += new System.EventHandler(this._removeIndexButton_Click);
             // 
             // _startFrequencyTextBox
             // 
@@ -251,18 +266,19 @@ namespace Biofeedback
             // 
             // _indicesListView
             // 
-            this._indicesListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this._indicesListView.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left
+            | System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Bottom);
             this._indicesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.IndexColumn,
             this.ChannelsColumn,
             this.FrequencyColumn,
+            this.WindowColumn,
             this.ValueColumn});
             this._indicesListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1});
-            this._indicesListView.Location = new System.Drawing.Point(447, 28);
+            this._indicesListView.Location = new System.Drawing.Point(447, 30);
             this._indicesListView.Name = "_indicesListView";
-            this._indicesListView.Size = new System.Drawing.Size(287, 261);
+            this._indicesListView.Size = new System.Drawing.Size(410, 395);
             this._indicesListView.TabIndex = 8;
             this._indicesListView.UseCompatibleStateImageBehavior = false;
             this._indicesListView.View = System.Windows.Forms.View.Details;
@@ -281,20 +297,15 @@ namespace Biofeedback
             this.FrequencyColumn.Text = "Frequency";
             this.FrequencyColumn.Width = 80;
             // 
+            // WindowColumn
+            // 
+            this.WindowColumn.Text = "Window/Overlap";
+            this.WindowColumn.Width = 100;
+            // 
             // ValueColumn
             // 
             this.ValueColumn.Text = "Value";
-            this.ValueColumn.Width = 58;
-            // 
-            // _removeIndexButton
-            // 
-            this._removeIndexButton.Location = new System.Drawing.Point(445, 295);
-            this._removeIndexButton.Name = "_removeIndexButton";
-            this._removeIndexButton.Size = new System.Drawing.Size(87, 23);
-            this._removeIndexButton.TabIndex = 9;
-            this._removeIndexButton.Text = "Remove index";
-            this._removeIndexButton.UseVisualStyleBackColor = true;
-            this._removeIndexButton.Click += new System.EventHandler(this._removeIndexButton_Click);
+            this.ValueColumn.Width = 80;
             // 
             // _indexNameTextBox
             // 
@@ -302,6 +313,22 @@ namespace Biofeedback
             this._indexNameTextBox.Name = "_indexNameTextBox";
             this._indexNameTextBox.Size = new System.Drawing.Size(76, 20);
             this._indexNameTextBox.TabIndex = 10;
+            // 
+            // _indexWindowTextBox
+            // 
+            this._indexWindowTextBox.Location = new System.Drawing.Point(363, 310);
+            this._indexWindowTextBox.Name = "_indexWindowTextBox";
+            this._indexWindowTextBox.Size = new System.Drawing.Size(76, 20);
+            this._indexWindowTextBox.TabIndex = 10;
+            this._indexWindowTextBox.Text = "8";
+            // 
+            // _indexWindowOverlapTextBox
+            // 
+            this._indexWindowOverlapTextBox.Location = new System.Drawing.Point(363, 350);
+            this._indexWindowOverlapTextBox.Name = "_indexWindowOverlapTextBox";
+            this._indexWindowOverlapTextBox.Size = new System.Drawing.Size(76, 20);
+            this._indexWindowOverlapTextBox.TabIndex = 10;
+            this._indexWindowOverlapTextBox.Text = "0.9";
             // 
             // label3
             // 
@@ -311,6 +338,24 @@ namespace Biofeedback
             this.label3.Size = new System.Drawing.Size(35, 13);
             this.label3.TabIndex = 11;
             this.label3.Text = "Name";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(360, 294);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Window";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(360, 335);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Overlap coeff";
             // 
             // _scaleTrackBar
             // 
@@ -328,7 +373,7 @@ namespace Biofeedback
             this._timeTrackBar.LargeChange = 2;
             this._timeTrackBar.Location = new System.Drawing.Point(5, 70);
             this._timeTrackBar.Maximum = 16;
-            this._timeTrackBar.Minimum = 3;
+            this._timeTrackBar.Minimum = 1;
             this._timeTrackBar.Name = "_timeTrackBar";
             this._timeTrackBar.Size = new System.Drawing.Size(233, 45);
             this._timeTrackBar.TabIndex = 12;
@@ -349,7 +394,11 @@ namespace Biofeedback
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(734, 461);
+            this.ClientSize = new System.Drawing.Size(862, 461);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this._indexWindowTextBox);
+            this.Controls.Add(this._indexWindowOverlapTextBox);
             this.Controls.Add(this._timeTrackBar);
             this.Controls.Add(this._scaleTrackBar);
             this.Controls.Add(this._spectrumChart);
@@ -401,10 +450,15 @@ namespace Biofeedback
         private System.Windows.Forms.ListView _indicesListView;
         private System.Windows.Forms.ColumnHeader IndexColumn;
         private System.Windows.Forms.ColumnHeader ValueColumn;
+        private System.Windows.Forms.ColumnHeader WindowColumn;
         private System.Windows.Forms.Button _removeIndexButton;
         private System.Windows.Forms.ColumnHeader FrequencyColumn;
         private System.Windows.Forms.TextBox _indexNameTextBox;
+        private System.Windows.Forms.TextBox _indexWindowTextBox;
+        private System.Windows.Forms.TextBox _indexWindowOverlapTextBox;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ColumnHeader ChannelsColumn;
         private Spectrum.SpectrumChart _spectrumChart;
         private System.Windows.Forms.TrackBar _scaleTrackBar;

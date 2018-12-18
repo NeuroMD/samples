@@ -201,10 +201,24 @@ namespace Biofeedback
                 return;
             }
 
+            if (!double.TryParse(_indexWindowTextBox.Text, out var window))
+            {
+                MessageBox.Show("Wrong window duration value", "Index creation", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!double.TryParse(_indexWindowOverlapTextBox.Text, out var overlap))
+            {
+                MessageBox.Show("Wrong overlap value", "Index creation", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
             var index = new EegIndex {Name = _indexNameTextBox.Text, FrequencyBottom = startFreq, FrequencyTop = stopFreq};
             var checkedChannels = _channelsListBox.CheckedItems.OfType<ChannelAdapter>();
-            var indexChannel = new EegIndexChannel(index, checkedChannels);
-            _indicesListView.Items.Add(new IndexListItem(this, indexChannel, index, checkedChannels.Select(x=>x.ToString())));
+            var indexChannel = new EegIndexChannel(index, checkedChannels, window, overlap);
+            _indicesListView.Items.Add(new IndexListItem(this, indexChannel, index, checkedChannels.Select(x=>x.ToString()), window, overlap));
         }
 
         private void _removeIndexButton_Click(object sender, System.EventArgs e)
