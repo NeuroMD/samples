@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 
 # project name and supported languages
-project(device-info CXX)
+project(device-enumeration CXX)
 
 # detect operating system and host processor
 message(STATUS "We are on a ${CMAKE_SYSTEM_NAME} system")
@@ -40,6 +40,6 @@ if (WIN32)
     link_directories(${NEUROSDK})
 endif (WIN32)
 
-add_executable (device-info main.cpp)
-target_link_libraries(device-info debug neurosdk${PLATFORM_SUFFIX}d)
-target_link_libraries(device-info optimized neurosdk${PLATFORM_SUFFIX})
+add_executable (device-enumeration main.cpp)
+target_link_libraries(device-enumeration debug neurosdk${PLATFORM_SUFFIX}d)
+target_link_libraries(device-enumeration optimized neurosdk${PLATFORM_SUFFIX})
