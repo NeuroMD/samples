@@ -8,9 +8,13 @@ message(STATUS "We are on a ${CMAKE_SYSTEM_NAME} system")
 message(STATUS "The host processor is ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
 if (WIN32) 
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2 /MD")
+    SET (CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING
+            "Debug;Release" FORCE)
+    SET (RELEASE_BUILD_NAME "Release")
+    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /MD")
 else () 
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c99 -Wall")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -fno-rtti")
 endif (WIN32)
 
 if (WIN32)
@@ -21,6 +25,7 @@ if (WIN32)
         set (TARGET_PLATFORM "x64")     
         SET (NEUROSDK $ENV{NEUROSDK_64})
     endif() 
+    set (PLATFORM_SUFFIX -${TARGET_PLATFORM})
 endif (WIN32)
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
@@ -29,27 +34,10 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release;")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 if (WIN32)
-    include_directories(${NEUROSDK}/include/wrappers/c)
+    include_directories(${NEUROSDK}/include)
     link_directories(${NEUROSDK})
 endif (WIN32)
 
 add_executable (device-info main.c)
-target_link_libraries(device-info debug c-neurosdkd)
-target_link_libraries(device-info optimized c-neurosdk)
-
-add_custom_command(TARGET device-info POST_BUILD        
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "${NEUROSDK}/c-neurosdkd.dll"      
-        $<TARGET_FILE_DIR:device-info>)
-add_custom_command(TARGET device-info POST_BUILD        
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "${NEUROSDK}/c-neurosdk.dll"      
-        $<TARGET_FILE_DIR:device-info>)
-add_custom_command(TARGET device-info POST_BUILD        
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "${NEUROSDK}/neurosdkd.dll"      
-        $<TARGET_FILE_DIR:device-info>)
-add_custom_command(TARGET device-info POST_BUILD        
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "${NEUROSDK}/neurosdk.dll"      
-        $<TARGET_FILE_DIR:device-info>)
+target_link_libraries(device-info debug neurosdk${PLATFORM_SUFFIX}d)
+target_link_libraries(device-info optimized neurosdk${PLATFORM_SUFFIX})

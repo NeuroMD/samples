@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalView", "SignalView\Si
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biofeedback", "Biofeedback\Biofeedback.csproj", "{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceInfo", "DeviceInfo\DeviceInfo.csproj", "{B63C55A6-590B-45B4-8575-89F418DF1B07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,8 +41,16 @@ Global
 		{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}.Debug|x64.Build.0 = Debug|x64
 		{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}.Release|x64.ActiveCfg = Release|Any CPU
-		{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}.Release|x64.Build.0 = Release|Any CPU
+		{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}.Release|x64.ActiveCfg = Release|x64
+		{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}.Release|x64.Build.0 = Release|x64
+		{B63C55A6-590B-45B4-8575-89F418DF1B07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B63C55A6-590B-45B4-8575-89F418DF1B07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B63C55A6-590B-45B4-8575-89F418DF1B07}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B63C55A6-590B-45B4-8575-89F418DF1B07}.Debug|x64.Build.0 = Debug|Any CPU
+		{B63C55A6-590B-45B4-8575-89F418DF1B07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B63C55A6-590B-45B4-8575-89F418DF1B07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B63C55A6-590B-45B4-8575-89F418DF1B07}.Release|x64.ActiveCfg = Release|Any CPU
+		{B63C55A6-590B-45B4-8575-89F418DF1B07}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

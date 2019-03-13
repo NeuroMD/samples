@@ -53,20 +53,20 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="net-neurosdk">
-      <HintPath>$(NEUROSDK_64)\net-neurosdk.dll</HintPath>
+    <Reference Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="net-neurosdk-x64">
+      <HintPath>$(NEUROSDK)\windows\x64\net-neurosdk-x64.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Include="net-neurosdkd">
-      <HintPath>$(NEUROSDK_64)\net-neurosdkd.dll</HintPath>
+    <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Include="net-neurosdk-x64d">
+      <HintPath>$(NEUROSDK)\windows\x64\net-neurosdk-x64d.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Include="net-neurosdk">
-      <HintPath>$(NEUROSDK_86)\net-neurosdk.dll</HintPath>
+    <Reference Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Include="net-neurosdk-AnyCPU">
+      <HintPath>$(NEUROSDK)\windows\x86\net-neurosdk-AnyCPU.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" Include="net-neurosdkd">
-      <HintPath>$(NEUROSDK_86)\net-neurosdkd.dll</HintPath>
+    <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" Include="net-neurosdk-AnyCPUd">
+      <HintPath>$(NEUROSDK)\windows\x86\net-neurosdk-AnyCPUd.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -123,40 +123,6 @@
       <Project>{9c76705a-f52a-40e6-9f28-7cabcfb2a864}</Project>
       <Name>SignalView</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="$(NEUROSDK_64)\c-neurosdk.dll">
-      <Link>c-neurosdk.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Include="$(NEUROSDK_64)\c-neurosdkd.dll">
-      <Link>c-neurosdkd.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Include="$(NEUROSDK_86)\c-neurosdk.dll">
-      <Link>c-neurosdk.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" Include="$(NEUROSDK_86)\c-neurosdkd.dll">
-      <Link>c-neurosdkd.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="$(NEUROSDK_64)\neurosdk.dll">
-      <Link>neurosdk.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Include="$(NEUROSDK_64)\neurosdkd.dll">
-      <Link>neurosdkd.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Include="$(NEUROSDK_86)\neurosdk.dll">
-      <Link>neurosdk.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" Include="$(NEUROSDK_86)\neurosdkd.dll">
-      <Link>neurosdkd.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

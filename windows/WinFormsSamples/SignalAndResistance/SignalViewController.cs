@@ -37,7 +37,14 @@ namespace SignalAndResistance
 
         private void SetDuration(double duration)
         {
-            _invokationContext.Invoke((MethodInvoker) delegate { _durationLabel.Text = $@"{duration:0.00} s"; });
+            try
+            {
+                _invokationContext.Invoke((MethodInvoker) delegate { _durationLabel.Text = $@"{duration:0.00} s"; });
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         private void SetChannelData(double[] data, double samplingFrequency, int channelLength)

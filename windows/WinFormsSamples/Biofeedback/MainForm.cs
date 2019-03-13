@@ -79,12 +79,30 @@ namespace Biofeedback
             });
         }
 
-        private static IList<ChannelAdapter> CreateChannels(Device device)
+        private static IList<DoubleSignalChannelWrap> CreateChannels(Device device)
         {
-            return DeviceTraits.GetChannelsWithType(device, ChannelType.Signal).Select(channelInfo => new ChannelAdapter(device, channelInfo)).ToList();
+            var channels = DeviceTraits.GetChannelsWithType(device, ChannelType.Signal)
+                .Select(channelInfo => new EegChannel(device, channelInfo))
+                .Cast<IDataChannel<double>>()
+                .ToList();
+
+            var channelAdapters = new List<DoubleSignalChannelWrap>();
+            foreach (var signalChannel in channels)
+            {
+                channelAdapters.Add(new DoubleSignalChannelWrap(signalChannel));
+            }
+            for (var i = 0; i < channels.Count - 1; ++i)
+            {
+                for (var j = i + 1; j < channels.Count; ++j)
+                {
+                    var bipolarChannel = new BipolarDoubleChannel(channels[i], channels[j]);
+                    channelAdapters.Add(new DoubleSignalChannelWrap(bipolarChannel));
+                }
+            }
+            return channelAdapters;
         }
 
-        private static IList<SpectrumChannel> CreateSpectrumChannels(IList<ChannelAdapter> channels)
+        private static IList<SpectrumChannel> CreateSpectrumChannels(IList<DoubleSignalChannelWrap> channels)
         {
             return channels.Select(x => new SpectrumChannel(x)).ToList();
         }
@@ -216,7 +234,7 @@ namespace Biofeedback
             }
 
             var index = new EegIndex {Name = _indexNameTextBox.Text, FrequencyBottom = startFreq, FrequencyTop = stopFreq};
-            var checkedChannels = _channelsListBox.CheckedItems.OfType<ChannelAdapter>();
+            var checkedChannels = _channelsListBox.CheckedItems.OfType<DoubleSignalChannelWrap>().ToList();
             var indexChannel = new EegIndexChannel(index, checkedChannels, window, overlap);
             _indicesListView.Items.Add(new IndexListItem(this, indexChannel, index, checkedChannels.Select(x=>x.ToString()), window, overlap));
         }

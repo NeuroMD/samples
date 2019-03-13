@@ -80,13 +80,25 @@ namespace SignalAndResistance
 
         private static IEnumerable<ChannelAdapter<double>> CreateChannels(Device device)
         {
-            var channels = new List<ChannelAdapter<double>>();
-            foreach (var channelInfo in DeviceTraits.GetChannelsWithType(device, ChannelType.Signal))
+            var channels = DeviceTraits.GetChannelsWithType(device, ChannelType.Signal)
+                                        .Select(channelInfo => CreateChannelForDevice(device, channelInfo))
+                                        .Cast<IDataChannel<double>>()
+                                        .ToList();
+
+            var channelAdapters = new List<ChannelAdapter<double>>();
+            foreach (var signalChannel in channels)
             {
-                var signalChannel = CreateChannelForDevice(device, channelInfo);
-                channels.Add(new ChannelAdapter<double>(signalChannel));
+                channelAdapters.Add(new ChannelAdapter<double>(signalChannel));
             }
-            return channels;
+            for (var i = 0; i < channels.Count - 1; ++i)
+            {
+                for (var j = i + 1; j < channels.Count; ++j)
+                {
+                    var bipolarChannel = new BipolarDoubleChannel(channels[i], channels[j]);
+                    channelAdapters.Add(new ChannelAdapter<double>(bipolarChannel));
+                }
+            }
+            return channelAdapters;
         }
 
         private void _reconnectButton_Click(object sender, System.EventArgs e)

@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "cscanner.h"
-#include "cdevice.h"
-#include "cparams.h"
-#include "sdk_error.h"
+#include "c-wrap/cscanner.h"
+#include "c-wrap/cdevice.h"
+#include "c-wrap/cparams.h"
+#include "c-wrap/sdk_error.h"
 
-void on_device_connected(Device* device) {
+void show_device_features(Device* device) {
 	CommandArray commands;
 	if (device_available_commands(device, &commands) == SDK_NO_ERROR) {
 		printf("Device can execute:\n");
@@ -43,17 +43,6 @@ void on_device_connected(Device* device) {
 	}
 }
 
-void on_param_changed(Device *device, Parameter param) {
-	if (param == ParameterState) {
-		DeviceState state;
-		device_read_State(device, &state);
-		if (state == DeviceStateConnected) {
-			printf("Device connected\n");
-			on_device_connected(device);
-		}
-	}
-}
-
 void on_device_found(Device *device) {
 	char nameBuffer[128];
 	device_read_Name(device, nameBuffer, 128);
@@ -66,20 +55,26 @@ void on_device_found(Device *device) {
 
 	printf("Found device %s [%s], state: %s\n", nameBuffer, addressBuffer, state == DeviceStateConnected ? "Connected" : "Disconnected");
 
-	device_subscribe_param_changed(device, &on_param_changed);
-	if (state != DeviceStateConnected) {
-		device_connect(device);
+	device_connect(device);
+	device_read_State(device, &state);
+	while (state != DeviceStateConnected) {
+		device_read_State(device, &state);
 	}
-	else {
-		on_device_connected(device);
+	show_device_features(device);
+}
+
+void on_device_list_changed(DeviceEnumerator *enumerator, void *user_data) {
+	DeviceInfoArray deviceInfoArray;
+	enumerator_get_device_list(enumerator, &deviceInfoArray);
+	for (size_t i = 0; i < deviceInfoArray.info_count; ++i) {
+		on_device_found(create_Device(deviceInfoArray.info_array[i]));
 	}
 }
 
 int main(int argc, char* argv[]) {
-	DeviceScanner *scanner = create_device_scanner();
-	scanner_set_device_found_callback(scanner, &on_device_found);
-	scanner_start_scan(scanner, 0);//zero timeout for infinity
+	DeviceEnumerator *scanner = create_device_enumerator(DeviceTypeAny);
+	ListenerHandle deviceListChangedHandle;
+	enumerator_set_device_list_changed_callback(scanner, &on_device_list_changed, &deviceListChangedHandle, NULL);
 	getchar();
-	scanner_stop_scan(scanner);
-	scanner_delete(scanner);
+	enumerator_delete(scanner);
 }

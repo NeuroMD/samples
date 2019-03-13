@@ -5,11 +5,11 @@ namespace SignalAndResistance
 {
     class ChannelAdapter<T>
     {
-        private readonly IBaseChannel<T> _channel;
+        private readonly IDataChannel<T> _channel;
 
         public event EventHandler<int> LengthChanged;
 
-        public ChannelAdapter(IBaseChannel<T> channel)
+        public ChannelAdapter(IDataChannel<T> channel)
         {
             _channel = channel;
             _channel.LengthChanged += _channel_LengthChanged;

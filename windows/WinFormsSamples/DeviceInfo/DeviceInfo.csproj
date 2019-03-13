@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}</ProjectGuid>
+    <ProjectGuid>{B63C55A6-590B-45B4-8575-89F418DF1B07}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Biofeedback</RootNamespace>
-    <AssemblyName>Biofeedback</AssemblyName>
+    <RootNamespace>DeviceInfo</RootNamespace>
+    <AssemblyName>DeviceInfo</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,43 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="net-sdk-extensions-x64">
-      <HintPath>$(NEUROSDK_EXT)\windows\x64\net-sdk-extensions-x64.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Include="net-sdk-extensions-x64d">
-      <HintPath>$(NEUROSDK_EXT)\windows\x64\net-sdk-extensions-x64d.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Include="net-sdk-extensions-AnyCPU">
-      <HintPath>$(NEUROSDK_EXT)\windows\x86\net-sdk-extensions-AnyCPU.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" Include="net-sdk-extensions-AnyCPUd">
-      <HintPath>$(NEUROSDK_EXT)\windows\x86\net-sdk-extensions-AnyCPUd.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="net-neurosdk-x64">
       <HintPath>$(NEUROSDK)\windows\x64\net-neurosdk-x64.dll</HintPath>
       <Private>True</Private>
@@ -98,26 +62,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DoubleSignalChannelWrap.cs" />
-    <Compile Include="DeviceModel.cs" />
-    <Compile Include="IndexListItem.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="DeviceAdapter.cs" />
+    <Compile Include="DeviceForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="DeviceForm.Designer.cs">
+      <DependentUpon>DeviceForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpectrumChartController.cs" />
-    <Compile Include="Spectrum\Rhythm.cs" />
-    <Compile Include="Spectrum\Spectrum.cs" />
-    <Compile Include="Spectrum\SpectrumChart.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Spectrum\SpectrumModel.cs" />
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="DeviceForm.resx">
+      <DependentUpon>DeviceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -128,7 +83,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Spectrum\SpectrumChart.resx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -143,10 +97,4 @@
     <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\SignalView\SignalView.csproj">
-      <Project>{9C76705A-F52A-40E6-9F28-7CABCFB2A864}</Project>
-      <Name>SignalView</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

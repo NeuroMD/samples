@@ -7,14 +7,25 @@ namespace DeviceInfo
     {
         static void Main(string[] args)
         {
-            var scanner = new DeviceScanner();
-            scanner.DeviceFound += Scanner_DeviceFound;
-            scanner.ScanStateChanged += Scanner_ScanStateChanged;
-            scanner.StartScan();
-            Console.ReadLine();
+            using (var enumerator = new DeviceEnumerator(DeviceType.Any))
+            {
+                enumerator.DeviceListChanged += Enumerator_DeviceListChanged;
+                Console.ReadLine();
+            }
         }
 
-        private static void OnDeviceConnected(Device device)
+        private static void Enumerator_DeviceListChanged(object sender, EventArgs e)
+        {
+            if (sender is DeviceEnumerator enumerator)
+            {
+                foreach (var device in enumerator.Devices)
+                {
+                    OnDeviceFound(device);
+                }
+            }
+        }
+
+        private static void ShowDeviceFeatures(Device device)
         {
             Console.WriteLine();
             Console.WriteLine("Device can execute:");
@@ -39,48 +50,22 @@ namespace DeviceInfo
             Console.WriteLine();
         }
 
-        private static void Scanner_ScanStateChanged(object sender, bool isScanning)
+        private static void OnDeviceFound(Neuro.DeviceInfo deviceInfo)
         {
-            Console.WriteLine(isScanning ? "Scan started" : "Scan stopped");
-        }
-
-        private static void Scanner_DeviceFound(object sender, Device device)
-        {
-            var deviceName = device.ReadParam<string>(Parameter.Name);
-            var deviceAddress = device.ReadParam<string>(Parameter.Address);
-            var deviceState = device.ReadParam<DeviceState>(Parameter.State);
-
-            Console.WriteLine($"Found device {deviceName} [{deviceAddress}], state: {deviceState}");
-
-            device.ParameterChanged += Device_ParameterChanged;
-            var state = device.ReadParam<DeviceState>(Parameter.State);
-            if (state == DeviceState.Connected)
+            using (var device = new Device(deviceInfo))
             {
-                OnDeviceConnected(device);
-            }
-            else
-            {
+                var deviceName = device.ReadParam<string>(Parameter.Name);
+                var deviceAddress = device.ReadParam<string>(Parameter.Address);
+                var deviceState = device.ReadParam<DeviceState>(Parameter.State);
+
+                Console.WriteLine($"Found device {deviceName} [{deviceAddress}], state: {deviceState}");
+
                 device.Connect();
-            }
-        }
-
-        private static void Device_ParameterChanged(object sender, Parameter parameter)
-        {
-            try
-            {
-                if (parameter == Parameter.State)
+                while (device.ReadParam<DeviceState>(Parameter.State) != DeviceState.Connected)
                 {
-                    var device = (Device)sender;
-                    var state = device.ReadParam<DeviceState>(Parameter.State);
-                    if (state == DeviceState.Connected)
-                    {
-                        OnDeviceConnected(device);
-                    }
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
+
+                device.Disconnect();
             }
         }
     }

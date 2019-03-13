@@ -26,6 +26,7 @@ namespace Biofeedback
             {
                 DeviceLost?.Invoke(this, null);
                 Device.ParameterChanged -= OnDeviceParamChanged;
+                Device.Dispose();
                 Device = null;
             }
             _scanner.StartScan();
