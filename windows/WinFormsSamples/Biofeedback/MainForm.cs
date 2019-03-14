@@ -25,31 +25,12 @@ namespace Biofeedback
             _deviceModel = new DeviceModel();
             _deviceModel.DeviceFound += _deviceModel_DeviceFound;
             _deviceModel.DeviceLost += _deviceModel_DeviceLost;
-            _deviceModel.SearchStateChanged += _deviceModel_SearchStateChanged;
             _deviceModel.Reconnect();
         }
 
         private void _timer_Tick(object sender, EventArgs e)
         {
             _spectrumChartController?.Redraw();
-        }
-
-        private void _deviceModel_SearchStateChanged(object sender, bool isScanning)
-        {
-            if (isScanning)
-            {
-                Invoke((MethodInvoker)delegate
-                {
-                    _deviceLabel.Text = @"Waiting for device...";
-                });
-            }
-            else
-            {
-                Invoke((MethodInvoker)delegate
-                {
-                    _deviceLabel.Text = _deviceModel.Device == null ? @"No device" : _deviceModel.Device.ReadParam<string>(Parameter.Name);
-                });
-            }
         }
 
         private void _deviceModel_DeviceLost(object sender, System.EventArgs e)

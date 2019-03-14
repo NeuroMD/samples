@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalAndResistance", "SignalAndResistance\SignalAndResistance.csproj", "{250AE6CF-B8C9-4F28-BD5A-D776BAC6C37F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signal", "SignalAndResistance\Signal.csproj", "{250AE6CF-B8C9-4F28-BD5A-D776BAC6C37F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalView", "SignalView\SignalView.csproj", "{9C76705A-F52A-40E6-9F28-7CABCFB2A864}"
 EndProject

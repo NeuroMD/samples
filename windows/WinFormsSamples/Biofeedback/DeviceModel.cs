@@ -3,38 +3,44 @@ using Neuro;
 
 namespace Biofeedback
 {
-    class DeviceModel
+    class DeviceModel : IDisposable
     {
-        private readonly DeviceScanner _scanner;
+        private readonly DeviceEnumerator _enumerator;
 
         public Device Device { get; private set; }
         public event EventHandler<Device> DeviceFound;
         public event EventHandler DeviceLost;
-        public event EventHandler<bool> SearchStateChanged;
 
         public DeviceModel()
         {
-            _scanner = new DeviceScanner();
-            _scanner.ScanStateChanged += _scanner_ScanStateChanged;
-            _scanner.DeviceFound += _scanner_DeviceFound;
+            _enumerator = new DeviceEnumerator(DeviceType.Any);
+            _enumerator.DeviceListChanged += _enumerator_DeviceListChanged;
+        }
+
+        private void _enumerator_DeviceListChanged(object sender, EventArgs e)
+        {
+            var devices = _enumerator.Devices;
+            if (devices.Count > 0)
+            {
+                OnDeviceFound(devices[0]);
+            }
         }
 
         public void Reconnect()
         {
-            _scanner.StopScan();
             if (Device != null)
             {
                 DeviceLost?.Invoke(this, null);
                 Device.ParameterChanged -= OnDeviceParamChanged;
+                try
+                {
+                    Device.Execute(Command.StopSignal);
+                    Device.Disconnect();
+                }
+                catch { }
                 Device.Dispose();
                 Device = null;
             }
-            _scanner.StartScan();
-        }
-
-        private void _scanner_ScanStateChanged(object sender, bool isScanning)
-        {
-            SearchStateChanged?.Invoke(this, isScanning);
         }
 
         private void OnDeviceStateChanged(DeviceState state)
@@ -58,17 +64,32 @@ namespace Biofeedback
             }
         }
 
-        private void _scanner_DeviceFound(object sender, Device device)
+        private void OnDeviceFound(DeviceInfo deviceInfo)
         {
-            _scanner.StopScan();
             if (Device != null)
             {
                 return;
             }
 
-            Device = device;
+            Device = new Device(deviceInfo);
             Device.ParameterChanged += OnDeviceParamChanged;
             Device.Connect();
+        }
+
+        public void Dispose()
+        {
+            _enumerator?.Dispose();
+            if (Device != null)
+            {
+                Device.ParameterChanged -= OnDeviceParamChanged;
+                try
+                {
+                    Device.Execute(Command.StopSignal);
+                    Device.Disconnect();
+                }
+                catch { }
+                Device.Dispose();
+            }
         }
     }
 }

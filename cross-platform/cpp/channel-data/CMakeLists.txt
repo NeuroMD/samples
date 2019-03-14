@@ -1,30 +1,37 @@
 cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 
-if (WIN32)
-    if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
-		set (TARGET_PLATFORM "x86")		
-		SET (NEUROSDK $ENV{NEUROSDK_86})
-	else ()
-		set (TARGET_PLATFORM "x64")		
-		SET (NEUROSDK $ENV{NEUROSDK_64})
-	endif()	
-endif (WIN32)
-
 # project name and supported languages
-project(channel-data--${TARGET_PLATFORM} CXX)
+project(channel-data CXX)
 
 # detect operating system and host processor
 message(STATUS "We are on a ${CMAKE_SYSTEM_NAME} system")
 message(STATUS "The host processor is ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
 if (WIN32) 
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2 /MD")
+    SET (CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING
+            "Debug;Release" FORCE)
+    SET (RELEASE_BUILD_NAME "Release")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /MD")
 else () 
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14 -Wall")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -fno-rtti")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -fno-rtti")
+endif (WIN32)
+
+if (WIN32)
+    if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
+        set (TARGET_PLATFORM "x86")     
+        SET (NEUROSDK $ENV{NEUROSDK_86})
+    else ()
+        set (TARGET_PLATFORM "x64")     
+        SET (NEUROSDK $ENV{NEUROSDK_64})
+    endif() 
+    set (PLATFORM_SUFFIX -${TARGET_PLATFORM})
 endif (WIN32)
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_EXE_LINKER_FLAGS}")
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -34,13 +41,5 @@ if (WIN32)
 endif (WIN32)
 
 add_executable (channel-data main.cpp)
-target_link_libraries(channel-data debug neurosdkd optimized neurosdk)
-
-add_custom_command(TARGET channel-data POST_BUILD        
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "${NEUROSDK}/neurosdkd.dll"      
-        $<TARGET_FILE_DIR:channel-data>)
-add_custom_command(TARGET channel-data POST_BUILD        
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different  
-        "${NEUROSDK}/neurosdk.dll"      
-        $<TARGET_FILE_DIR:channel-data>)
+target_link_libraries(channel-data debug neurosdk${PLATFORM_SUFFIX}d)
+target_link_libraries(channel-data optimized neurosdk${PLATFORM_SUFFIX})

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "device_scanner/scanner_factory.h"
+#include "device_scanner/device_enumerator.h"
 #include "device/device.h"
 #include "device/param_values.h"
 #include "channels/device_channel.h"
@@ -27,54 +27,42 @@ void createBatteryChannel(Neuro::DeviceSharedPtr device_ptr){
 	BatteryListeners.push_back(listener);
 }
 
-void connectDevice(Neuro::DeviceSharedPtr device_ptr){
-    using Neuro::Parameter;
-	std::cout << "Connecting device [" 
-              << device_ptr->readParam<Parameter::Address>()<< "]" << "\n";
+void onDeviceFound(Neuro::Device &&device) {
+	using Neuro::Parameter;
+	using Neuro::DeviceState;
+	using Neuro::to_string;
 
-	using device_t = typename std::remove_reference_t<decltype(device_ptr)>::element_type;
-	auto weakDevice = std::weak_ptr<device_t>(device_ptr);
-    device_ptr->setParamChangedCallback([weakDevice](auto param){
-        if (param == Parameter::State){
-			auto device = weakDevice.lock();
-			if (device != nullptr) {
-				auto state = device->readParam<Parameter::State>();
-				if (state == Neuro::DeviceState::Connected) {
-					std::cout << "Device ["
-						<< device->readParam<Parameter::Address>()
-						<< "] connected" << "\n";
-					createBatteryChannel(device);
-				}
-			}
-        }
-    });
-	device_ptr->connect();
+	const auto deviceName = device.readParam<Parameter::Name>();
+	const auto deviceAddress = device.readParam<Parameter::Address>();
+	const auto deviceState = device.readParam<Parameter::State>();
+	std::cout << deviceName
+		<< " [" << deviceAddress << "] "
+		<< to_string(deviceState)
+		<< "\n";
+
+	if (deviceState != DeviceState::Connected) {
+		std::cout << "Connecting device [" << device.readParam<Parameter::Address>() << "]" << "\n";
+		device.connect();
+		while (device.readParam<Parameter::State>() != DeviceState::Connected);
+	}
+
+	const auto device_ptr = std::make_shared<Neuro::Device>(std::move(device));
 	FoundDevices.push_back(device_ptr);
+	createBatteryChannel(device_ptr);
 }
 
-void onDeviceFound(Neuro::DeviceUniquePtr device_ptr){
-    using Neuro::Parameter;
-    using Neuro::DeviceState;
-    using Neuro::to_string;
-
-
-    auto deviceState = device_ptr->readParam<Parameter::State>();
-	using device_t = typename std::remove_reference_t<decltype(device_ptr)>::element_type;
-	auto sharedDevice = std::shared_ptr<device_t>(std::move(device_ptr));
-	if (deviceState != DeviceState::Connected) {
-		connectDevice(sharedDevice);
-	}
-	else{
-		createBatteryChannel(sharedDevice);
+void onDeviceListChanged(const std::vector<Neuro::DeviceInfo>& devices) {
+	for (const auto &deviceInfo : devices) {
+		onDeviceFound(Neuro::Device(deviceInfo));
 	}
 }
 
 int main(int argc, char *argv[]){
 	LoggerFactory::getCurrentPlatformLogger()->setLogLevel(LogLevel::Info);
-    auto scanner = Neuro::createDeviceScanner();
-    scanner->subscribeDeviceFound([&](Neuro::DeviceUniquePtr device_ptr){
-        onDeviceFound(std::forward<decltype(device_ptr)>(device_ptr));
-    });
-    scanner->startScan(0);//zero timeout for infinity
-    while (std::cin.get() != '\n');
+	auto enumerator = Neuro::make_device_enumerator<Neuro::Device>();
+	auto notifierHandle = enumerator.subscribeDeviceListChanged([&]() {
+		onDeviceListChanged(enumerator.devices());
+	});
+	onDeviceListChanged(enumerator.devices());
+	while (std::cin.get() != '\n');
 }

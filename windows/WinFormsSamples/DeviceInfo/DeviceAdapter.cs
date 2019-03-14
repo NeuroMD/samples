@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Data;
-using System.Linq;
 using Neuro;
 
 namespace DeviceInfo
 {
-    class DeviceAdapter
+    class DeviceAdapter : IDisposable
     {
         private readonly Device _device;
         private int _batteryCharge;
@@ -39,7 +37,7 @@ namespace DeviceInfo
         {
             var name = _device.ReadParam<string>(Parameter.Name);
             var address = _device.ReadParam<string>(Parameter.Address);
-            return name + " [" + address + "] - " + (ConnectionState == DeviceState.Connected ? "Connected" : "Disconnected");
+            return name + " [" + address + "]";
         }
 
         private void _device_ParameterChanged(object sender, Parameter parameter)
@@ -115,6 +113,11 @@ namespace DeviceInfo
             }
 
             DeviceInfoText = infoText;
+        }
+
+        public void Dispose()
+        {
+            _device.Dispose();
         }
     }
 }

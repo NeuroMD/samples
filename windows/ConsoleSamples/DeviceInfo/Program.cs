@@ -60,12 +60,19 @@ namespace DeviceInfo
 
                 Console.WriteLine($"Found device {deviceName} [{deviceAddress}], state: {deviceState}");
 
-                device.Connect();
-                while (device.ReadParam<DeviceState>(Parameter.State) != DeviceState.Connected)
+                try
                 {
+                    device.Connect();
+                    while (device.ReadParam<DeviceState>(Parameter.State) != DeviceState.Connected)
+                    {
+                    }
+                    ShowDeviceFeatures(device);
+                    device.Disconnect();
                 }
-
-                device.Disconnect();
+                catch (Exception e)
+                {
+                    Console.Write(e.Message);
+                }
             }
         }
     }

@@ -54,19 +54,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="net-neurosdk-x64">
-      <HintPath>$(NEUROSDK)\windows\x64\net-neurosdk-x64.dll</HintPath>
+      <HintPath>$(NEUROSDK_64)\net-neurosdk-x64.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Include="net-neurosdk-x64d">
-      <HintPath>$(NEUROSDK)\windows\x64\net-neurosdk-x64d.dll</HintPath>
+      <HintPath>$(NEUROSDK_64)\net-neurosdk-x64d.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Include="net-neurosdk-AnyCPU">
-      <HintPath>$(NEUROSDK)\windows\x86\net-neurosdk-AnyCPU.dll</HintPath>
+      <HintPath>$(NEUROSDK_86)\net-neurosdk-AnyCPU.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" Include="net-neurosdk-AnyCPUd">
-      <HintPath>$(NEUROSDK)\windows\x86\net-neurosdk-AnyCPUd.dll</HintPath>
+      <HintPath>$(NEUROSDK_86)\net-neurosdk-AnyCPUd.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

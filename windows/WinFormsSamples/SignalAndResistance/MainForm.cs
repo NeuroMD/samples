@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Neuro;
@@ -17,30 +18,14 @@ namespace SignalAndResistance
             _deviceModel = new DeviceModel();
             _deviceModel.DeviceFound += _deviceModel_DeviceFound;
             _deviceModel.DeviceLost += _deviceModel_DeviceLost;
-            _deviceModel.SearchStateChanged += _deviceModel_SearchStateChanged;
             _deviceModel.Reconnect();
-        }
-
-        private void _deviceModel_SearchStateChanged(object sender, bool isScanning)
-        {
-            if (isScanning)
-            {
-                Invoke((MethodInvoker) delegate
-                {
-                    _deviceLabel.Text = @"Waiting for device...";
-                });
-            }
-            else
-            {
-                Invoke((MethodInvoker) delegate
-                {
-                    _deviceLabel.Text = _deviceModel.Device == null ? @"No device" : _deviceModel.Device.ReadParam<string>(Parameter.Name);
-                });
-            }
         }
 
         private void _deviceModel_DeviceLost(object sender, System.EventArgs e)
         {
+            if (!IsHandleCreated)
+                return;
+
             Invoke((MethodInvoker) delegate
             {
                 _startSignalButton.Enabled = false;
@@ -119,6 +104,11 @@ namespace SignalAndResistance
         private void _channelComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             _signalViewController.SetChannel(_channelComboBox.SelectedItem as ChannelAdapter<double>);
+        }
+
+        private void MainForm_Closing(object sender, CancelEventArgs e)
+        {
+            _deviceModel?.Dispose();
         }
     }
 }
