@@ -1,24 +1,26 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Indices;
 using SignalView;
 
-namespace SignalAndResistance
+namespace Indices
 {
     class SignalViewController
     {
         private readonly Control _invocationContext;
         private readonly SignalChart _signalChart;
-        private readonly ToolStripLabel _durationLabel;
-        private ChannelAdapter<double> _channel;
+        private readonly Label _durationLabel;
+        private DoubleSignalChannelWrap _channel;
 
-        public SignalViewController(Control invocationContext, SignalChart signalView, ToolStripLabel durationLabel)
+        public SignalViewController(Control invocationContext, SignalChart signalView, Label durationLabel)
         {
             _invocationContext = invocationContext;
             _signalChart = signalView;
             _durationLabel = durationLabel;
         }
 
-        public void SetChannel(ChannelAdapter<double> channel)
+        public void SetChannel(DoubleSignalChannelWrap channel)
         {
             if (_channel != null)
             {
@@ -28,7 +30,8 @@ namespace SignalAndResistance
             if (_channel != null)
             {
                 _channel.LengthChanged += OnLengthChanged;
-                SetDuration(_channel.Length);
+                SetDuration(_channel.TotalLength / _channel.SamplingFrequency);
+                SetChannelData(ReadLastData(_signalChart.SamplesOnScreen), _channel.SamplingFrequency, _channel.TotalLength);
             }
             else
             {
@@ -52,15 +55,29 @@ namespace SignalAndResistance
         {
             try
             {
-                _invocationContext.Invoke((MethodInvoker) delegate
-                {
-                    _signalChart.DrawSignal(data, data.Length, data.Length, channelLength, (int) samplingFrequency,
-                        new[] {_channel.ToString()});
+                Task.Run(() => {
+                    _invocationContext.Invoke((MethodInvoker)delegate
+                    {
+                        _signalChart.DrawSignal(data, data.Length, data.Length, channelLength, (int)samplingFrequency,
+                            new[] { _channel.ToString() });
+                    });
                 });
+                
             }
             catch (Exception)
             {
             }
+        }
+
+        private double[] ReadLastData(int length)
+        {
+            var offset = _channel.TotalLength - length;
+            if (offset < 0)
+            {
+                offset = 0;
+                length = _channel.TotalLength;
+            }
+            return _channel.ReadData(offset, length);
         }
 
         private void OnLengthChanged(object sender, int length)
@@ -68,7 +85,7 @@ namespace SignalAndResistance
             if (_channel == null) return;
 
             SetDuration(length / _channel.SamplingFrequency);
-            SetChannelData(_channel.ReadLastData(_signalChart.SamplesOnScreen), _channel.SamplingFrequency, length);
+            SetChannelData(ReadLastData(_signalChart.SamplesOnScreen), _channel.SamplingFrequency, length);
         }
     }
 }

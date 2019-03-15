@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using Neuro;
 
-namespace Biofeedback.Spectrum
+namespace Indices.Spectrum
 {
   public class EEGRhythm
     {

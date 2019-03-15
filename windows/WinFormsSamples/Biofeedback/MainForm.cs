@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using Biofeedback.Spectrum;
+using Indices.Spectrum;
 using Neuro;
 
-namespace Biofeedback
+namespace Indices
 {
     public partial class MainForm : Form
     {
         private readonly DeviceModel _deviceModel;
         private readonly Timer _timer = new Timer();
         private SpectrumChartController _spectrumChartController;
-
+        private readonly SpectrumModel _spectrumModel = new SpectrumModel();
+        private readonly SignalViewController _signalViewController;
+        private readonly IList<EmulationChannel> _emulChannels = new List<EmulationChannel>();
+        
         public MainForm()
         {
             InitializeComponent();
@@ -22,10 +26,21 @@ namespace Biofeedback
             _timer.Interval = 20;
             _timer.Tick += _timer_Tick;
             _timer.Start();
+            _filtersListBox.Items.AddRange(Enum.GetValues(typeof(Filter)).OfType<object>().ToArray());
             _deviceModel = new DeviceModel();
-            _deviceModel.DeviceFound += _deviceModel_DeviceFound;
-            _deviceModel.DeviceLost += _deviceModel_DeviceLost;
-            _deviceModel.Reconnect();
+            _deviceModel.DeviceListChanged += _deviceModel_DeviceListChanged;
+            _deviceModel.ChannelListChanged += _deviceModel_ChannelListChanged;
+            _spectrumChartController = new SpectrumChartController(_spectrumChart, _timeTrackBar, _scaleTrackBar, _spectrumModel, _spectrumAmplitudeLabel, _spectrumTimeLabel);
+            _signalViewController = new SignalViewController(this, _signalChart, _durationLabek);
+        }
+
+        private void _deviceModel_ChannelListChanged(object sender, EventArgs e)
+        {
+            var channels = CreateChannels(_deviceModel.DeviceChannels);
+            BeginInvoke((MethodInvoker)delegate
+            {
+                _channelsListBox.Items.AddRange(channels.ToArray());
+            });
         }
 
         private void _timer_Tick(object sender, EventArgs e)
@@ -33,44 +48,42 @@ namespace Biofeedback
             _spectrumChartController?.Redraw();
         }
 
-        private void _deviceModel_DeviceLost(object sender, System.EventArgs e)
+        private void _deviceModel_DeviceListChanged(object sender, EventArgs args)
         {
-            Invoke((MethodInvoker)delegate
+            var devices = _deviceModel.Devices;
+            BeginInvoke((MethodInvoker)delegate
             {
-                _spectrumChartController = null;
-                _indicesListView.Items.Clear();
-                _startSignalButton.Enabled = false;
-                _stopButton.Enabled = false;
+                _deviceListBox.Items.Clear();
+                _deviceListBox.Items.AddRange(devices.Select(x=>new DeviceWrapper(x)).ToArray());
             });
         }
 
-        private void _deviceModel_DeviceFound(object sender, Device device)
+        private IList<DoubleSignalChannelWrap> CreateChannels(IList<IDataChannel<double>> rawChannels)
         {
-            if (device == null) return;
-
-            var channels = CreateChannels(device);
-            _spectrumChartController = new SpectrumChartController(_spectrumChart, _timeTrackBar, _scaleTrackBar, new SpectrumModel(CreateSpectrumChannels(channels)));
-            Invoke((MethodInvoker)delegate
+            var channels = new List<IDataChannel<double>>();
+            var filters = GetSelectedFilters();
+            foreach (var dataChannel in rawChannels)
             {
-                _indicesListView.Items.Clear();
-                _deviceLabel.Text = device.ReadParam<string>(Parameter.Name);
-                _startSignalButton.Enabled = DeviceTraits.HasChannelsWithType(device, ChannelType.Signal);
-                _stopButton.Enabled = _startSignalButton.Enabled;
-                _channelsListBox.Items.AddRange(channels.ToArray());
-            });
-        }
-
-        private static IList<DoubleSignalChannelWrap> CreateChannels(Device device)
-        {
-            var channels = DeviceTraits.GetChannelsWithType(device, ChannelType.Signal)
-                .Select(channelInfo => new EegChannel(device, channelInfo))
-                .Cast<IDataChannel<double>>()
-                .ToList();
-
+                if (filters.Length > 0)
+                {
+                    
+                    channels.Add(dataChannel);
+                }
+                else
+                {
+                    channels.Add(new FilteredChannel(dataChannel, filters));
+                }
+            }
+            
             var channelAdapters = new List<DoubleSignalChannelWrap>();
+            var name = "";
+            if (filters.Length > 0)
+            {
+                name = '\n' + filters.Select(x => x.ToString()).Aggregate((a, b) => a + '\n' + b);
+            }
             foreach (var signalChannel in channels)
             {
-                channelAdapters.Add(new DoubleSignalChannelWrap(signalChannel));
+                channelAdapters.Add(new DoubleSignalChannelWrap(signalChannel, signalChannel.Info.Name+name));
             }
             for (var i = 0; i < channels.Count - 1; ++i)
             {
@@ -83,16 +96,15 @@ namespace Biofeedback
             return channelAdapters;
         }
 
-        private static IList<SpectrumChannel> CreateSpectrumChannels(IList<DoubleSignalChannelWrap> channels)
-        {
-            return channels.Select(x => new SpectrumChannel(x)).ToList();
-        }
-
         private void _startSignalButton_Click(object sender, System.EventArgs e)
         {
             try
             {
-                _deviceModel.Device?.Execute(Command.StartSignal);
+                _deviceModel.StartSignal();
+                foreach (var emulChannel in _emulChannels)
+                {
+                    emulChannel.StartTimer();
+                }
             }
             catch (Exception exc)
             {
@@ -105,18 +117,17 @@ namespace Biofeedback
         {
             try
             {
-                _deviceModel.Device?.Execute(Command.StopSignal);
+                _deviceModel.StopSignal();
+                foreach (var emulChannel in _emulChannels)
+                {
+                    emulChannel.StopTimer();
+                }
             }
             catch (Exception exc)
             {
                 MessageBox.Show($"Cannot stop signal receiving: {exc.Message}", "Stop signal", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
-        }
-
-        private void _reconnectButton_Click(object sender, System.EventArgs e)
-        {
-            _deviceModel.Reconnect();
         }
 
         private void _customIndexRadio_CheckedChanged(object sender, System.EventArgs e)
@@ -214,10 +225,9 @@ namespace Biofeedback
                 return;
             }
 
-            var index = new EegIndex {Name = _indexNameTextBox.Text, FrequencyBottom = startFreq, FrequencyTop = stopFreq};
             var checkedChannels = _channelsListBox.CheckedItems.OfType<DoubleSignalChannelWrap>().ToList();
-            var indexChannel = new EegIndexChannel(index, checkedChannels, window, overlap);
-            _indicesListView.Items.Add(new IndexListItem(this, indexChannel, index, checkedChannels.Select(x=>x.ToString()), window, overlap));
+            var spectrumPowerChannel = new SpectrumPowerChannel(checkedChannels.Select(x => new SpectrumChannel(x)), startFreq, stopFreq, _indexNameTextBox.Text, window, overlap);
+            _indicesListView.Items.Add(new IndexListItem(this, spectrumPowerChannel, checkedChannels.Select(x=>x.ToString()), startFreq, stopFreq, window, overlap));
         }
 
         private void _removeIndexButton_Click(object sender, System.EventArgs e)
@@ -226,6 +236,75 @@ namespace Biofeedback
             foreach (ListViewItem selectedIndex in selectedIndices)
             {
                 _indicesListView.Items.Remove(selectedIndex);
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _deviceModel.Dispose();
+        }
+
+        private Filter[] GetSelectedFilters()
+        {
+            return _filtersListBox.CheckedItems.OfType<Filter>().ToArray();
+        }
+
+        private void _addEmulatorButton_Click(object sender, EventArgs e)
+        {
+            var componentStrings = _emulationParamsBox.Text.Split(';');
+            var components = new List<EmulationSine>();
+            foreach (var componentString in componentStrings)
+            {
+                var amplAndFreqStrings = componentString.Split('/');
+                if (amplAndFreqStrings.Length != 2)
+                {
+                    MessageBox.Show("Wrong parameters string", "Emulation params string", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                try
+                {
+                    var amplitudeUv = double.Parse(amplAndFreqStrings[0], NumberStyles.Number) * 1e-6;
+                    var frequencyHz = double.Parse(amplAndFreqStrings[1], NumberStyles.Number);
+                    components.Add(new EmulationSine { AmplitudeV = amplitudeUv, FrequencyHz = frequencyHz, PhaseShiftRad = 0});
+                }
+                catch
+                {
+                    MessageBox.Show("Wrong parameters string", "Emulation params string", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+            }
+            
+            var emulChannel = new EmulationChannel(components, 250, 1250);
+            var filters = GetSelectedFilters();
+            var name = _emulationParamsBox.Text;
+            _emulChannels.Add(emulChannel);
+            if (filters.Length > 0)
+            {
+                name += '\n';
+                name += filters.Select(x => x.ToString()).Aggregate((a, b) => a + '\n' + b);
+                _channelsListBox.Items.Add(new DoubleSignalChannelWrap(new FilteredChannel(emulChannel, filters), name));
+            }
+            else
+            {
+                _channelsListBox.Items.Add(new DoubleSignalChannelWrap(emulChannel, name));
+            }
+        }
+
+        private void _channelsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_channelsListBox.SelectedItem is DoubleSignalChannelWrap channel)
+            {
+                _signalViewController.SetChannel(channel);
+                _spectrumModel.SetChannels(new SpectrumChannel(channel));
+            }
+        }
+
+        private void _addDeviceButton_Click(object sender, EventArgs e)
+        {
+            if (_deviceListBox.SelectedItem is DeviceWrapper deviceInfo)
+            {
+                _deviceModel.SelectDevice(deviceInfo);
             }
         }
     }

@@ -1,34 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Neuro;
 
-namespace Biofeedback.Spectrum
+namespace Indices.Spectrum
 {
     class SpectrumModel
     {
-        private readonly IList<SpectrumChannel> _spectrumChannels;
+        private SpectrumChannel _spectrumChannel;
 
-        public double FrequencyStep => _spectrumChannels.Select(x => x.HzPerSpectrumSample).First();
-        public float SamplingFrequency => _spectrumChannels.Select(x => x.SamplingFrequency).First();
+        public double FrequencyStep => _spectrumChannel?.HzPerSpectrumSample ?? 1;
+        public float SamplingFrequency => _spectrumChannel?.SamplingFrequency ?? 250;
         public double WindowDuration { get; set; }
-        public IList<Spectrum> Spectrums { get; private set; }
+        public Spectrum Spectrum { get; private set; }
         private readonly Action _calculationTask;
         private bool _stopTask = false;
 
-        public SpectrumModel(IList<SpectrumChannel> channels)
+        public SpectrumModel()
         {
-            Spectrums = new List<Spectrum>();
-            _spectrumChannels = channels;
+            WindowDuration = 8;
+            Spectrum = new Spectrum("", new double[256]);
             _calculationTask = ()=>
             {
                 try
                 {
-                    CalculateSpectrums();
+                    CalculateSpectrum();
                 }
                 catch (Exception e) { Console.WriteLine(e.Message);}
 
+                if (!_stopTask) Thread.Sleep(50);
                 if (!_stopTask) Task.Run(_calculationTask);
             };
             Task.Run(_calculationTask);
@@ -39,25 +41,26 @@ namespace Biofeedback.Spectrum
             _stopTask = true;
         }
 
-        private void CalculateSpectrums()
+        public void SetChannels(SpectrumChannel channel)
         {
-            var spectrums = new List<Spectrum>();
+            _spectrumChannel = channel;
+        }
+
+        private void CalculateSpectrum()
+        {
+            if (_spectrumChannel == null) return;
             var readLength = (int) (SamplingFrequency * WindowDuration);
             if (readLength <= 0)
                 return;
-            foreach (var spectrumChannel in _spectrumChannels)
-            {
-                var offset = spectrumChannel.TotalLength - readLength;
+   
+                var offset = _spectrumChannel.TotalLength - readLength;
                 if (offset < 0)
                 {
                     offset = 0;
-                    readLength = spectrumChannel.TotalLength;
+                    readLength = _spectrumChannel.TotalLength;
                 }
-                spectrums.Add(new Spectrum(spectrumChannel.Info.Name,
-                    spectrumChannel.ReadData(offset, readLength)));
-            }
-
-            Spectrums = spectrums;
+            Spectrum = new Spectrum(_spectrumChannel.Info.Name,
+                _spectrumChannel.ReadData(offset, readLength));
         }
     }
 }

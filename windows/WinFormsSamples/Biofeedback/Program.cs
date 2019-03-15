@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Biofeedback
+namespace Indices
 {
     static class Program
     {

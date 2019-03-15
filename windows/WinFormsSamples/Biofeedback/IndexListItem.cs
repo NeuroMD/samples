@@ -3,28 +3,28 @@ using System.Linq;
 using System.Windows.Forms;
 using Neuro;
 
-namespace Biofeedback
+namespace Indices
 {
     class IndexListItem : ListViewItem
     {
-        private readonly EegIndexChannel _indexChannel;
+        private readonly SpectrumPowerChannel _spectrumPowerChannel;
         private readonly Control _context;
 
-        public IndexListItem(Control context, EegIndexChannel indexChannel, EegIndex index, IEnumerable<string> channels, double window, double overlap)
+        public IndexListItem(Control context, SpectrumPowerChannel spectrumPowerChannel, IEnumerable<string> channels, float lowFreq, float highFreq, double window, double overlap)
         {
             _context = context;
-            Text = index.Name;
+            Text = spectrumPowerChannel.Info.Name;
             SubItems.Add(channels.Aggregate("", (current, chan) => current + chan + " "));
-            SubItems.Add($"{index.FrequencyBottom} - {index.FrequencyTop} Hz");
+            SubItems.Add($"{lowFreq} - {highFreq} Hz");
             SubItems.Add($"{window}/{overlap}");
             SubItems.Add("0.0");
-            _indexChannel = indexChannel;
-            _indexChannel.LengthChanged += _indexChannel_LengthChanged;
+            _spectrumPowerChannel = spectrumPowerChannel;
+            _spectrumPowerChannel.LengthChanged += SpectrumPowerChannelLengthChanged;
         }
 
-        private void _indexChannel_LengthChanged(object sender, int length)
+        private void SpectrumPowerChannelLengthChanged(object sender, int length)
         {
-            var newIndexValue = _indexChannel.ReadData(length - 1, 1)[0];
+            var newIndexValue = _spectrumPowerChannel.ReadData(length - 1, 1)[0];
             _context.Invoke((MethodInvoker)delegate
             {
                 SubItems[4].Text = (newIndexValue * 1000).ToString("F4");

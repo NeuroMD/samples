@@ -1,4 +1,4 @@
-﻿namespace Biofeedback.Spectrum
+﻿namespace Indices.Spectrum
 {
     public class Spectrum
     {

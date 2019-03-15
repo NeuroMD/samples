@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signal", "SignalAndResistan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalView", "SignalView\SignalView.csproj", "{9C76705A-F52A-40E6-9F28-7CABCFB2A864}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biofeedback", "Biofeedback\Biofeedback.csproj", "{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Indices", "Biofeedback\Indices.csproj", "{AF33FD4B-FB5E-4C9F-A937-567D904EAD65}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceInfo", "DeviceInfo\DeviceInfo.csproj", "{B63C55A6-590B-45B4-8575-89F418DF1B07}"
 EndProject

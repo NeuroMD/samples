@@ -1,95 +1,79 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Neuro;
 
-namespace Biofeedback
+namespace Indices
 {
     class DeviceModel : IDisposable
     {
         private readonly DeviceEnumerator _enumerator;
+        private readonly IList<IDataChannel<double>> _deviceChannels = new List<IDataChannel<double>>();
+        private Device _currentDevice;
 
-        public Device Device { get; private set; }
-        public event EventHandler<Device> DeviceFound;
-        public event EventHandler DeviceLost;
+        public IList<IDataChannel<double>> DeviceChannels => _deviceChannels;
+        public IList<DeviceInfo> Devices => _enumerator.Devices;
+        public event EventHandler DeviceListChanged;
+        public event EventHandler ChannelListChanged;
 
         public DeviceModel()
         {
             _enumerator = new DeviceEnumerator(DeviceType.Any);
-            _enumerator.DeviceListChanged += _enumerator_DeviceListChanged;
+            _enumerator.DeviceListChanged += (sender, args) =>{ DeviceListChanged?.Invoke(this, null);};
         }
 
-        private void _enumerator_DeviceListChanged(object sender, EventArgs e)
+        public void SelectDevice(DeviceInfo deviceInfo)
         {
-            var devices = _enumerator.Devices;
-            if (devices.Count > 0)
+            _currentDevice?.Dispose();
+            _deviceChannels.Clear();
+            ChannelListChanged?.Invoke(this, null);
+            _currentDevice = new Device(deviceInfo);
+            _currentDevice.Connect();
+            if (_currentDevice.ReadParam<DeviceState>(Parameter.State) != DeviceState.Connected)
             {
-                OnDeviceFound(devices[0]);
-            }
-        }
-
-        public void Reconnect()
-        {
-            if (Device != null)
-            {
-                DeviceLost?.Invoke(this, null);
-                Device.ParameterChanged -= OnDeviceParamChanged;
-                try
+                _currentDevice.ParameterChanged += (sender, parameter) =>
                 {
-                    Device.Execute(Command.StopSignal);
-                    Device.Disconnect();
-                }
-                catch { }
-                Device.Dispose();
-                Device = null;
-            }
-        }
-
-        private void OnDeviceStateChanged(DeviceState state)
-        {
-            if (state == DeviceState.Connected)
-            {
-                DeviceFound?.Invoke(this, Device);
+                    if (parameter == Parameter.State)
+                    {
+                        if (_currentDevice.ReadParam<DeviceState>(Parameter.State) == DeviceState.Connected)
+                        {
+                            OnDeviceConnected();
+                        }
+                    }
+                };
             }
             else
             {
-                DeviceLost?.Invoke(this, null);
+                OnDeviceConnected();
             }
         }
 
-        private void OnDeviceParamChanged(object sender, Parameter parameter)
-        {
-            if (parameter == Parameter.State)
+        private void OnDeviceConnected(){
+            var deviceChannels = _currentDevice.Channels;
+            foreach (var deviceChannel in deviceChannels)
             {
-                var state = Device.ReadParam<DeviceState>(Parameter.State);
-                OnDeviceStateChanged(state);
+                if (deviceChannel.Type == ChannelType.Signal)
+                {
+                    _deviceChannels.Add(new SignalChannel(_currentDevice, deviceChannel));
+                }
             }
-        }
-
-        private void OnDeviceFound(DeviceInfo deviceInfo)
-        {
-            if (Device != null)
-            {
-                return;
-            }
-
-            Device = new Device(deviceInfo);
-            Device.ParameterChanged += OnDeviceParamChanged;
-            Device.Connect();
+            ChannelListChanged?.Invoke(this, null);
         }
 
         public void Dispose()
         {
             _enumerator?.Dispose();
-            if (Device != null)
-            {
-                Device.ParameterChanged -= OnDeviceParamChanged;
-                try
-                {
-                    Device.Execute(Command.StopSignal);
-                    Device.Disconnect();
-                }
-                catch { }
-                Device.Dispose();
-            }
+            _currentDevice?.Dispose();
+        }
+
+        public void StartSignal()
+        {
+            _currentDevice?.Execute(Command.StartSignal);
+        }
+
+        public void StopSignal()
+        {
+            _currentDevice?.Execute(Command.StopSignal);
         }
     }
 }

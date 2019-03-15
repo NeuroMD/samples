@@ -186,10 +186,15 @@ namespace SignalView
 			inputIndex = index;
 
 			inputMessage = message;
-			
-			//после передачи - перерисовать
-			RedrawScreen(grafx.Graphics);	
-			this.Refresh();
+
+            //после передачи - перерисовать
+            try
+            {
+                RedrawScreen(grafx.Graphics);
+            }
+            catch { }
+
+            this.Refresh();
 		}
 
 

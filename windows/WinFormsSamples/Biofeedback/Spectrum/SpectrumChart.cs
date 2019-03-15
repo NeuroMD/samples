@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using Neuro;
 
-namespace Biofeedback.Spectrum
+namespace Indices.Spectrum
 {
 	public class SpectrumChart : UserControl
 	{
@@ -100,7 +100,8 @@ namespace Biofeedback.Spectrum
 			    new EEGRhythm(EegStandardIndices.Delta, Color.IndianRed, "δ"),
 			    new EEGRhythm(EegStandardIndices.Theta, Color.Orange, "θ"),
 			    new EEGRhythm(EegStandardIndices.Alpha, Color.DodgerBlue, "α"),
-			    new EEGRhythm(EegStandardIndices.Beta, Color.DarkOliveGreen, "β")
+			    new EEGRhythm(EegStandardIndices.Beta, Color.DarkOliveGreen, "β"),
+                new EEGRhythm(new EegIndex(){FrequencyBottom = 34, FrequencyTop = 80, Name = "Gamma"}, Color.DarkRed, "γ")
             };
 			_sigScale = 100;
 			// создаем кисти для ритмов
@@ -151,7 +152,7 @@ namespace Biofeedback.Spectrum
             _screen = _screenBg.Graphics;
 		}
 
-		public void DrawSpectrumList(IList<Spectrum> spectrumData)
+		public void DrawSpectrum(Spectrum spectrum)
 		{
 			if (_screenBg == null)
 				RecreateBuffers();
@@ -170,7 +171,7 @@ namespace Biofeedback.Spectrum
 	        do
 	        {
 	            columns++;
-	            chHeight = (double) (Height - HRulerHeight)/spectrumData.Count*columns;
+	            chHeight = (double) (Height - HRulerHeight);
 	            chWidth = (double) (Width)/columns - VRulerWidth;
 	        } while (((double) chWidth/chHeight) > 4);
 
@@ -203,8 +204,6 @@ namespace Biofeedback.Spectrum
 	        }
 
 	        int ch = 0;
-	        foreach (var spectrum in spectrumData)
-	        {
 	            int index = lowFreqIndex;
 
 	            rect.X = (float) ((ch%columns)*(chWidth + VRulerWidth) + VRulerWidth);
@@ -270,7 +269,7 @@ namespace Biofeedback.Spectrum
 	            }
 
 	            ch++;
-	        }
+	        
 
 
 	        //------------------------------------------
