@@ -27,7 +27,7 @@ namespace Indices
             var newIndexValue = _spectrumPowerChannel.ReadData(length - 1, 1)[0];
             _context.Invoke((MethodInvoker)delegate
             {
-                SubItems[4].Text = (newIndexValue * 1000).ToString("F4");
+                SubItems[4].Text = (newIndexValue * 1e6).ToString("F4");
             });
         }
     }

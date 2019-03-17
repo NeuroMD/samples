@@ -30,7 +30,9 @@ namespace Indices
             _deviceModel = new DeviceModel();
             _deviceModel.DeviceListChanged += _deviceModel_DeviceListChanged;
             _deviceModel.ChannelListChanged += _deviceModel_ChannelListChanged;
-            _spectrumChartController = new SpectrumChartController(_spectrumChart, _timeTrackBar, _scaleTrackBar, _spectrumModel, _spectrumAmplitudeLabel, _spectrumTimeLabel);
+            _spectrumChartController = new SpectrumChartController(_spectrumChart, _timeTrackBar, _scaleTrackBar, _spectrumModel, _spectrumAmplitudeLabel, _spectrumTimeLabel, 
+                _lowFreqTrackBar, _highFreqTrackBar, _lowFreqLabel, _highFreqLabel, _wattLabel,
+                _rectangularWindowRadio, _sineWindowRadio, _hammingWindowRadio, _blackmanWindowRadio);
             _signalViewController = new SignalViewController(this, _signalChart, _durationLabek);
         }
 
@@ -67,11 +69,11 @@ namespace Indices
                 if (filters.Length > 0)
                 {
                     
-                    channels.Add(dataChannel);
+                    channels.Add(new FilteredChannel(dataChannel, filters));
                 }
                 else
                 {
-                    channels.Add(new FilteredChannel(dataChannel, filters));
+                    channels.Add(dataChannel);
                 }
             }
             

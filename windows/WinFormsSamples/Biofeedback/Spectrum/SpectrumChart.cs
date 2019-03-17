@@ -44,7 +44,7 @@ namespace Indices.Spectrum
 		Font rulerFont = new Font("Tahoma", 9, FontStyle.Regular, GraphicsUnit.Pixel);
 		Pen rulerPenThin = new Pen(Color.Black, 1);
 		Pen rulerPenThick = new Pen(Color.Black, 2);
-		Pen gridPen = new Pen(Color.DimGray, 1);
+		Pen gridPen = new Pen(Color.Gray, 1);
 		Pen[] rhythmPen;
 
 		private bool disposed = false;
@@ -117,8 +117,8 @@ namespace Indices.Spectrum
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, false);
 			
 			
-			gridPen.DashPattern = new float[] { 4.0F, 6.0F };
-			gridPen.DashStyle = DashStyle.Custom;
+			//gridPen.DashPattern = new float[] { 4.0F, 6.0F };
+			gridPen.DashStyle = DashStyle.Dot;
             Resize += SpectrumChart_Resize;
 		}
 
@@ -151,6 +151,14 @@ namespace Indices.Spectrum
 			_screenBg = _screenContext.Allocate(CreateGraphics(), new Rectangle(0, 0, Width, Height));
             _screen = _screenBg.Graphics;
 		}
+
+        private float _lowMarker = 8f;
+        private float _highMarker = 14f;
+        public void SetFreqMarkers(float low, float high)
+        {
+            _lowMarker = low;
+            _highMarker = high;
+        }
 
 		public void DrawSpectrum(Spectrum spectrum)
 		{
@@ -255,12 +263,12 @@ namespace Indices.Spectrum
 	            // короткие черточки и подписи
 	            double sc = 0;
 	            Y = rect.Bottom;
-	            for (int ry = 0; ry < 3; ry++)
+	            for (int ry = 0; ry < 9; ry++)
 	            {
-	                Y = Y - (float) (chHeight/4);
-	                sc = sc + _sigScale/4;
+	                Y = Y - (float) (chHeight/10);
+	                sc = sc + _sigScale/10;
 
-	                //screen.DrawLine(gridPen, rect.X, Y, (float)(rect.X + chWidth), Y);
+	                _screen.DrawLine(gridPen, rect.X, Y, (float)(rect.X + chWidth), Y);
 	                _screen.DrawLine(rulerPenThin, rect.X, Y, rect.X - 4, Y);
 	                textSize = _screen.MeasureString(sc.ToString(), rulerFont);
 	                //if (sc != scaleString)
@@ -277,10 +285,9 @@ namespace Indices.Spectrum
 	        // у каждого столбца своя линейка
 	        _screen.FillRectangle(rulerBrush, 0, Height - HRulerHeight, Width, HRulerHeight);
 	        //StringFormat sfv = new StringFormat(StringFormatFlags.DirectionVertical);
-	        for (int col = 0; col < columns; col++)
-	        {
+
 	            int freq = 0;
-	            X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth);
+	            X = (float) (VRulerWidth);
 	            Y = Height - HRulerHeight;
 	            _screen.DrawLine(rulerPenThin, X, Y, (float) (X + chWidth), Y);
 	            // длинные линии и надписи рядом с ними
@@ -298,7 +305,7 @@ namespace Indices.Spectrum
 
 	            // короткие линии
 	            freq = 0;
-	            X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth);
+	            X = (float) (VRulerWidth);
 	            do
 	            {
 	                _screen.DrawLine(rulerPenThin, X, Y, X, Y + 4);
@@ -306,8 +313,15 @@ namespace Indices.Spectrum
 	                X += (float) (pixelsPerHz);
 	            } while (freq < highFreq);
 
-	            // Герцы
-	            X = (float) (col*(chWidth + VRulerWidth));
+                //маркеры
+                var lowMarkerX = VRulerWidth + _lowMarker / highFreq * chWidth;
+                _screen.DrawLine(rulerPenThin, (float)lowMarkerX, 0, (float)lowMarkerX, Height - HRulerHeight);
+
+                var highMarkerX = VRulerWidth + _highMarker / highFreq * chWidth;
+                _screen.DrawLine(rulerPenThin, (float)highMarkerX, 0, (float)highMarkerX, Height - HRulerHeight);
+
+            // Герцы
+            X = (float) (0);
 	            textSize = _screen.MeasureString("Hz", nameFont);
 	            _screen.DrawString("Hz", dimensionFont, nameBrush, X + 6, Y + 15);
 
@@ -320,7 +334,7 @@ namespace Indices.Spectrum
 	            _screen.ResetTransform();
 
 	            // рисуем ритмы
-	            X = (float) (col*(chWidth + VRulerWidth) + VRulerWidth);
+	            X = (float) (VRulerWidth);
 	            rect.Y = Y + 22;
 	            rect.Height = 16;
 	            for (int i = 0; i < rhythmList.Count; i++)
@@ -330,7 +344,7 @@ namespace Indices.Spectrum
 	                _screen.FillRectangle(rhythmBrush[i], rect);
 	                _screen.DrawString(rhythmList[i].Symbol, nameFont, nameBrush, rect, sf);
 	            }
-	        }
+	        
 		    _screenBg.Render(Graphics.FromHwnd(Handle));
         }
 
