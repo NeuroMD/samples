@@ -277,7 +277,7 @@ namespace Indices
                 }
             }
             
-            var emulChannel = new EmulationChannel(components, 250, 1250);
+            var emulChannel = new EmulationChannel(components, 250, 2000);
             var filters = GetSelectedFilters();
             var name = _emulationParamsBox.Text;
             _emulChannels.Add(emulChannel);

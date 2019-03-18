@@ -92,10 +92,10 @@ namespace Indices
             this._highFreqLabel = new System.Windows.Forms.Label();
             this._spectrumChart = new Indices.Spectrum.SpectrumChart();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this._rectangularWindowRadio = new System.Windows.Forms.RadioButton();
-            this._sineWindowRadio = new System.Windows.Forms.RadioButton();
-            this._hammingWindowRadio = new System.Windows.Forms.RadioButton();
             this._blackmanWindowRadio = new System.Windows.Forms.RadioButton();
+            this._hammingWindowRadio = new System.Windows.Forms.RadioButton();
+            this._sineWindowRadio = new System.Windows.Forms.RadioButton();
+            this._rectangularWindowRadio = new System.Windows.Forms.RadioButton();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._scaleTrackBar)).BeginInit();
@@ -408,7 +408,7 @@ namespace Indices
             this._durationLabek.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this._durationLabek.AutoSize = true;
-            this._durationLabek.Location = new System.Drawing.Point(869, 868);
+            this._durationLabek.Location = new System.Drawing.Point(991, 872);
             this._durationLabek.Name = "_durationLabek";
             this._durationLabek.Size = new System.Drawing.Size(13, 13);
             this._durationLabek.TabIndex = 14;
@@ -664,27 +664,15 @@ namespace Indices
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Window type";
             // 
-            // _rectangularWindowRadio
+            // _blackmanWindowRadio
             // 
-            this._rectangularWindowRadio.AutoSize = true;
-            this._rectangularWindowRadio.Checked = true;
-            this._rectangularWindowRadio.Location = new System.Drawing.Point(7, 20);
-            this._rectangularWindowRadio.Name = "_rectangularWindowRadio";
-            this._rectangularWindowRadio.Size = new System.Drawing.Size(83, 17);
-            this._rectangularWindowRadio.TabIndex = 0;
-            this._rectangularWindowRadio.TabStop = true;
-            this._rectangularWindowRadio.Text = "Rectangular";
-            this._rectangularWindowRadio.UseVisualStyleBackColor = true;
-            // 
-            // _sineWindowRadio
-            // 
-            this._sineWindowRadio.AutoSize = true;
-            this._sineWindowRadio.Location = new System.Drawing.Point(97, 20);
-            this._sineWindowRadio.Name = "_sineWindowRadio";
-            this._sineWindowRadio.Size = new System.Drawing.Size(46, 17);
-            this._sineWindowRadio.TabIndex = 1;
-            this._sineWindowRadio.Text = "Sine";
-            this._sineWindowRadio.UseVisualStyleBackColor = true;
+            this._blackmanWindowRadio.AutoSize = true;
+            this._blackmanWindowRadio.Location = new System.Drawing.Point(226, 20);
+            this._blackmanWindowRadio.Name = "_blackmanWindowRadio";
+            this._blackmanWindowRadio.Size = new System.Drawing.Size(72, 17);
+            this._blackmanWindowRadio.TabIndex = 3;
+            this._blackmanWindowRadio.Text = "Blackman";
+            this._blackmanWindowRadio.UseVisualStyleBackColor = true;
             // 
             // _hammingWindowRadio
             // 
@@ -696,15 +684,27 @@ namespace Indices
             this._hammingWindowRadio.Text = "Hamming";
             this._hammingWindowRadio.UseVisualStyleBackColor = true;
             // 
-            // _blackmanWindowRadio
+            // _sineWindowRadio
             // 
-            this._blackmanWindowRadio.AutoSize = true;
-            this._blackmanWindowRadio.Location = new System.Drawing.Point(226, 20);
-            this._blackmanWindowRadio.Name = "_blackmanWindowRadio";
-            this._blackmanWindowRadio.Size = new System.Drawing.Size(72, 17);
-            this._blackmanWindowRadio.TabIndex = 3;
-            this._blackmanWindowRadio.Text = "Blackman";
-            this._blackmanWindowRadio.UseVisualStyleBackColor = true;
+            this._sineWindowRadio.AutoSize = true;
+            this._sineWindowRadio.Location = new System.Drawing.Point(97, 20);
+            this._sineWindowRadio.Name = "_sineWindowRadio";
+            this._sineWindowRadio.Size = new System.Drawing.Size(46, 17);
+            this._sineWindowRadio.TabIndex = 1;
+            this._sineWindowRadio.Text = "Sine";
+            this._sineWindowRadio.UseVisualStyleBackColor = true;
+            // 
+            // _rectangularWindowRadio
+            // 
+            this._rectangularWindowRadio.AutoSize = true;
+            this._rectangularWindowRadio.Checked = true;
+            this._rectangularWindowRadio.Location = new System.Drawing.Point(7, 20);
+            this._rectangularWindowRadio.Name = "_rectangularWindowRadio";
+            this._rectangularWindowRadio.Size = new System.Drawing.Size(83, 17);
+            this._rectangularWindowRadio.TabIndex = 0;
+            this._rectangularWindowRadio.TabStop = true;
+            this._rectangularWindowRadio.Text = "Rectangular";
+            this._rectangularWindowRadio.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
