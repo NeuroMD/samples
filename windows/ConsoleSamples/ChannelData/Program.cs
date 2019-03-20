@@ -17,7 +17,7 @@ namespace ChannelData
         private static SamplingFrequency Frequency { get; set; }
         private static BatteryChannel _batteryChannel;
         private static Device _device;
-        private static readonly Dictionary<string, SignalChannel> _channels = new Dictionary<string, SignalChannel>();
+        private static readonly Dictionary<string, double> _channels = new Dictionary<string, double>();
 
         static void Main(string[] args)
         {
@@ -76,8 +76,8 @@ namespace ChannelData
             Console.WriteLine("Device connected");
             Frequency = _device.ReadParam<SamplingFrequency>(Parameter.SamplingFrequency);
             Rewrite();
-            _batteryChannel = new BatteryChannel(_device);
-            _batteryChannel.LengthChanged += BatteryChannel_LengthChanged;
+            
+            _device.AddIntChannelDataListener(BatteryChannel_DataReceived, DeviceTraits.GetChannelsWithType(_device, ChannelType.Battery)[0]);
             if (Frequency != SamplingFrequency.Hz250)
             {
                 _device.SetParam(Parameter.SamplingFrequency, SamplingFrequency.Hz250);
@@ -89,21 +89,24 @@ namespace ChannelData
                 if (channelInfo.Type != ChannelType.Signal)
                     continue;
 
-                var signalChannel = new SignalChannel(_device, channelInfo, new[] { Filter.LowPass_30Hz_SF250, Filter.HighPass_2Hz_SF250 });
-                _channels[signalChannel.Info.Name] = signalChannel;
-                signalChannel.LengthChanged += SignalChannel_LengthChanged;
+                _device.AddSignalChannelDataListener(SignalChannel_DataReceived, channelInfo);
+                _channels[channelInfo.Name] = 0.0;
             }
             _device.Execute(Command.StartSignal);
         }
 
-        private static void SignalChannel_LengthChanged(object sender, int length)
+        private static void SignalChannel_DataReceived(object sender, Device.SignalChannelData channelData)
         {
+            lock (lockable)
+            {
+                _channels[channelData.ChannelInfo.Name] = channelData.DataArray[channelData.DataArray.Length - 1];
+            }
             Rewrite();
         }
 
-        private static void BatteryChannel_LengthChanged(object sender, int length)
+        private static void BatteryChannel_DataReceived(object sender, Device.ChannelData<int> batteryData)
         {
-            BatteryLevel = (sender as BatteryChannel)?.ReadData(length - 1, 1)[0] ?? 0;
+            BatteryLevel = batteryData.DataArray[0];
             Rewrite();
         }
 
@@ -115,7 +118,7 @@ namespace ChannelData
                 Console.Write($"{DeviceName} [{DeviceAddress}] State: {ConnectionState} Battery: {BatteryLevel} Frequency: {Frequency}");
                 foreach (var channelName in _channels.Keys)
                 {
-                    Console.Write($" Duration of {channelName}: {_channels[channelName].TotalLength / 250.0:0.00}");
+                    Console.Write($" Value of {channelName}: {_channels[channelName]:0.00000000}");
                 }
             }
             
