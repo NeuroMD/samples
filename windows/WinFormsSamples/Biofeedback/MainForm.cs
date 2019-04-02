@@ -21,7 +21,7 @@ namespace Indices
         {
             InitializeComponent();
             _indicesListView.Items.Clear();
-            SetIndexControls(EegStandardIndices.Alpha);
+            SetIndexControls(8, 14, "Alpha");
             SetIndexControlsEnabled(false);
             _timer.Interval = 20;
             _timer.Tick += _timer_Tick;
@@ -144,7 +144,7 @@ namespace Indices
         {
             if (_alphaRadio.Checked)
             {
-                SetIndexControls(EegStandardIndices.Alpha);
+                SetIndexControls(8, 14, "Alpha");
                 SetIndexControlsEnabled(false);
             }
         }
@@ -153,7 +153,7 @@ namespace Indices
         {
             if (_betaRadio.Checked)
             {
-                SetIndexControls(EegStandardIndices.Beta);
+                SetIndexControls(14, 34, "Beta");
                 SetIndexControlsEnabled(false);
             }
         }
@@ -162,7 +162,7 @@ namespace Indices
         {
             if (_deltaRadio.Checked)
             {
-                SetIndexControls(EegStandardIndices.Delta);
+                SetIndexControls(0.5, 4, "Delta");
                 SetIndexControlsEnabled(false);
             }
         }
@@ -171,7 +171,7 @@ namespace Indices
         {
             if (_thetaRadio.Checked)
             {
-                SetIndexControls(EegStandardIndices.Theta);
+                SetIndexControls(4, 8, "Theta");
                 SetIndexControlsEnabled(false);
             }
         }
@@ -183,11 +183,11 @@ namespace Indices
             _indexNameTextBox.Enabled = isEnabled;
         }
 
-        private void SetIndexControls(EegIndex index)
+        private void SetIndexControls(double lowFrequency, double highFrequency, string name)
         {
-            _startFrequencyTextBox.Text = index.FrequencyBottom.ToString("F4");
-            _stopFrequencyTextBox.Text = index.FrequencyTop.ToString("F4");
-            _indexNameTextBox.Text = index.Name;
+            _startFrequencyTextBox.Text = lowFrequency.ToString("F4");
+            _stopFrequencyTextBox.Text = highFrequency.ToString("F4");
+            _indexNameTextBox.Text = name;
         }
 
         private void _createIndexButton_Click(object sender, System.EventArgs e)

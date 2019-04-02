@@ -97,11 +97,11 @@ namespace Indices.Spectrum
 		{
 			rhythmList = new List<EEGRhythm>
 			{
-			    new EEGRhythm(EegStandardIndices.Delta, Color.IndianRed, "δ"),
-			    new EEGRhythm(EegStandardIndices.Theta, Color.Orange, "θ"),
-			    new EEGRhythm(EegStandardIndices.Alpha, Color.DodgerBlue, "α"),
-			    new EEGRhythm(EegStandardIndices.Beta, Color.DarkOliveGreen, "β"),
-                new EEGRhythm(new EegIndex(){FrequencyBottom = 34, FrequencyTop = 80, Name = "Gamma"}, Color.DarkRed, "γ")
+			    new EEGRhythm("Delta", 0.5, 4,  Color.IndianRed, "δ"),
+			    new EEGRhythm("Theta", 4, 8,  Color.Orange, "θ"),
+			    new EEGRhythm("Alpha", 8, 14, Color.DodgerBlue, "α"),
+			    new EEGRhythm("Beta", 14, 34,  Color.DarkOliveGreen, "β"),
+                new EEGRhythm("Gamma", 34, 80, Color.DarkRed, "γ")
             };
 			_sigScale = 100;
 			// создаем кисти для ритмов

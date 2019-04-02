@@ -11,12 +11,12 @@ namespace Indices.Spectrum
         public double FreqEnd;
         public Color Color;
 
-        public EEGRhythm(EegIndex index, Color color, string symbol)
+        public EEGRhythm(string name, double frequencyBottom, double frequencyTop, Color color, string symbol)
         {
-            Name = index.Name;
+            Name = name;
             Symbol = symbol;
-            FreqBegin = index.FrequencyBottom;
-            FreqEnd = index.FrequencyTop;
+            FreqBegin = frequencyBottom;
+            FreqEnd = frequencyTop;
             Color = color;
         }
 
