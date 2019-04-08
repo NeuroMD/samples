@@ -1,4 +1,4 @@
-﻿namespace EmotionalStates
+﻿namespace EmotionalStates.Drawable
 {
     partial class DrawableControl
     {
@@ -30,7 +30,18 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.SuspendLayout();
+            // 
+            // DrawableControl
+            // 
             components = new System.ComponentModel.Container();
+
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DrawableControl_MouseClick);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DrawableControl_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawableControl_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawableControl_MouseUp);
+            this.ResumeLayout(false);
+
         }
 
         #endregion

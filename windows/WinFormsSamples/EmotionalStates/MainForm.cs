@@ -3,8 +3,10 @@ using System.Drawing;
 using System.Net;
 using System.Windows.Forms;
 using EmotionalStates.Devices;
+using EmotionalStates.Drawable;
 using EmotionalStates.EmotionsChart;
 using EmotionalStates.IndexChart;
+using EmotionalStates.Spectrum;
 
 namespace EmotionalStates
 {
@@ -12,6 +14,9 @@ namespace EmotionalStates
     {
         private IndexChartPresenter _indexChartPresenter;
         private EmotionsChartPresenter _emotionsChartPresenter;
+        private SpectrumChartPresenter _spectrumChartPresenter;
+        private StatesSettingsPresenter _statesSettingsPresenter;
+        private IndexSettingsPresenter _indexSettingsPresenter;
         private readonly DeviceModel _deviceModel = new DeviceModel();
         private readonly EmotionsChart.EmotionsChart _statesChart = new EmotionsChart.EmotionsChart {Mode = EmotionBarMode.Empty};
 
@@ -29,15 +34,27 @@ namespace EmotionalStates
                 {
                     _startSignalButton.Enabled = true;
                     _stopSignalButton.Enabled = true;
+
+                    var indexChart = new EegIndexChart();
+                    _indexChartPresenter = new IndexChartPresenter(indexChart, _deviceModel.IndexChannel,
+                        _emotionsStartButton, _statesStopButton, this);
+                    _indexSettingsPresenter = new IndexSettingsPresenter(_indexSettingsControl, _deviceModel.IndexChannel);
+                    _indexSettingsControl.Enabled = true;
+                    var spectrumChartT3O1 = new SpectrumChart();
+                    var spectrumChartT4O2 = new SpectrumChart();
+                    _spectrumChartPresenter = new SpectrumChartPresenter(spectrumChartT3O1, _spectrumAmplitudeTrackBar,
+                        new SpectrumModel(_deviceModel.T3O1SpectrumChannel));
+                    _spectrumChartPresenter = new SpectrumChartPresenter(spectrumChartT4O2, _spectrumAmplitudeTrackBar,
+                        new SpectrumModel(_deviceModel.T4O2SpectrumChannel));
+
+                    var compositeDrawable = new CompoundDrawable();
+                    compositeDrawable.AddDrawable(indexChart, new PointF(0f, 0f), new SizeF(0.7f, 0.94f));
+                    compositeDrawable.AddDrawable(spectrumChartT3O1, new PointF(0.7f, 0.0f), new SizeF(0.3f, 0.47f));
+                    compositeDrawable.AddDrawable(spectrumChartT4O2, new PointF(0.7f, 0.47f), new SizeF(0.3f, 0.47f));
+                    compositeDrawable.AddDrawable(_statesChart, new PointF(0f, 0.94f), new SizeF(1.0f, 0.06f));
+                    _drawableControl.Drawable = compositeDrawable;
+
                 });
-
-                var indexChart = new EegIndexChart();
-                _indexChartPresenter = new IndexChartPresenter(indexChart, _deviceModel.IndexChannel, _emotionsStartButton, _statesStopButton, this);
-
-                var compositeDrawable = new CompoundDrawable();
-                compositeDrawable.AddDrawable(indexChart, new PointF(0f,0f), new SizeF(1.0f, 0.9f));
-                compositeDrawable.AddDrawable(_statesChart, new PointF(0f,0.9f), new SizeF(1.0f, 0.1f));
-                _drawableControl.Drawable = compositeDrawable;
             }
             else
             {
@@ -93,7 +110,10 @@ namespace EmotionalStates
 
             try
             {
-                _emotionsChartPresenter = new EmotionsChartPresenter(_statesChart, _deviceModel.CreateEmotionChannel());
+                var channel = _deviceModel.CreateEmotionChannel();
+                _emotionsChartPresenter = new EmotionsChartPresenter(_statesChart, channel);
+                _statesSettingsPresenter = new StatesSettingsPresenter(_emotionCoefficientsControl, channel);
+                _emotionCoefficientsControl.Enabled = true;
                 SetDestination();
             }
             catch (Exception exc)
@@ -104,6 +124,7 @@ namespace EmotionalStates
 
         private void _statesStopButton_Click(object sender, EventArgs e)
         {
+            _emotionCoefficientsControl.Enabled = false;
             _deviceModel.StopSignal();
             _emotionsChartPresenter?.Dispose();
             _emotionsChartPresenter = null;

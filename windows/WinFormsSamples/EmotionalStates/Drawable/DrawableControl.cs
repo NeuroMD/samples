@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace EmotionalStates
+namespace EmotionalStates.Drawable
 {
     public partial class DrawableControl : Control
     {
@@ -63,6 +62,26 @@ namespace EmotionalStates
             _graphicsContext.MaximumBuffer = new Size(this.Width + 1, this.Height + 1);
             _graphicsBuffer?.Dispose();
             _graphicsBuffer = _graphicsContext.Allocate(this.CreateGraphics(), new Rectangle(0, 0, this.Width, this.Height));
+        }
+
+        private void DrawableControl_MouseClick(object sender, MouseEventArgs e)
+        {
+            (Drawable as IMouseEventsHandler)?.OnMouseClick(e);
+        }
+
+        private void DrawableControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            (Drawable as IMouseEventsHandler)?.OnMouseDown(e);
+        }
+
+        private void DrawableControl_MouseUp(object sender, MouseEventArgs e)
+        {
+            (Drawable as IMouseEventsHandler)?.OnMouseUp(e);
+        }
+
+        private void DrawableControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            (Drawable as IMouseEventsHandler)?.OnMouseMove(e);
         }
     }
 

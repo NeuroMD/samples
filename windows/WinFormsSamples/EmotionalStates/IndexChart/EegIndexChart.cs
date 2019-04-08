@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
+using EmotionalStates.Drawable;
 using Neuro;
 
 namespace EmotionalStates.IndexChart
 {
-    internal sealed class EegIndexChart : IDrawable, IEegIndexChart
+    internal sealed class EegIndexChart : MouseEventsHandler, IDrawable, IEegIndexChart
     {
         private readonly EegIndexMap _chartMap = new EegIndexMap();
         private readonly EegIndexChartCursor _chartCursor = new EegIndexChartCursor();
@@ -17,6 +19,7 @@ namespace EmotionalStates.IndexChart
             set
             {
                 _drawableSize = value;
+                _chartCursor.DrawableSize = _drawableSize;
                 SizeChanged?.Invoke(this, _drawableSize);
             }
         }
@@ -25,7 +28,7 @@ namespace EmotionalStates.IndexChart
         {
             using (var backgroundBrush = new SolidBrush(Color.LightYellow))
             {
-                graphics.FillRectangle(backgroundBrush, 0, 0, _drawableSize.Width, _drawableSize.Height+1);
+                graphics.FillRectangle(backgroundBrush, 0, 0, _drawableSize.Width+1, _drawableSize.Height+1);
             }
 
             if (Mode == EegIndexChartMode.Signal)
@@ -51,13 +54,31 @@ namespace EmotionalStates.IndexChart
             {
                 _indicesData = value;
                 _chartMap.RecalculatePolygons(_indicesData, DrawableSize);
-                _chartCursor.RecalculateLabels(_indicesData, DrawableSize);
+                _chartCursor.IndicesData = _indicesData;
             }
         }
 
         public EegIndexChartMode Mode { get; set; }
 
         public event EventHandler<Size> SizeChanged;
+
+        public override bool OnMouseMove(MouseEventArgs mouseEventArgs)
+        {
+            _chartCursor.OnMouseMove(mouseEventArgs);
+            return true;
+        }
+
+        public override bool OnMouseDown(MouseEventArgs mouseEventArgs)
+        {
+            _chartCursor.OnMouseDown(mouseEventArgs);
+            return true;
+        }
+
+        public override bool OnMouseUp(MouseEventArgs mouseEventArgs)
+        {
+            _chartCursor.OnMouseUp(mouseEventArgs);
+            return true;
+        }
     }
 
     class EegIndexMap
@@ -130,9 +151,11 @@ namespace EmotionalStates.IndexChart
 
     class EegIndexChartCursor
     {
-        private readonly Color _cursorBackground = Color.FromArgb(50, Color.White);
+        private Color _cursorBackgroundColor = Color.FromArgb(50, Color.White);
         private readonly Font _cursorLabelFont = new Font("Arial", 14);
         private double _cursorPosition = 0.95;
+        private Size _drawableSize = new Size(10,10);
+        private EegIndexValues[] _indicesData = new EegIndexValues[0];
         private Rectangle _cursorRectangle = new Rectangle(100, 0, 100, 100);
         private int _alphaLabelY = 20;
         private int _betaLabelY = 45;
@@ -142,8 +165,27 @@ namespace EmotionalStates.IndexChart
         private string _betaLabelText;
         private string _deltaLabelText;
         private string _thetaLabelText;
+        private bool _cursorMoving = false;
 
-        public void RecalculateLabels(EegIndexValues[] indicesData, Size drawableSize)
+        public Size DrawableSize
+        {
+            set
+            {
+                _drawableSize = value; 
+                RecalculateLabels(_indicesData, _drawableSize);
+            }
+        }
+
+        public EegIndexValues[] IndicesData
+        {
+            set
+            {
+                _indicesData = value;
+                RecalculateLabels(_indicesData, _drawableSize);
+            }
+        }
+
+        private void RecalculateLabels(EegIndexValues[] indicesData, Size drawableSize)
         {
             _cursorRectangle.X = (int) ((drawableSize.Width - _cursorRectangle.Width) * _cursorPosition);
             _cursorRectangle.Height = drawableSize.Height;
@@ -179,7 +221,7 @@ namespace EmotionalStates.IndexChart
 
         public void Draw(Graphics graphics)
         {
-            graphics.FillRectangle(new SolidBrush(_cursorBackground), _cursorRectangle);
+            graphics.FillRectangle(new SolidBrush(_cursorBackgroundColor), _cursorRectangle);
             var cursorCenter = _cursorRectangle.X + _cursorRectangle.Width / 2;
             graphics.DrawLine(Pens.White, cursorCenter, 0, cursorCenter, _cursorRectangle.Height);
 
@@ -199,6 +241,64 @@ namespace EmotionalStates.IndexChart
                 graphics.DrawString(_deltaLabelText, _cursorLabelFont, fontBrush, deltaX, _deltaLabelY);
                 graphics.DrawString(_thetaLabelText, _cursorLabelFont, fontBrush, thetaX, _thetaLabelY);
             }
+        }
+
+        public void OnMouseDown(MouseEventArgs mouseEventArgs)
+        {
+            if (MouseOverCursor(mouseEventArgs))
+            {
+                GrabCursor(mouseEventArgs.X);
+            }
+            else
+            {
+                ReleaseCursor();
+            }
+        }
+
+        public void OnMouseUp(MouseEventArgs mouseEventArgs)
+        {
+            ReleaseCursor();
+        }
+
+        public void OnMouseMove(MouseEventArgs mouseEventArgs)
+        {
+            if (_cursorMoving)
+            {
+                var cursorX = mouseEventArgs.X - _cursorRectangle.Width / 2;
+                if (cursorX < 0)
+                {
+                    cursorX = 0;
+                }
+                if (cursorX + _cursorRectangle.Width > _drawableSize.Width)
+                {
+                    cursorX = _drawableSize.Width - _cursorRectangle.Width;
+                }
+
+                _cursorPosition = (double) cursorX / (_drawableSize.Width - _cursorRectangle.Width);
+                RecalculateLabels(_indicesData, _drawableSize);
+            }
+            else
+            {
+                _cursorBackgroundColor = MouseOverCursor(mouseEventArgs) ? Color.FromArgb(160, Color.LightBlue) : Color.FromArgb(50, Color.White);
+            }
+        }
+
+        private bool MouseOverCursor(MouseEventArgs mouseEventArgs)
+        {
+            return mouseEventArgs.X >= _cursorRectangle.X && mouseEventArgs.X <= _cursorRectangle.X + _cursorRectangle.Width
+                   && mouseEventArgs.Y >= _cursorRectangle.Y && mouseEventArgs.Y <= _cursorRectangle.Y + _cursorRectangle.Height;
+        }
+
+        private void GrabCursor(int mouseX)
+        {
+            _cursorMoving = true;
+            _cursorBackgroundColor = Color.FromArgb(120, Color.Blue);
+        }
+
+        private void ReleaseCursor()
+        {
+            _cursorMoving = false;
+            Color.FromArgb(160, Color.LightBlue);
         }
     }
 }

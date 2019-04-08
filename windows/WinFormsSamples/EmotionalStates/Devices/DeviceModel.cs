@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Neuro;
 
 namespace EmotionalStates
@@ -11,6 +9,8 @@ namespace EmotionalStates
         private Device _currentDevice;
 
         public EegIndexChannel IndexChannel { get; private set; }
+        public SpectrumChannel T3O1SpectrumChannel { get; private set; }
+        public SpectrumChannel T4O2SpectrumChannel { get; private set; }
 
         public event EventHandler ChannelsChanged;
 
@@ -44,11 +44,16 @@ namespace EmotionalStates
                 .Where(x=>x.Type == ChannelType.Signal)
                 .ToDictionary(channelInfo => channelInfo.Name, channelInfo => new EegChannel(_currentDevice, channelInfo));
 
-            if (deviceChannels.ContainsKey("T3") && deviceChannels.ContainsKey("T4") &&
-                deviceChannels.ContainsKey("O1") && deviceChannels.ContainsKey("O2"))
+            if (deviceChannels.ContainsKey("T3") && deviceChannels.ContainsKey("O1"))
             {
-                IndexChannel = new EegIndexChannel(deviceChannels["T3"], deviceChannels["T4"], deviceChannels["O1"], deviceChannels["O2"]);
-                ChannelsChanged?.Invoke(this, null);
+                T3O1SpectrumChannel = new SpectrumChannel(new BipolarDoubleChannel(deviceChannels["T3"], deviceChannels["O1"]));
+                if (deviceChannels.ContainsKey("T4") && deviceChannels.ContainsKey("O2"))
+                {
+                    T4O2SpectrumChannel = new SpectrumChannel(new BipolarDoubleChannel(deviceChannels["T4"], deviceChannels["O2"]));
+                    IndexChannel = new EegIndexChannel(deviceChannels["T3"], deviceChannels["T4"], deviceChannels["O1"],
+                        deviceChannels["O2"]);
+                    ChannelsChanged?.Invoke(this, null);
+                }
             }
         }
 

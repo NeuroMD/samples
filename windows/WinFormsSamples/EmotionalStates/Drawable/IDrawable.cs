@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace EmotionalStates
+namespace EmotionalStates.Drawable
 {
     public interface IDrawable
     {

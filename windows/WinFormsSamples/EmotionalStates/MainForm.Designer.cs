@@ -1,4 +1,6 @@
-﻿namespace EmotionalStates
+﻿using EmotionalStates.Drawable;
+
+namespace EmotionalStates
 {
     partial class MainForm
     {
@@ -28,7 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            EmotionalStates.EmptyDrawable emptyDrawable1 = new EmotionalStates.EmptyDrawable();
+            EmotionalStates.Drawable.EmptyDrawable emptyDrawable2 = new EmotionalStates.Drawable.EmptyDrawable();
             this.label1 = new System.Windows.Forms.Label();
             this._deviceLabel = new System.Windows.Forms.Label();
             this._findDeviceButton = new System.Windows.Forms.Button();
@@ -41,8 +43,12 @@
             this._portTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this._drawableControl = new EmotionalStates.DrawableControl();
             this._statesStopButton = new System.Windows.Forms.Button();
+            this._spectrumAmplitudeTrackBar = new System.Windows.Forms.TrackBar();
+            this._indexSettingsControl = new EmotionalStates.IndexChart.IndexSettingsControl();
+            this._emotionCoefficientsControl = new EmotionalStates.EmotionsChart.EmotionCoefficientsControl();
+            this._drawableControl = new EmotionalStates.Drawable.DrawableControl();
+            ((System.ComponentModel.ISupportInitialize)(this._spectrumAmplitudeTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -112,7 +118,7 @@
             this._broadcastCheckBox.AutoSize = true;
             this._broadcastCheckBox.Checked = true;
             this._broadcastCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._broadcastCheckBox.Location = new System.Drawing.Point(919, 12);
+            this._broadcastCheckBox.Location = new System.Drawing.Point(946, 12);
             this._broadcastCheckBox.Name = "_broadcastCheckBox";
             this._broadcastCheckBox.Size = new System.Drawing.Size(74, 17);
             this._broadcastCheckBox.TabIndex = 10;
@@ -124,7 +130,7 @@
             // 
             this._applyNetSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._applyNetSettingsButton.Enabled = false;
-            this._applyNetSettingsButton.Location = new System.Drawing.Point(999, 8);
+            this._applyNetSettingsButton.Location = new System.Drawing.Point(1026, 8);
             this._applyNetSettingsButton.Name = "_applyNetSettingsButton";
             this._applyNetSettingsButton.Size = new System.Drawing.Size(75, 23);
             this._applyNetSettingsButton.TabIndex = 11;
@@ -136,7 +142,7 @@
             // 
             this._ipAddressTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._ipAddressTextBox.Enabled = false;
-            this._ipAddressTextBox.Location = new System.Drawing.Point(717, 10);
+            this._ipAddressTextBox.Location = new System.Drawing.Point(744, 10);
             this._ipAddressTextBox.Name = "_ipAddressTextBox";
             this._ipAddressTextBox.Size = new System.Drawing.Size(100, 20);
             this._ipAddressTextBox.TabIndex = 12;
@@ -146,7 +152,7 @@
             // _portTextBox
             // 
             this._portTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._portTextBox.Location = new System.Drawing.Point(853, 10);
+            this._portTextBox.Location = new System.Drawing.Point(880, 10);
             this._portTextBox.Name = "_portTextBox";
             this._portTextBox.Size = new System.Drawing.Size(60, 20);
             this._portTextBox.TabIndex = 13;
@@ -157,7 +163,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(823, 13);
+            this.label2.Location = new System.Drawing.Point(850, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 13);
             this.label2.TabIndex = 14;
@@ -167,23 +173,11 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(694, 13);
+            this.label3.Location = new System.Drawing.Point(721, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(17, 13);
             this.label3.TabIndex = 15;
             this.label3.Text = "IP";
-            // 
-            // _drawableControl
-            // 
-            this._drawableControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._drawableControl.Drawable = emptyDrawable1;
-            this._drawableControl.Location = new System.Drawing.Point(12, 37);
-            this._drawableControl.Name = "_drawableControl";
-            this._drawableControl.Size = new System.Drawing.Size(1065, 491);
-            this._drawableControl.TabIndex = 0;
-            this._drawableControl.Text = "drawableControl1";
             // 
             // _statesStopButton
             // 
@@ -196,11 +190,77 @@
             this._statesStopButton.UseVisualStyleBackColor = true;
             this._statesStopButton.Click += new System.EventHandler(this._statesStopButton_Click);
             // 
+            // _spectrumAmplitudeTrackBar
+            // 
+            this._spectrumAmplitudeTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._spectrumAmplitudeTrackBar.Location = new System.Drawing.Point(1060, 37);
+            this._spectrumAmplitudeTrackBar.Maximum = 500;
+            this._spectrumAmplitudeTrackBar.Minimum = 10;
+            this._spectrumAmplitudeTrackBar.Name = "_spectrumAmplitudeTrackBar";
+            this._spectrumAmplitudeTrackBar.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this._spectrumAmplitudeTrackBar.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this._spectrumAmplitudeTrackBar.RightToLeftLayout = true;
+            this._spectrumAmplitudeTrackBar.Size = new System.Drawing.Size(45, 619);
+            this._spectrumAmplitudeTrackBar.TabIndex = 18;
+            this._spectrumAmplitudeTrackBar.Value = 100;
+            // 
+            // _indexSettingsControl
+            // 
+            this._indexSettingsControl.AlphaWeight = 1D;
+            this._indexSettingsControl.BetaWeight = 1D;
+            this._indexSettingsControl.Delay = 3D;
+            this._indexSettingsControl.DeltaWeight = 0.5D;
+            this._indexSettingsControl.Enabled = false;
+            this._indexSettingsControl.Location = new System.Drawing.Point(6, 37);
+            this._indexSettingsControl.Name = "_indexSettingsControl";
+            this._indexSettingsControl.Size = new System.Drawing.Size(141, 190);
+            this._indexSettingsControl.TabIndex = 21;
+            this._indexSettingsControl.ThetaWeight = 1D;
+            // 
+            // _emotionCoefficientsControl
+            // 
+            this._emotionCoefficientsControl.Enabled = false;
+            this._emotionCoefficientsControl.Location = new System.Drawing.Point(6, 233);
+            this._emotionCoefficientsControl.Name = "_emotionCoefficientsControl";
+            this._emotionCoefficientsControl.NX1 = 0D;
+            this._emotionCoefficientsControl.NX2 = 0D;
+            this._emotionCoefficientsControl.NX3 = 0D;
+            this._emotionCoefficientsControl.NX4 = 0D;
+            this._emotionCoefficientsControl.NY1 = 0D;
+            this._emotionCoefficientsControl.NY2 = 0D;
+            this._emotionCoefficientsControl.NY3 = 0D;
+            this._emotionCoefficientsControl.NY4 = 0D;
+            this._emotionCoefficientsControl.PX1 = 0D;
+            this._emotionCoefficientsControl.PX2 = 0D;
+            this._emotionCoefficientsControl.PX3 = 0D;
+            this._emotionCoefficientsControl.PX4 = 0D;
+            this._emotionCoefficientsControl.PY1 = 0D;
+            this._emotionCoefficientsControl.PY2 = 0D;
+            this._emotionCoefficientsControl.PY3 = 0D;
+            this._emotionCoefficientsControl.PY4 = 0D;
+            this._emotionCoefficientsControl.Size = new System.Drawing.Size(141, 470);
+            this._emotionCoefficientsControl.TabIndex = 20;
+            // 
+            // _drawableControl
+            // 
+            this._drawableControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._drawableControl.Drawable = emptyDrawable2;
+            this._drawableControl.Location = new System.Drawing.Point(153, 37);
+            this._drawableControl.Name = "_drawableControl";
+            this._drawableControl.Size = new System.Drawing.Size(930, 666);
+            this._drawableControl.TabIndex = 0;
+            this._drawableControl.Text = "drawableControl1";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1086, 540);
+            this.ClientSize = new System.Drawing.Size(1113, 707);
+            this.Controls.Add(this._indexSettingsControl);
+            this.Controls.Add(this._emotionCoefficientsControl);
             this.Controls.Add(this._statesStopButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -215,9 +275,11 @@
             this.Controls.Add(this._deviceLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this._drawableControl);
+            this.Controls.Add(this._spectrumAmplitudeTrackBar);
             this.Name = "MainForm";
             this.Text = "Emotional states";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            ((System.ComponentModel.ISupportInitialize)(this._spectrumAmplitudeTrackBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -239,6 +301,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button _statesStopButton;
+        private System.Windows.Forms.TrackBar _spectrumAmplitudeTrackBar;
+        private EmotionsChart.EmotionCoefficientsControl _emotionCoefficientsControl;
+        private IndexChart.IndexSettingsControl _indexSettingsControl;
     }
 }
 
