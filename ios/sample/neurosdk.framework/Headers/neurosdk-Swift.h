@@ -187,8 +187,7 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 
 SWIFT_CLASS("_TtC8neurosdk14NTArtifactZone")
 @interface NTArtifactZone : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 
@@ -206,8 +205,12 @@ SWIFT_CLASS("_TtC8neurosdk16NTBatteryChannel")
 
 SWIFT_CLASS("_TtC8neurosdk13NTChannelInfo")
 @interface NTChannelInfo : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
+SWIFT_CLASS("_TtC8neurosdk24NTConnectionStatsChannel")
+@interface NTConnectionStatsChannel : NTBaseChannel
 @end
 
 
@@ -242,8 +245,7 @@ SWIFT_CLASS("_TtC8neurosdk17NTEegIndexChannel")
 
 SWIFT_CLASS("_TtC8neurosdk16NTEegIndexValues")
 @interface NTEegIndexValues : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 
@@ -254,8 +256,7 @@ SWIFT_CLASS("_TtC8neurosdk23NTElectrodeStateChannel")
 
 SWIFT_CLASS("_TtC8neurosdk16NTEmotionalState")
 @interface NTEmotionalState : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 
@@ -266,8 +267,17 @@ SWIFT_CLASS("_TtC8neurosdk23NTEmotionalStateChannel")
 
 SWIFT_CLASS("_TtC8neurosdk15NTParameterInfo")
 @interface NTParameterInfo : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
+SWIFT_CLASS("_TtC8neurosdk19NTResistanceChannel")
+@interface NTResistanceChannel : NTBaseChannel
+@end
+
+
+SWIFT_CLASS("_TtC8neurosdk17NTSpectrumChannel")
+@interface NTSpectrumChannel : NTBaseChannel
 @end
 
 #if __has_attribute(external_source_symbol)

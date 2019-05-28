@@ -22,7 +22,7 @@ class RootViewController: UIViewController{
     var timer: CADisplayLink!
     
     //MARK: neurosdk classes
-    var scanner: NTDeviceScanner? = nil
+    var scanner = NTDeviceScanner(.TypeAny)
     var device: NTDevice?
     var batteryChannel: NTBatteryChannel?
     var signal: NTEegChannel?
@@ -160,7 +160,7 @@ class RootViewController: UIViewController{
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         // Configure the page view controller and add it as a child view controller.
-        
+
         initUI()
         initMetal()
         initSystem()
@@ -198,8 +198,7 @@ class RootViewController: UIViewController{
         timer.add(to: RunLoop.main, forMode: .common)
     }
     func initSystem() {
-        scanner = NTDeviceScanner(.TypeCallibri)
-        scanner!.subscribeFoundDevice { (findedDevice) in
+        scanner.subscribeFoundDevice { (findedDevice) in
             print("- founded device state -")
             self.device = findedDevice
             if let d = self.device {

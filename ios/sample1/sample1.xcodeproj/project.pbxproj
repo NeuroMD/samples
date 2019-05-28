@@ -114,10 +114,15 @@
 					84EF6226226DEBE900C02DDC = {
 						CreatedOnToolsVersion = 10.2;
 						LastSwiftMigration = 1020;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
-			buildConfigurationList = 84EF6222226DEBE900C02DDC /* Build configuration list for PBXProject "sample1" */;
+			buildConfigurationList = 84EF6222226DEBE900C02DDC /* Build configuration list for PBXProject "centralManagerDidUpdateState" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -163,7 +168,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\n\n\n\n# Type a script or drag a script file from your workspace to insert its path.\n# /Users/admin/Documents/NT/ios/sdk/core/build/Debug-iphoneos/neurosdk.framework\necho ${PROJECT_FILE_PATH}\n#rm -rf ${PROJECT_FILE_PATH}/../neurosdk.framework\n#cp -f -R /Users/admin/Library/Developer/Xcode/DerivedData/neurosdk-bedcbznolnxmcndnlplgivaixhpu/Build/Products/Release-iphoneos/neurosdk.framework ${PROJECT_FILE_PATH}/../neurosdk.framework\n\n\n\n\n\n\n";
+			shellScript = "\n\n\n\n# Type a script or drag a script file from your workspace to insert its path.\n# /Users/admin/Documents/NT/ios/sdk/core/build/Debug-iphoneos/neurosdk.framework\necho ${PROJECT_FILE_PATH}\nrm -rf ${PROJECT_FILE_PATH}/../neurosdk.framework\ncp -f -R /Users/admin/Library/Developer/Xcode/DerivedData/neurosdk-czpufqssowujmgaitktqmiyiansm/Build/Products/Release-iphoneos/neurosdk.framework ${PROJECT_FILE_PATH}/../neurosdk.framework\n\n\n\n\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -362,7 +367,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		84EF6222226DEBE900C02DDC /* Build configuration list for PBXProject "sample1" */ = {
+		84EF6222226DEBE900C02DDC /* Build configuration list for PBXProject "centralManagerDidUpdateState" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				84EF623B226DEBEA00C02DDC /* Debug */,

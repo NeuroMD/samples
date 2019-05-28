@@ -1,5 +1,5 @@
-#ifndef EEG_CHANNELS_CWRAP_H
-#define EEG_CHANNELS_CWRAP_H
+#ifndef EEG_EXTENSIONS_CHANNELS_H
+#define EEG_EXTENSIONS_CHANNELS_H
 
 #include "lib_export.h"
 #include "cdevice.h"
@@ -20,16 +20,26 @@ typedef enum _ArtifactType {
 	ArtifactTypeBlink,
 	ArtifactTypeBrux
 } ArtifactType;
+typedef enum _SourceChannel{
+    T3,
+    T4,
+    O1,
+    O2
+} SourceChannel;
 
 typedef struct _ArtifactZone {
 	double time;
 	double duration;
 	ArtifactType type;
+    
+    size_t channelCount;
+    SourceChannel *channels;
 } ArtifactZone;
 
 SDK_SHARED EegArtifactChannel* create_EegArtifactChannel_eeg_channels(EegDoubleChannel *t3, EegDoubleChannel *t4, EegDoubleChannel *o1, EegDoubleChannel *o2);
 SDK_SHARED int EegArtifactChannel_read_data(EegArtifactChannel *channel, size_t offset, size_t length, ArtifactZone *out_buffer, size_t buffer_size, size_t *samples_read);
 SDK_SHARED int EegArtifactChannel_get_buffer_size(EegArtifactChannel *channel, size_t *out_buffer_size);
+SDK_SHARED int delete_SourceChannel(SourceChannel *channels);
 
 typedef struct _EegIndexValues {
 	double AlphaRate;
@@ -69,7 +79,7 @@ typedef struct _StateCoefficients {
 	double NY2;
 	double NY3;
 	double NY4;
-}StateCoefficients;
+} StateCoefficients;
 
 SDK_SHARED EmotionalStateChannel* create_EmotionalStateChannel(EegIndexChannel *index_channel);
 SDK_SHARED int EmotionalStateChannel_read_data(EmotionalStateChannel *channel, size_t offset, size_t length, EmotionalState *out_buffer, size_t buffer_size, size_t *samples_read);

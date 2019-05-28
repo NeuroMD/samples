@@ -1,5 +1,5 @@
-#ifndef EEG_CHANNELS_CWRAP_H
-#define EEG_CHANNELS_CWRAP_H
+#ifndef EEG_EXTENSIONS_CHANNELS_H
+#define EEG_EXTENSIONS_CHANNELS_H
 
 #include "lib_export.h"
 #include "cdevice.h"
@@ -69,7 +69,7 @@ typedef struct _StateCoefficients {
 	double NY2;
 	double NY3;
 	double NY4;
-}StateCoefficients;
+} StateCoefficients;
 
 SDK_SHARED EmotionalStateChannel* create_EmotionalStateChannel(EegIndexChannel *index_channel);
 SDK_SHARED int EmotionalStateChannel_read_data(EmotionalStateChannel *channel, size_t offset, size_t length, EmotionalState *out_buffer, size_t buffer_size, size_t *samples_read);

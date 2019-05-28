@@ -1,5 +1,5 @@
-#ifndef ECG_CHANNELS_CWRAP_H
-#define ECG_CHANNELS_CWRAP_H
+#ifndef ECG_EXTENSIONS_CHANNELS_H
+#define ECG_EXTENSIONS_CHANNELS_H
 
 #include "lib_export.h"
 #include "csignal-channel.h"

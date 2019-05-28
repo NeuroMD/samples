@@ -24,11 +24,24 @@ class ViewController: UIViewController {
         scanner.subscribeFoundDevice { [weak self] (device) in
             if let safe = self {
                 safe.device = device
+                guard let d = safe.device else {return}
+                
                 safe.device?.connect()
                 safe.device?.subscribeParameterChanged(subscriber: { (param) in
                     if(param == .State) {
                         let state = safe.device?.readParam(param: .State) as NTState?
                         if( state == .Connected) {
+                            
+                            for ch in d.channels() {
+                                print(ch)
+                            }
+                            for p in d.parameters() {
+                                print(p)
+                            }
+                            for c in d.commands() {
+                                print(c)
+                            }
+                            
                             let name = safe.device?.readParam(param: .Name) as String?
                             if(Thread.isMainThread) {
                                 safe.label.text = name
