@@ -1,5 +1,5 @@
-#ifndef EEG_CHANNELS_H
-#define EEG_CHANNELS_H
+#ifndef C_SPECTRUM_POWER_CHANNEL_H
+#define C_SPECTRUM_POWER_CHANNEL_H
 
 #include "lib_export.h"
 #include "cspectrum-channel.h"

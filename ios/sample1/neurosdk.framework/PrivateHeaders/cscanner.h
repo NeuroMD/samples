@@ -29,6 +29,7 @@ typedef enum _DeviceType {
 typedef struct _DeviceInfo {
 	char Name[256];
 	AddressType Address;
+	uint64_t SerialNumber;
 } DeviceInfo;
 
 typedef struct _DeviceInfoArray {

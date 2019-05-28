@@ -22,7 +22,7 @@ class RootViewController: UIViewController{
     var timer: CADisplayLink!
     
     //MARK: neurosdk classes
-    var scanner = NTDeviceScanner(.TypeAny)
+    let scanner = NTDeviceScanner(.TypeAny)
     var device: NTDevice?
     var batteryChannel: NTBatteryChannel?
     var signal: NTEegChannel?
@@ -169,7 +169,6 @@ class RootViewController: UIViewController{
 
     //MARK: init methods
     func initMetal() {
-        
         self.metalDevice = MTLCreateSystemDefaultDevice()
         metalLayer = CAMetalLayer()             // 1
         metalLayer.device = metalDevice         // 2
@@ -178,7 +177,6 @@ class RootViewController: UIViewController{
         metalLayer.frame = plotView.layer.frame // 5
         print (plotView.frame)
         plotView.layer.addSublayer(metalLayer)  // 6
-        
         
         // 1
         let defaultLibrary = metalDevice.makeDefaultLibrary()!
@@ -212,13 +210,8 @@ class RootViewController: UIViewController{
                                 self.statusView.isHidden = false
                                 self.nameDeviceLabel.text = (self.device?.readParam(param: .Name))! as String
                                 var chnl: NTChannelInfo!
-                                guard let lchannels = self.device!.channels() else {
-                                    print("NTEegChannel: test (device == nil) ")
-                                    return
-                                }
                                 
-                                
-                                for channel in lchannels {
+                                for channel in d.channels() {
                                     if( channel.type == .TypeSignal) {
                                         chnl = channel
                                         break

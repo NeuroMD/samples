@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		845F216C22719D8000F852FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF622A226DEBE900C02DDC /* AppDelegate.swift */; };
 		848B053A22735B9900D2FB61 /* neurosdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848B053922735B9900D2FB61 /* neurosdk.framework */; };
+		849D8387228BF942002FB692 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D8386228BF942002FB692 /* CoreBluetooth.framework */; };
 		84CA273E22806BD800B158FE /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF622C226DEBE900C02DDC /* RootViewController.swift */; };
 		84CA274022806C1C00B158FE /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84CA273F22806C1C00B158FE /* libc++.tbd */; };
 		84EF6236226DEBEA00C02DDC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84EF6235226DEBEA00C02DDC /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 
 /* Begin PBXFileReference section */
 		848B053922735B9900D2FB61 /* neurosdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = neurosdk.framework; sourceTree = "<group>"; };
+		849D8386228BF942002FB692 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		84CA273F22806C1C00B158FE /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		84EF6227226DEBE900C02DDC /* sample1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sample1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84EF622A226DEBE900C02DDC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -33,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849D8387228BF942002FB692 /* CoreBluetooth.framework in Frameworks */,
 				84CA274022806C1C00B158FE /* libc++.tbd in Frameworks */,
 				848B053A22735B9900D2FB61 /* neurosdk.framework in Frameworks */,
 			);
@@ -74,6 +77,7 @@
 		84EF6240226DEC0200C02DDC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				849D8386228BF942002FB692 /* CoreBluetooth.framework */,
 				84CA273F22806C1C00B158FE /* libc++.tbd */,
 				848B053922735B9900D2FB61 /* neurosdk.framework */,
 			);
@@ -122,7 +126,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 84EF6222226DEBE900C02DDC /* Build configuration list for PBXProject "centralManagerDidUpdateState" */;
+			buildConfigurationList = 84EF6222226DEBE900C02DDC /* Build configuration list for PBXProject "sample1" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -168,7 +172,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\n\n\n\n# Type a script or drag a script file from your workspace to insert its path.\n# /Users/admin/Documents/NT/ios/sdk/core/build/Debug-iphoneos/neurosdk.framework\necho ${PROJECT_FILE_PATH}\nrm -rf ${PROJECT_FILE_PATH}/../neurosdk.framework\ncp -f -R /Users/admin/Library/Developer/Xcode/DerivedData/neurosdk-czpufqssowujmgaitktqmiyiansm/Build/Products/Release-iphoneos/neurosdk.framework ${PROJECT_FILE_PATH}/../neurosdk.framework\n\n\n\n\n\n\n";
+			shellScript = "\n\n\n\n# Type a script or drag a script file from your workspace to insert its path.\n# /Users/admin/Documents/NT/ios/sdk/core/build/Debug-iphoneos/neurosdk.framework\necho ${PROJECT_FILE_PATH}\n#rm -rf ${PROJECT_FILE_PATH}/../neurosdk.framework\n#cp -f -R /Users/admin/Library/Developer/Xcode/DerivedData/neurosdk-czpufqssowujmgaitktqmiyiansm/Build/Products/Release-iphoneos/neurosdk.framework ${PROJECT_FILE_PATH}/../neurosdk.framework\n\n\n\n\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -367,7 +371,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		84EF6222226DEBE900C02DDC /* Build configuration list for PBXProject "centralManagerDidUpdateState" */ = {
+		84EF6222226DEBE900C02DDC /* Build configuration list for PBXProject "sample1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				84EF623B226DEBEA00C02DDC /* Debug */,

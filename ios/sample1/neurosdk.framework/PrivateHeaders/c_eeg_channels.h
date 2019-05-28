@@ -20,16 +20,26 @@ typedef enum _ArtifactType {
 	ArtifactTypeBlink,
 	ArtifactTypeBrux
 } ArtifactType;
+typedef enum _SourceChannel{
+    T3,
+    T4,
+    O1,
+    O2
+} SourceChannel;
 
 typedef struct _ArtifactZone {
 	double time;
 	double duration;
 	ArtifactType type;
+    
+    size_t channelCount;
+    SourceChannel *channels;
 } ArtifactZone;
 
 SDK_SHARED EegArtifactChannel* create_EegArtifactChannel_eeg_channels(EegDoubleChannel *t3, EegDoubleChannel *t4, EegDoubleChannel *o1, EegDoubleChannel *o2);
 SDK_SHARED int EegArtifactChannel_read_data(EegArtifactChannel *channel, size_t offset, size_t length, ArtifactZone *out_buffer, size_t buffer_size, size_t *samples_read);
 SDK_SHARED int EegArtifactChannel_get_buffer_size(EegArtifactChannel *channel, size_t *out_buffer_size);
+SDK_SHARED int delete_SourceChannel(SourceChannel *channels);
 
 typedef struct _EegIndexValues {
 	double AlphaRate;

@@ -37,6 +37,7 @@ typedef enum _Filter {
 	BandStop_45_55Hz_SF250
 } Filter;
 
+SDK_SHARED AnyChannel *AnyChannel_create(Device *device, ChannelType channel);
 SDK_SHARED void AnyChannel_delete(AnyChannel *channel);
 SDK_SHARED int AnyChannel_get_info(AnyChannel *channel, ChannelInfo *out_info);
 SDK_SHARED int AnyChannel_get_sampling_frequency(AnyChannel *channel, float * out_frequency);
