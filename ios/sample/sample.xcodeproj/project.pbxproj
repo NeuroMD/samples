@@ -163,7 +163,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#echo ${PROJECT_FILE_PATH}\n#rm -rf ${PROJECT_FILE_PATH}/../neurosdk.framework\n\n\n\n\n\n#cp -f -R /Users/admin/Library/Developer/Xcode/DerivedData/neurosdk-czpufqssowujmgaitktqmiyiansm/Build/Products/Release-iphoneos/neurosdk.framework ${PROJECT_FILE_PATH}/../neurosdk.framework\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho ${PROJECT_FILE_PATH}\n#rm -rf ${PROJECT_FILE_PATH}/../neurosdk.framework\n\n\n\n\n\n#cp -f -R /Users/admin/Library/Developer/Xcode/DerivedData/neurosdk-czpufqssowujmgaitktqmiyiansm/Build/Products/Release-iphoneos/neurosdk.framework ${PROJECT_FILE_PATH}/../neurosdk.framework\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

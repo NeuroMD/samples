@@ -26,12 +26,13 @@ class ViewController: UIViewController {
                 safe.device = device
                 guard let d = safe.device else {return}
                 
-                safe.device?.connect()
-                safe.device?.subscribeParameterChanged(subscriber: { (param) in
+                d.connect()
+                d.subscribeParameterChanged(subscriber: { (param) in
                     if(param == .State) {
-                        let state = safe.device?.readParam(param: .State) as NTState?
+                        let state = d.readParam(param: .State) as NTState?
                         if( state == .Connected) {
-                            
+                            print("Connected")
+
                             for ch in d.channels() {
                                 print(ch)
                             }
@@ -41,16 +42,18 @@ class ViewController: UIViewController {
                             for c in d.commands() {
                                 print(c)
                             }
-                            
+
                             let name = safe.device?.readParam(param: .Name) as String?
                             if(Thread.isMainThread) {
                                 safe.label.text = name
-                                
+
                             } else {
                                 DispatchQueue.main.sync {
                                     safe.label.text = name
                                 }
                             }
+                        } else {
+                            print("Disconnected")
                         }
                         
                     }

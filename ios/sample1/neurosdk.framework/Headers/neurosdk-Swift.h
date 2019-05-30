@@ -203,6 +203,11 @@ SWIFT_CLASS("_TtC8neurosdk16NTBatteryChannel")
 @end
 
 
+SWIFT_CLASS("_TtC8neurosdk22NTBipolarDoubleChannel")
+@interface NTBipolarDoubleChannel : NTBaseChannel
+@end
+
+
 SWIFT_CLASS("_TtC8neurosdk13NTChannelInfo")
 @interface NTChannelInfo : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
@@ -262,6 +267,11 @@ SWIFT_CLASS("_TtC8neurosdk16NTEmotionalState")
 
 SWIFT_CLASS("_TtC8neurosdk23NTEmotionalStateChannel")
 @interface NTEmotionalStateChannel : NTBaseChannel
+@end
+
+
+SWIFT_CLASS("_TtC8neurosdk23NTFilteredDoubleChannel")
+@interface NTFilteredDoubleChannel : NTBaseChannel
 @end
 
 
