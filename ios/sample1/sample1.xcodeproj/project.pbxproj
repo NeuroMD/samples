@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		845F216C22719D8000F852FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF622A226DEBE900C02DDC /* AppDelegate.swift */; };
-		848B053A22735B9900D2FB61 /* neurosdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848B053922735B9900D2FB61 /* neurosdk.framework */; };
+		8490ED9322A15167004A60AE /* neurosdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8490ED9222A15167004A60AE /* neurosdk.framework */; };
 		849D8387228BF942002FB692 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849D8386228BF942002FB692 /* CoreBluetooth.framework */; };
 		84CA273E22806BD800B158FE /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF622C226DEBE900C02DDC /* RootViewController.swift */; };
 		84CA274022806C1C00B158FE /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84CA273F22806C1C00B158FE /* libc++.tbd */; };
@@ -18,7 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		848B053922735B9900D2FB61 /* neurosdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = neurosdk.framework; sourceTree = "<group>"; };
+		8490ED9222A15167004A60AE /* neurosdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = neurosdk.framework; sourceTree = "<group>"; };
 		849D8386228BF942002FB692 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		84CA273F22806C1C00B158FE /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		84EF6227226DEBE900C02DDC /* sample1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sample1.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -36,8 +36,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				849D8387228BF942002FB692 /* CoreBluetooth.framework in Frameworks */,
+				8490ED9322A15167004A60AE /* neurosdk.framework in Frameworks */,
 				84CA274022806C1C00B158FE /* libc++.tbd in Frameworks */,
-				848B053A22735B9900D2FB61 /* neurosdk.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,9 +77,9 @@
 		84EF6240226DEC0200C02DDC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8490ED9222A15167004A60AE /* neurosdk.framework */,
 				849D8386228BF942002FB692 /* CoreBluetooth.framework */,
 				84CA273F22806C1C00B158FE /* libc++.tbd */,
-				848B053922735B9900D2FB61 /* neurosdk.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

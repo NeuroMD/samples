@@ -214,13 +214,15 @@ SWIFT_CLASS("_TtC8neurosdk13NTChannelInfo")
 @end
 
 
-SWIFT_CLASS("_TtC8neurosdk24NTConnectionStatsChannel")
-@interface NTConnectionStatsChannel : NTBaseChannel
+SWIFT_CLASS("_TtC8neurosdk8NTDevice")
+@interface NTDevice : NSObject
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 
-SWIFT_CLASS("_TtC8neurosdk8NTDevice")
-@interface NTDevice : NSObject
+SWIFT_CLASS("_TtC8neurosdk12NTDeviceInfo")
+@interface NTDeviceInfo : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end

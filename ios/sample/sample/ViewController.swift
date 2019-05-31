@@ -21,18 +21,16 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         view.addSubview(label)
-        scanner.subscribeFoundDevice { [weak self] (device) in
+        scanner.subscribeFoundDevice { [weak self] (deviceInfo) in
             if let safe = self {
-                safe.device = device
+                safe.device = NTDevice(deviceInfo)
                 guard let d = safe.device else {return}
-                
                 d.connect()
                 d.subscribeParameterChanged(subscriber: { (param) in
                     if(param == .State) {
-                        let state = d.readParam(param: .State) as NTState?
+                        let state = d.readState()!
                         if( state == .Connected) {
                             print("Connected")
-
                             for ch in d.channels() {
                                 print(ch)
                             }
@@ -42,8 +40,7 @@ class ViewController: UIViewController {
                             for c in d.commands() {
                                 print(c)
                             }
-
-                            let name = safe.device?.readParam(param: .Name) as String?
+                            let name = safe.device?.readName()
                             if(Thread.isMainThread) {
                                 safe.label.text = name
 

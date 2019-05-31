@@ -197,23 +197,41 @@ class RootViewController: UIViewController{
         
     }
     func initSystem() {
-        scanner?.subscribeFoundDevice { [ weak self ]  (findedDevice) in
+        scanner?.subscribeFoundDevice { [ weak self ]  (deviceInfo) in
             print("- founded device state -")
             guard let safe = self else { return }
-            safe.device = findedDevice
-            safe.scanner = nil
+            safe.device = NTDevice(deviceInfo)
             if let d = safe.device {
+
                 d.subscribeParameterChanged(subscriber: { (param) in
+                    let _ = d.readName()
+                    let _ = d.readAddress()
+                    let _ = d.readState()
+                    let _ = d.readSerialNumber()
+                    let _ = d.readOffset()
+                    let _ = d.readHardwareFilterState()
+                    let _ = d.readFirmwareMode()
+                    let _ = d.readSamplingFrequency()
+                    let _ = d.readGain()
+                    let _ = d.readExternalSwitchState()
+                    let _ = d.readADCInputState()
+                    let _ = d.readAccelerometerSens()
+                    let _ = d.readGyroscopeSens()
+                    let _ = d.readStimulatorAndMAState()
+                    let _ = d.readStimulatorParamPack()
+                    let _ = d.readMotionAssistantParamPack()
+                    let _ = d.readFirmwareVersion()
+                    
                     if( param == .State) {
-                        let stateDevice = (safe.device?.readParam(param: .State))! as NTState
+                        let stateDevice = d.readState()!
                         safe.connected = stateDevice == .Connected
                         DispatchQueue.main.sync {
                             safe.connected = stateDevice == .Connected
                             if(safe.connected) {
                                 safe.statusView.isHidden = false
-                                safe.nameDeviceLabel.text = (safe.device?.readParam(param: .Name))! as String
+                                safe.nameDeviceLabel.text = d.readName()!
                                 var chnl: NTChannelInfo!
-                                
+
                                 for channel in d.channels() {
                                     if( channel.type == .TypeSignal) {
                                         chnl = channel
@@ -221,12 +239,12 @@ class RootViewController: UIViewController{
                                     }
                                     print("Device: ChannelInfo(", channel.index, channel.name, channel.type, ")\n")
                                 }
-                                
+
                                 safe.signal = NTEegChannel(safe.device!, chnl)
-                                
+
                                 safe.signal?.subscribeLengthChanged(subscribe: { (length) in
                                     let newdata = safe.signal?.readData(offset: length-1, length: 1)?.first
-                                    
+
                                     let duration = safe.timer.targetTimestamp - safe.timer.timestamp
                                     safe.startTimestamp = safe.startTimestamp + duration
                                     print(newdata, safe.startTimestamp)
@@ -236,7 +254,7 @@ class RootViewController: UIViewController{
                                 safe.signalBtn.setTitle("Start Signal", for: .normal)
                                 if let _ =  safe.batteryChannel {
                                     print("NTBatteryChannel: - allraady init")
-                                    
+
                                 } else {
                                     safe.batteryChannel = NTBatteryChannel(safe.device)
                                     safe.batteryChannel?.subscribeLengthChanged(subscribe: { (length) in
@@ -246,7 +264,7 @@ class RootViewController: UIViewController{
                                         }
                                     })
                                 }
-                                
+
                             } else {
                                 print("- disconnected - reconnect")
                             }
