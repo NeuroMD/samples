@@ -243,7 +243,7 @@ class RootViewController: UIViewController{
                                 safe.signal = NTEegChannel(safe.device!, chnl)
 
                                 safe.signal?.subscribeLengthChanged(subscribe: { (length) in
-                                    let newdata = safe.signal?.readData(offset: length-1, length: 1)?.first
+                                    let newdata = safe.signal?.readData(offset: length-1, length: 1).first
 
                                     let duration = safe.timer.targetTimestamp - safe.timer.timestamp
                                     safe.startTimestamp = safe.startTimestamp + duration
@@ -258,7 +258,7 @@ class RootViewController: UIViewController{
                                 } else {
                                     safe.batteryChannel = NTBatteryChannel(safe.device)
                                     safe.batteryChannel?.subscribeLengthChanged(subscribe: { (length) in
-                                        let level = safe.batteryChannel?.readData(offset: length-1, length: 1)?.first
+                                        let level = safe.batteryChannel?.readData(offset: length-1, length: 1).first
                                         DispatchQueue.main.sync {
                                             safe.batteryDeviceLabel.text = String(format: "Battery level: %d %", arguments: [level!])
                                         }

@@ -17,9 +17,9 @@ class ViewController: UIViewController {
         return l
         
     }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.addSubview(label)
         scanner.subscribeFoundDevice { [weak self] (deviceInfo) in
             if let safe = self {
@@ -52,7 +52,7 @@ class ViewController: UIViewController {
                         } else {
                             print("Disconnected")
                         }
-                        
+
                     }
                 })
             }

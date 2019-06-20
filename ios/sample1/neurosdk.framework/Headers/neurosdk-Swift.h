@@ -221,6 +221,8 @@ SWIFT_CLASS("_TtC8neurosdk8NTDevice")
 @end
 
 
+
+
 SWIFT_CLASS("_TtC8neurosdk12NTDeviceInfo")
 @interface NTDeviceInfo : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
@@ -272,6 +274,11 @@ SWIFT_CLASS("_TtC8neurosdk23NTEmotionalStateChannel")
 @end
 
 
+SWIFT_CLASS("_TtC8neurosdk24NTEmulationDoubleChannel")
+@interface NTEmulationDoubleChannel : NTBaseChannel
+@end
+
+
 SWIFT_CLASS("_TtC8neurosdk23NTFilteredDoubleChannel")
 @interface NTFilteredDoubleChannel : NTBaseChannel
 @end
@@ -290,6 +297,11 @@ SWIFT_CLASS("_TtC8neurosdk19NTResistanceChannel")
 
 SWIFT_CLASS("_TtC8neurosdk17NTSpectrumChannel")
 @interface NTSpectrumChannel : NTBaseChannel
+@end
+
+
+SWIFT_CLASS("_TtC8neurosdk28NTSpectrumPowerDoubleChannel")
+@interface NTSpectrumPowerDoubleChannel : NTBaseChannel
 @end
 
 #if __has_attribute(external_source_symbol)
