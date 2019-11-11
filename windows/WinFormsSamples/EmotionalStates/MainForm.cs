@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Net;
 using System.Windows.Forms;
 using EmotionalStates.Devices;
 using EmotionalStates.Drawable;
 using EmotionalStates.EmotionsChart;
 using EmotionalStates.IndexChart;
+using EmotionalStates.SignalChart;
 using EmotionalStates.Spectrum;
+using Neuro;
 
 namespace EmotionalStates
 {
@@ -19,12 +23,19 @@ namespace EmotionalStates
         private IndexSettingsPresenter _indexSettingsPresenter;
         private readonly DeviceModel _deviceModel = new DeviceModel();
         private readonly EmotionsChart.EmotionsChart _statesChart = new EmotionsChart.EmotionsChart {Mode = EmotionBarMode.Empty};
+//        private readonly SignalViewController[] _signalViewController = new SignalViewController[2];
 
-    public MainForm()
+        public MainForm()
         {
             InitializeComponent();
             _deviceModel.ChannelsChanged += _deviceModel_ChannelsChanged;
+            
+//            _signalViewController[0] = new SignalViewController(this, signalChart1);
+//            _signalViewController[1] = new SignalViewController(this, signalChart2);
+
+
         }
+
 
         private void _deviceModel_ChannelsChanged(object sender, System.EventArgs e)
         {
@@ -32,6 +43,14 @@ namespace EmotionalStates
             {
                 BeginInvoke((MethodInvoker) delegate
                 {
+                    var signalChart1 = new DrawableSignalChart();
+                    var signalChart2 = new DrawableSignalChart();
+
+                    signalChart1.SetChannel(_deviceModel.T3O1SignalChannel);
+                    signalChart2.SetChannel(_deviceModel.T4O21SignalChannel);
+//                    _signalViewController[0].SetChannel(_deviceModel.T3O1SignalChannel);
+                    //                    _signalViewController[1].SetChannel(_deviceModel.T4O21SignalChannel);
+
                     _startSignalButton.Enabled = true;
                     _stopSignalButton.Enabled = true;
 
@@ -48,10 +67,12 @@ namespace EmotionalStates
                         new SpectrumModel(_deviceModel.T4O2SpectrumChannel));
 
                     var compositeDrawable = new CompoundDrawable();
-                    compositeDrawable.AddDrawable(indexChart, new PointF(0f, 0f), new SizeF(0.7f, 0.94f));
-                    compositeDrawable.AddDrawable(spectrumChartT3O1, new PointF(0.7f, 0.0f), new SizeF(0.3f, 0.47f));
-                    compositeDrawable.AddDrawable(spectrumChartT4O2, new PointF(0.7f, 0.47f), new SizeF(0.3f, 0.47f));
+                    compositeDrawable.AddDrawable(indexChart, new PointF(0f, 0f), new SizeF(0.35f, 0.94f));
+                    compositeDrawable.AddDrawable(spectrumChartT3O1, new PointF(0.35f, 0.0f), new SizeF(0.3f, 0.47f));
+                    compositeDrawable.AddDrawable(spectrumChartT4O2, new PointF(0.35f, 0.47f), new SizeF(0.3f, 0.47f));
                     compositeDrawable.AddDrawable(_statesChart, new PointF(0f, 0.94f), new SizeF(1.0f, 0.06f));
+                    compositeDrawable.AddDrawable(signalChart1, new PointF(0.65f, 0.0f), new SizeF(0.35f, 0.47f));
+                    compositeDrawable.AddDrawable(signalChart2, new PointF(0.65f, 0.47f), new SizeF(0.35f, 0.47f));
                     _drawableControl.Drawable = compositeDrawable;
 
                 });

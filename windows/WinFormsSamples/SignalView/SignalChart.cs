@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace SignalView
@@ -166,7 +167,7 @@ namespace SignalView
 		/// </summary>
 		/// функция передачи параметров в элемент отображения
 		/// </summary>
-		public void DrawSignal(double[] data, int index, int length, int timeOffset,int fSample,  string[] message)
+		public void DrawSignal(double[] data, int index, int length, int timeOffset,int fSample,  string[] message, Graphics customGraphics = null)
 		{
 			//for (int i = 0; i < length; i++)
 			//  input[i] = data[i];
@@ -190,7 +191,7 @@ namespace SignalView
             //после передачи - перерисовать
             try
             {
-                RedrawScreen(grafx.Graphics);
+                RedrawScreen(customGraphics ?? grafx.Graphics);
             }
             catch { }
 
@@ -376,9 +377,10 @@ namespace SignalView
 					scPosY.X + scWidth, scPosY.Y + scaleCountY * scWidth-1);
 			}
 
-			g.TranslateTransform(0, scPosY.Y + scWidth * scaleCountY);
-			g.RotateTransform(-90); // производим поворот на -90
-			g.DrawString(scaleVolts[0], scFont, BlackBrush, scWidth * 4, 5);
+            GraphicsState state = g.Save();
+            g.TranslateTransform(0, scPosY.Y + scWidth * scaleCountY);
+            g.RotateTransform(-90); // производим поворот на -90
+            g.DrawString(scaleVolts[0], scFont, BlackBrush, scWidth * 4, 5);
 			g.DrawString(scaleVolts[1], scFont, BlackBrush, scWidth * 13, 5);
 			g.DrawString(scaleVolts[2], scFont, BlackBrush, scWidth * 19, 5);
 			for (int i = 0; i <= scaleCountY; i++)
@@ -387,12 +389,13 @@ namespace SignalView
 				g.DrawString(scaleBufStringY[i], scFont2, BlackBrush,
 					i * scWidth, 22);
 			}
-			g.ResetTransform();
+//			g.ResetTransform();
+            g.Restore(state);
 
-			//-------------------------------------------------------------------------------------------------------
-			// Перерисовать панель информации
-			// выводим информационные строки из буфера inputMessage
-			if (inputMessage != null)
+            //-------------------------------------------------------------------------------------------------------
+            // Перерисовать панель информации
+            // выводим информационные строки из буфера inputMessage
+            if (inputMessage != null)
 			{
 				for (int i = 0; i < inputMessage.Length; i++)
 					g.DrawString(inputMessage[i], scFont, BlackBrush, ipPos.X, ipPos.Y + 20*i);	
@@ -727,7 +730,7 @@ namespace SignalView
 			
 		}
 		// щелчек мышки на форме, проверяем, не щелкнули ли по органам управления
-		private void MouseDownHandler(object sender, MouseEventArgs e)
+		public void MouseDownHandler(object sender, MouseEventArgs e)
 		{
 			isMouseDown = true;
 			// шелчек мышкой по контролу управления масштабом по X
@@ -786,7 +789,7 @@ namespace SignalView
 
 		}
 		// щелчек мышки на форме, проверяем, не щелкнули ли по органам управления
-		private void MouseUpHandler(object sender, MouseEventArgs e)
+		public void MouseUpHandler(object sender, MouseEventArgs e)
 		{
 			isMouseDown = false;
 		}
