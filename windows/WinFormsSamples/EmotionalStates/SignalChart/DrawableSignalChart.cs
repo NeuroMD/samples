@@ -47,7 +47,7 @@ namespace EmotionalStates.SignalChart
             _signalChartControl.Location = new System.Drawing.Point(0, 0);
             _signalChartControl.Name = "";
             _signalChartControl.PeakDetector = false;
-            _signalChartControl.ScaleX = 14;
+            _signalChartControl.ScaleX = 18;
             _signalChartControl.ScaleY = 10;
 
             DrawableSize = new Size(500, 440);

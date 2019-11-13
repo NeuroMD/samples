@@ -134,7 +134,7 @@ namespace EmotionalStates.IndexChart
             {
                 var curTime = (lastIndexTimeSec/stepSec - i)*stepSec;
                 graphics.DrawLine(curTime/ stepSec % 5 == 0 ? rulerPenThick : rulerPenThin, new Point(curX , 0), new Point(curX , _drawableSize.Height - (curTime/ stepSec % 5 == 0 ? textHeight : textHeight+5)));
-                graphics.DrawString(((int)(10+curTime/12)).ToString(), timelineFont, new SolidBrush(timelineColor), curX  - 8, _drawableSize.Height - textHeight);
+                graphics.DrawString(((int)(10.0+curTime/12.5)).ToString(), timelineFont, new SolidBrush(timelineColor), curX  - 8, _drawableSize.Height - textHeight);
 
                 curX -= step;
             }
