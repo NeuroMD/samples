@@ -296,7 +296,7 @@ namespace SignalView
 				// длинные линии
 				g.DrawLine(GridPen, pointGridX, pointLeftUp.Y, pointGridX, pointRightDown.Y + 4);
 				// подписи
-				g.DrawString((scaleBufX[scaleX % 9] * index).ToString(), AxisFont, BlackBrush,
+				g.DrawString((scaleBufX[scaleX % 9] * index ).ToString(), AxisFont, BlackBrush,
 					pointGridX, pointRightDown.Y + 15, graphTextFormat);
 				index++;
 				pointGridX = pointGridX + gridStepX;

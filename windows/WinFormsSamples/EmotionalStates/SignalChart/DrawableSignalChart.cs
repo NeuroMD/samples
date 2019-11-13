@@ -27,6 +27,7 @@ namespace EmotionalStates.SignalChart
             _signalChannel = channel;
             if (_signalChannel != null)
             {
+                _signalChartControl.Name = channel.Info.Name;
                 _signalChannel.LengthChanged += OnLengthChanged;
             }
         }
@@ -34,21 +35,22 @@ namespace EmotionalStates.SignalChart
         private void OnLengthChanged(object sender, int length)
         {
             if (_signalChannel == null) return;
-            totalLengthChanged += length;
+            totalLengthChanged = length;
         }
 
         public DrawableSignalChart()
         {
-            DrawableSize = new Size(500, 440);
 
             _signalChartControl = new SignalView.SignalChart();
 
             _signalChartControl.BackColor = System.Drawing.SystemColors.Control;
             _signalChartControl.Location = new System.Drawing.Point(0, 0);
-            _signalChartControl.Name = "_signalChartControl";
+            _signalChartControl.Name = "";
             _signalChartControl.PeakDetector = false;
             _signalChartControl.ScaleX = 14;
             _signalChartControl.ScaleY = 10;
+
+            DrawableSize = new Size(500, 440);
             _signalChartControl.Size = DrawableSize;
 
         }
@@ -68,17 +70,14 @@ namespace EmotionalStates.SignalChart
 
         public void Draw(Graphics graphics)
         {
-            if (_signalChannel == null) return;
+            if (_signalChannel == null /*|| totalLengthChanged<=0*/) return;
 
-
-            var data = _signalChannel.ReadData(_signalChannel.TotalLength - _signalChartControl.SamplesOnScreen,
-                _signalChartControl.SamplesOnScreen);
+            var offset = _signalChannel.TotalLength - _signalChartControl.SamplesOnScreen;
+            var data = _signalChannel.ReadData(offset<0?0:offset,
+                Math.Min(totalLengthChanged, _signalChartControl.SamplesOnScreen));
 
             _signalChartControl.DrawSignal(data, data.Length, data.Length, totalLengthChanged, (int)_signalChannel.SamplingFrequency,
-                new[] { _signalChannel.ToString() }, graphics);
-
-
-
+                new[] { _signalChannel.Info.Name }, graphics);
             totalLengthChanged = 0;
         }
 
