@@ -57,6 +57,7 @@ namespace EmotionalStates
                     T4O2SpectrumChannel = new SpectrumChannel(T4O21SignalChannel);
                     IndexChannel = new EegIndexChannel(deviceChannels["T3"], deviceChannels["T4"], deviceChannels["O1"],
                         deviceChannels["O2"]);
+                    IndexChannel.SetWeights(1.00, 1.70, 0.00, 0.3);
                     ChannelsChanged?.Invoke(this, null);
                 }
             }

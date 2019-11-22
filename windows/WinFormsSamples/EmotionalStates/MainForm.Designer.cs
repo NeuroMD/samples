@@ -208,15 +208,15 @@ namespace EmotionalStates
             // _indexSettingsControl
             // 
             this._indexSettingsControl.AlphaWeight = 1D;
-            this._indexSettingsControl.BetaWeight = 1D;
-            this._indexSettingsControl.Delay = 3D;
-            this._indexSettingsControl.DeltaWeight = 0.5D;
+            this._indexSettingsControl.BetaWeight = 1.7D;
+            this._indexSettingsControl.Delay = 2D;
+            this._indexSettingsControl.DeltaWeight = 0.00D;
             this._indexSettingsControl.Enabled = false;
             this._indexSettingsControl.Location = new System.Drawing.Point(6, 37);
             this._indexSettingsControl.Name = "_indexSettingsControl";
             this._indexSettingsControl.Size = new System.Drawing.Size(141, 190);
             this._indexSettingsControl.TabIndex = 21;
-            this._indexSettingsControl.ThetaWeight = 1D;
+            this._indexSettingsControl.ThetaWeight = 0.3D;
             // 
             // _emotionCoefficientsControl
             // 
