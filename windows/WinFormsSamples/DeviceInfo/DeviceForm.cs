@@ -19,15 +19,18 @@ namespace DeviceInfo
 
         private void _enumerator_DeviceListChanged(object sender, EventArgs e)
         {
-            BeginInvoke((MethodInvoker) delegate { _deviceListBox.Items.Clear(); });
-            foreach (var deviceInfo in _enumerator.Devices)
+            if (sender is DeviceEnumerator enumerator)
             {
-                var deviceAdapter = new DeviceAdapter(new Device(deviceInfo));
-                BeginInvoke((MethodInvoker)delegate { _deviceListBox.Items.Add(deviceAdapter); });
-                deviceAdapter.ConnectionStateChanged += (o, state) => Invoke((MethodInvoker)delegate
+                BeginInvoke((MethodInvoker) delegate { _deviceListBox.Items.Clear(); });
+                foreach (var deviceInfo in _enumerator.Devices)
                 {
-                    _deviceListBox.PerformLayout();
-                });
+                    var deviceAdapter = new DeviceAdapter(enumerator.CreateDevice(deviceInfo));
+                    BeginInvoke((MethodInvoker) delegate { _deviceListBox.Items.Add(deviceAdapter); });
+                    deviceAdapter.ConnectionStateChanged += (o, state) => Invoke((MethodInvoker) delegate
+                    {
+                        _deviceListBox.PerformLayout();
+                    });
+                }
             }
         }
 
