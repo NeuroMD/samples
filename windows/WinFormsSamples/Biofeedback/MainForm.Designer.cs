@@ -66,7 +66,6 @@ namespace Indices
             this.label5 = new System.Windows.Forms.Label();
             this._scaleTrackBar = new System.Windows.Forms.TrackBar();
             this._timeTrackBar = new System.Windows.Forms.TrackBar();
-            this._signalChart = new SignalView.SignalChart();
             this._durationLabek = new System.Windows.Forms.Label();
             this._addEmulationChannelButton = new System.Windows.Forms.Button();
             this._spectrumAmplitudeLabel = new System.Windows.Forms.Label();
@@ -273,6 +272,7 @@ namespace Indices
             this.FrequencyColumn,
             this.WindowColumn,
             this.ValueColumn});
+            this._indicesListView.HideSelection = false;
             this._indicesListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1});
             this._indicesListView.Location = new System.Drawing.Point(1192, 35);
@@ -388,21 +388,6 @@ namespace Indices
             this._timeTrackBar.TabIndex = 12;
             this._timeTrackBar.Value = 8;
             // 
-            // _signalChart
-            // 
-            this._signalChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._signalChart.BackColor = System.Drawing.SystemColors.Control;
-            this._signalChart.Location = new System.Drawing.Point(590, 431);
-            this._signalChart.MinimumSize = new System.Drawing.Size(500, 440);
-            this._signalChart.Name = "_signalChart";
-            this._signalChart.PeakDetector = false;
-            this._signalChart.ScaleX = 17;
-            this._signalChart.ScaleY = 8;
-            this._signalChart.Size = new System.Drawing.Size(1109, 469);
-            this._signalChart.TabIndex = 13;
-            // 
             // _durationLabek
             // 
             this._durationLabek.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -447,7 +432,7 @@ namespace Indices
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this._emulationParamsBox);
             this.groupBox2.Controls.Add(this._addEmulationChannelButton);
-            this.groupBox2.Location = new System.Drawing.Point(590, 160);
+            this.groupBox2.Location = new System.Drawing.Point(590, 459);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(205, 134);
             this.groupBox2.TabIndex = 18;
@@ -477,7 +462,7 @@ namespace Indices
             // 
             this.groupBox3.Controls.Add(this._deviceListBox);
             this.groupBox3.Controls.Add(this._addDeviceButton);
-            this.groupBox3.Location = new System.Drawing.Point(590, 297);
+            this.groupBox3.Location = new System.Drawing.Point(590, 599);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(205, 134);
             this.groupBox3.TabIndex = 19;
@@ -517,7 +502,7 @@ namespace Indices
             this.groupBox5.Controls.Add(this._filtersListBox);
             this.groupBox5.Location = new System.Drawing.Point(590, 30);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(205, 131);
+            this.groupBox5.Size = new System.Drawing.Size(205, 430);
             this.groupBox5.TabIndex = 21;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Filters";
@@ -527,7 +512,7 @@ namespace Indices
             this._filtersListBox.FormattingEnabled = true;
             this._filtersListBox.Location = new System.Drawing.Point(5, 16);
             this._filtersListBox.Name = "_filtersListBox";
-            this._filtersListBox.Size = new System.Drawing.Size(194, 109);
+            this._filtersListBox.Size = new System.Drawing.Size(194, 409);
             this._filtersListBox.TabIndex = 0;
             // 
             // pictureBox1
@@ -728,7 +713,6 @@ namespace Indices
             this.Controls.Add(this._spectrumTimeLabel);
             this.Controls.Add(this._spectrumAmplitudeLabel);
             this.Controls.Add(this._durationLabek);
-            this.Controls.Add(this._signalChart);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this._indexWindowTextBox);
@@ -807,7 +791,6 @@ namespace Indices
         private Spectrum.SpectrumChart _spectrumChart;
         private System.Windows.Forms.TrackBar _scaleTrackBar;
         private System.Windows.Forms.TrackBar _timeTrackBar;
-        private SignalView.SignalChart _signalChart;
         private System.Windows.Forms.Label _durationLabek;
         private System.Windows.Forms.Button _addEmulationChannelButton;
         private System.Windows.Forms.Label _spectrumAmplitudeLabel;

@@ -12,6 +12,9 @@ namespace EmotionalStates
         public SpectrumChannel T3O1SpectrumChannel { get; private set; }
         public SpectrumChannel T4O2SpectrumChannel { get; private set; }
 
+        public BipolarDoubleChannel T3O1SignalChannel { get; private set; }
+        public BipolarDoubleChannel T4O21SignalChannel { get; private set; }
+
         public event EventHandler ChannelsChanged;
 
         public void SelectDevice(DeviceInfo deviceInfo)
@@ -46,12 +49,15 @@ namespace EmotionalStates
 
             if (deviceChannels.ContainsKey("T3") && deviceChannels.ContainsKey("O1"))
             {
-                T3O1SpectrumChannel = new SpectrumChannel(new BipolarDoubleChannel(deviceChannels["T3"], deviceChannels["O1"]));
+                T3O1SignalChannel = new BipolarDoubleChannel(deviceChannels["T3"], deviceChannels["O1"]);
+                T3O1SpectrumChannel = new SpectrumChannel(T3O1SignalChannel);
                 if (deviceChannels.ContainsKey("T4") && deviceChannels.ContainsKey("O2"))
                 {
-                    T4O2SpectrumChannel = new SpectrumChannel(new BipolarDoubleChannel(deviceChannels["T4"], deviceChannels["O2"]));
+                    T4O21SignalChannel = new BipolarDoubleChannel(deviceChannels["T4"], deviceChannels["O2"]);
+                    T4O2SpectrumChannel = new SpectrumChannel(T4O21SignalChannel);
                     IndexChannel = new EegIndexChannel(deviceChannels["T3"], deviceChannels["T4"], deviceChannels["O1"],
                         deviceChannels["O2"]);
+                    IndexChannel.SetWeights(1.00, 1.70, 0.00, 0.3);
                     ChannelsChanged?.Invoke(this, null);
                 }
             }

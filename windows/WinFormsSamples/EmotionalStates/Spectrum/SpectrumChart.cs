@@ -239,7 +239,6 @@ namespace EmotionalStates.Spectrum
 	                screen.FillRectangle(rhythmBrush[i], rect);
 	                screen.DrawString(rhythmList[i].Symbol, nameFont, nameBrush, rect, sf);
 	            }
-                
         }
 
     }

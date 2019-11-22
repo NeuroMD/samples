@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace SignalView
@@ -155,9 +156,13 @@ namespace SignalView
 			grafx = context.Allocate(this.CreateGraphics(), new Rectangle(0, 0, this.Width, this.Height));
 			
 			RecalcVariables();
-			// Draw the first frame to the buffer.
-			RedrawScreen(grafx.Graphics);	
-		}
+            // Draw the first frame to the buffer.
+            try
+            {
+                RedrawScreen(grafx.Graphics);
+            }
+            catch { }
+        }
 
 		public void DrawSignal(double[] data, int index, int length, int fSample, string[] message)
 		{
@@ -166,7 +171,7 @@ namespace SignalView
 		/// </summary>
 		/// функция передачи параметров в элемент отображения
 		/// </summary>
-		public void DrawSignal(double[] data, int index, int length, int timeOffset,int fSample,  string[] message)
+		public void DrawSignal(double[] data, int index, int length, int timeOffset,int fSample,  string[] message, Graphics customGraphics = null)
 		{
 			//for (int i = 0; i < length; i++)
 			//  input[i] = data[i];
@@ -190,7 +195,7 @@ namespace SignalView
             //после передачи - перерисовать
             try
             {
-                RedrawScreen(grafx.Graphics);
+                RedrawScreen(customGraphics ?? grafx.Graphics);
             }
             catch { }
 
@@ -215,52 +220,57 @@ namespace SignalView
 		/// </summary>
 		private void OnResize(object sender, EventArgs e)
 		{
-			// Re-create the graphics buffer for a new window size.
-			context.MaximumBuffer = new Size(this.Width + 1, this.Height + 1);
-			if (grafx != null)
-			{
-				grafx.Dispose();
-				grafx = null;
-			}
-			grafx = context.Allocate(this.CreateGraphics(), new Rectangle(0, 0, this.Width, this.Height));
+            try
+            {
+                // Re-create the graphics buffer for a new window size.
+                context.MaximumBuffer = new Size(this.Width + 1, this.Height + 1);
+                if (grafx != null)
+                {
+                    grafx.Dispose();
+                    grafx = null;
+                }
 
-			// определяем размеры экрана и координаты трех ключевых точек
-			// координаты точки pointLeftUp заданы константами вверху и не переопределяются
-			// размеры области должны быть четными, т.е. влево и вправо от центра должно быть одинаковое растояние
-			pointRightDown.X = (this.Width - pointLeftUp.X - mpWidthY) / 2;
-			pointRightDown.X = pointLeftUp.X + pointRightDown.X * 2;
-			pointRightDown.Y = (this.Height - apHeightX) / 2;
-			pointRightDown.Y = pointLeftUp.Y + pointRightDown.Y * 2;
-			pointOrigin.X = pointLeftUp.X + (pointRightDown.X - pointLeftUp.X) / 2;
-			pointOrigin.Y = pointLeftUp.Y + (pointRightDown.Y - pointLeftUp.Y) / 2;
+                grafx = context.Allocate(this.CreateGraphics(), new Rectangle(0, 0, this.Width, this.Height));
 
-			// все переменные линиий (шагов сетки) отсчитываются относительно 0 координат (центра)
-			// т.е. реально на эране линий будет в два раза больше, в право и влево от центра
-			// определяем, сколько шагов сетки (линий) помещается по вертикали
-			gridCountY = (pointOrigin.Y - pointLeftUp.Y) / gridStepY ;
-			// определяем, сколько шагов сетки (линий) помещается по горизонтали
-			gridCountX = (pointOrigin.X - pointLeftUp.X) / gridStepX;
+                // определяем размеры экрана и координаты трех ключевых точек
+                // координаты точки pointLeftUp заданы константами вверху и не переопределяются
+                // размеры области должны быть четными, т.е. влево и вправо от центра должно быть одинаковое растояние
+                pointRightDown.X = (this.Width - pointLeftUp.X - mpWidthY) / 2;
+                pointRightDown.X = pointLeftUp.X + pointRightDown.X * 2;
+                pointRightDown.Y = (this.Height - apHeightX) / 2;
+                pointRightDown.Y = pointLeftUp.Y + pointRightDown.Y * 2;
+                pointOrigin.X = pointLeftUp.X + (pointRightDown.X - pointLeftUp.X) / 2;
+                pointOrigin.Y = pointLeftUp.Y + (pointRightDown.Y - pointLeftUp.Y) / 2;
 
-			// панели масштаба
-			scPosX = new Point(pointLeftUp.X - 30, pointRightDown.Y + 30);
-			scPosY.Y = pointRightDown.Y + 45 - scaleCountY*scWidth;
-			
-			// панель информации
-			ipPos = new Point(pointRightDown.X - ipWidth, pointLeftUp.Y);
-			// определяем позицию кнопок прокрутки
-			XScrollRightButton.Left = this.Width - 10 - XScrollRightButton.Width;
-			XScrollRightButton.Top = scPosX.Y;
-			XScrollLeftButton.Left = XScrollRightButton.Left - 10 - XScrollRightButton.Width;
-			XScrollLeftButton.Top = XScrollRightButton.Top;
-			
-			YScrollUpButton.Left = 10;
-			YScrollUpButton.Top = 10;
-			YScrollDownButton.Left = YScrollUpButton.Left;
-			YScrollDownButton.Top = YScrollUpButton.Top + 10 + YScrollUpButton.Height;
+                // все переменные линиий (шагов сетки) отсчитываются относительно 0 координат (центра)
+                // т.е. реально на эране линий будет в два раза больше, в право и влево от центра
+                // определяем, сколько шагов сетки (линий) помещается по вертикали
+                gridCountY = (pointOrigin.Y - pointLeftUp.Y) / gridStepY;
+                // определяем, сколько шагов сетки (линий) помещается по горизонтали
+                gridCountX = (pointOrigin.X - pointLeftUp.X) / gridStepX;
 
-			RecalcVariables();
-			RedrawScreen(grafx.Graphics);
-			this.Refresh();
+                // панели масштаба
+                scPosX = new Point(pointLeftUp.X - 30, pointRightDown.Y + 30);
+                scPosY.Y = pointRightDown.Y + 45 - scaleCountY * scWidth;
+
+                // панель информации
+                ipPos = new Point(pointRightDown.X - ipWidth, pointLeftUp.Y);
+                // определяем позицию кнопок прокрутки
+                XScrollRightButton.Left = this.Width - 10 - XScrollRightButton.Width;
+                XScrollRightButton.Top = scPosX.Y;
+                XScrollLeftButton.Left = XScrollRightButton.Left - 10 - XScrollRightButton.Width;
+                XScrollLeftButton.Top = XScrollRightButton.Top;
+
+                YScrollUpButton.Left = 10;
+                YScrollUpButton.Top = 10;
+                YScrollDownButton.Left = YScrollUpButton.Left;
+                YScrollDownButton.Top = YScrollUpButton.Top + 10 + YScrollUpButton.Height;
+
+                RecalcVariables();
+                RedrawScreen(grafx.Graphics);
+            }
+            catch { }
+            this.Refresh();
 		}
 
 		// перерисовать экран
@@ -295,7 +305,7 @@ namespace SignalView
 				// длинные линии
 				g.DrawLine(GridPen, pointGridX, pointLeftUp.Y, pointGridX, pointRightDown.Y + 4);
 				// подписи
-				g.DrawString((scaleBufX[scaleX % 9] * index).ToString(), AxisFont, BlackBrush,
+				g.DrawString((scaleBufX[scaleX % 9] * index ).ToString(), AxisFont, BlackBrush,
 					pointGridX, pointRightDown.Y + 15, graphTextFormat);
 				index++;
 				pointGridX = pointGridX + gridStepX;
@@ -376,9 +386,10 @@ namespace SignalView
 					scPosY.X + scWidth, scPosY.Y + scaleCountY * scWidth-1);
 			}
 
-			g.TranslateTransform(0, scPosY.Y + scWidth * scaleCountY);
-			g.RotateTransform(-90); // производим поворот на -90
-			g.DrawString(scaleVolts[0], scFont, BlackBrush, scWidth * 4, 5);
+            GraphicsState state = g.Save();
+            g.TranslateTransform(0, scPosY.Y + scWidth * scaleCountY);
+            g.RotateTransform(-90); // производим поворот на -90
+            g.DrawString(scaleVolts[0], scFont, BlackBrush, scWidth * 4, 5);
 			g.DrawString(scaleVolts[1], scFont, BlackBrush, scWidth * 13, 5);
 			g.DrawString(scaleVolts[2], scFont, BlackBrush, scWidth * 19, 5);
 			for (int i = 0; i <= scaleCountY; i++)
@@ -387,12 +398,13 @@ namespace SignalView
 				g.DrawString(scaleBufStringY[i], scFont2, BlackBrush,
 					i * scWidth, 22);
 			}
-			g.ResetTransform();
+//			g.ResetTransform();
+            g.Restore(state);
 
-			//-------------------------------------------------------------------------------------------------------
-			// Перерисовать панель информации
-			// выводим информационные строки из буфера inputMessage
-			if (inputMessage != null)
+            //-------------------------------------------------------------------------------------------------------
+            // Перерисовать панель информации
+            // выводим информационные строки из буфера inputMessage
+            if (inputMessage != null)
 			{
 				for (int i = 0; i < inputMessage.Length; i++)
 					g.DrawString(inputMessage[i], scFont, BlackBrush, ipPos.X, ipPos.Y + 20*i);	
@@ -621,8 +633,12 @@ namespace SignalView
 			}
 			if ((scHoverLastX != scHoverX) | (scaleLastX != scaleX))
 			{
-				RedrawScreen(grafx.Graphics);
-				this.Refresh();
+                try
+                {
+                    RedrawScreen(grafx.Graphics);
+                }
+                catch { }
+                this.Refresh();
 			}
 			scaleLastX = scaleX;
 			scHoverLastX = scHoverX;
@@ -644,8 +660,12 @@ namespace SignalView
 			}
 			if ((scHoverLastY != scHoverY) | (scaleLastY != scaleY))
 			{
-				RedrawScreen(grafx.Graphics);
-				this.Refresh();
+                try
+                {
+                    RedrawScreen(grafx.Graphics);
+                }
+                catch { }
+                this.Refresh();
 			}
 			scaleLastY = scaleY;
 			scHoverLastY = scHoverY;
@@ -662,8 +682,12 @@ namespace SignalView
 					if (cursorUpActiv == false)
 					{
 						cursorUpActiv = true;
-						RedrawScreen(grafx.Graphics);
-						this.Refresh();
+                        try
+                        {
+                            RedrawScreen(grafx.Graphics);
+                        }
+                        catch { }
+                        this.Refresh();
 					}
 				}
 				else
@@ -671,8 +695,12 @@ namespace SignalView
 					if (cursorUpActiv == true)
 					{
 						cursorUpActiv = false;
-						RedrawScreen(grafx.Graphics);
-						this.Refresh();
+                        try
+                        {
+                            RedrawScreen(grafx.Graphics);
+                        }
+                        catch { }
+                        this.Refresh();
 					}
 				}
 
@@ -686,8 +714,12 @@ namespace SignalView
 					if (cursorDownActiv == false)
 					{
 						cursorDownActiv = true;
-						RedrawScreen(grafx.Graphics);
-						this.Refresh();
+                        try
+                        {
+                            RedrawScreen(grafx.Graphics);
+                        }
+                        catch { }
+                        this.Refresh();
 					}
 				}
 				else
@@ -695,8 +727,12 @@ namespace SignalView
 					if (cursorDownActiv == true)
 					{
 						cursorDownActiv = false;
-						RedrawScreen(grafx.Graphics);
-						this.Refresh();
+                        try
+                        {
+                            RedrawScreen(grafx.Graphics);
+                        }
+                        catch { }
+                        this.Refresh();
 					}
 				}
 			}
@@ -709,8 +745,12 @@ namespace SignalView
 						cursorUpY = (pointLeftUp.Y - pointOrigin.Y);
 					if (cursorUpY > (pointRightDown.Y - pointOrigin.Y))
 						cursorUpY = (pointRightDown.Y - pointOrigin.Y);
-					RedrawScreen(grafx.Graphics);
-					this.Refresh();
+                    try
+                    {
+                        RedrawScreen(grafx.Graphics);
+                    }
+                    catch { }
+                    this.Refresh();
 				}
 				if (cursorDownActiv == true)
 				{
@@ -720,14 +760,18 @@ namespace SignalView
 					if (cursorDownY > (pointRightDown.Y - pointOrigin.Y))
 						cursorDownY = (pointRightDown.Y - pointOrigin.Y);
 					cursorDownY = e.Y - pointOrigin.Y;
-					RedrawScreen(grafx.Graphics);
-					this.Refresh();
+                    try
+                    {
+                        RedrawScreen(grafx.Graphics);
+                    }
+                    catch { }
+                    this.Refresh();
 				}
 			}
 			
 		}
 		// щелчек мышки на форме, проверяем, не щелкнули ли по органам управления
-		private void MouseDownHandler(object sender, MouseEventArgs e)
+		public void MouseDownHandler(object sender, MouseEventArgs e)
 		{
 			isMouseDown = true;
 			// шелчек мышкой по контролу управления масштабом по X
@@ -740,9 +784,13 @@ namespace SignalView
 			}
 			if ((scaleLastX != scaleX))
 			{
-				RecalcVariables();			// пересчитываем смещение начала координат по X
-				RedrawScreen(grafx.Graphics);
-				this.Refresh();
+				RecalcVariables();          // пересчитываем смещение начала координат по X
+                try
+                {
+                    RedrawScreen(grafx.Graphics);
+                }
+                catch { }
+                this.Refresh();
 			}
 			scaleLastX = scaleX;
 
@@ -756,9 +804,13 @@ namespace SignalView
 			}
 			if ((scaleLastY != scaleY))
 			{
-				RecalcVariables();			// пересчитываем смещение начала координат по Y
-				RedrawScreen(grafx.Graphics);
-				this.Refresh();
+				RecalcVariables();          // пересчитываем смещение начала координат по Y
+                try
+                {
+                    RedrawScreen(grafx.Graphics);
+                }
+                catch { }
+                this.Refresh();
 			}
 			scaleLastY = scaleY;
 
@@ -786,7 +838,7 @@ namespace SignalView
 
 		}
 		// щелчек мышки на форме, проверяем, не щелкнули ли по органам управления
-		private void MouseUpHandler(object sender, MouseEventArgs e)
+		public void MouseUpHandler(object sender, MouseEventArgs e)
 		{
 			isMouseDown = false;
 		}
@@ -798,8 +850,12 @@ namespace SignalView
 			inputIndex = inputIndex + samplesOnScreen / 4;
 			if (inputIndex >= inputLength)
 				inputIndex = inputLength - 1;
-			RedrawScreen(grafx.Graphics);
-			this.Refresh();
+            try
+            {
+                RedrawScreen(grafx.Graphics);
+            }
+            catch { }
+            this.Refresh();
 
 
 		}
@@ -809,23 +865,36 @@ namespace SignalView
 			inputIndex = inputIndex - samplesOnScreen/4;
 			if (inputIndex < 0)
 				inputIndex = 0;
-			RedrawScreen(grafx.Graphics);
-			this.Refresh();
+            try
+            {
+                RedrawScreen(grafx.Graphics);
+            }
+            catch { }
+            this.Refresh();
 		}
 		// 2 кнопки сдвига по оси Y
 		// сдвиг вверх
 		private void YScrollUpButton_Click(object sender, EventArgs e)
 		{
 			shiftYnV += +nVOnScreen / 16;
-			RedrawScreen(grafx.Graphics);
-			this.Refresh();
+            try
+            {
+                RedrawScreen(grafx.Graphics);
+            }
+            catch { }
+            this.Refresh();
 		}
 		// сдвиг вверх
 		private void YScrollDownButton_Click(object sender, EventArgs e)
 		{
 			shiftYnV += -nVOnScreen/16;
-			RedrawScreen(grafx.Graphics);
-			this.Refresh();
+            try
+            {
+                RedrawScreen(grafx.Graphics);
+            }
+            catch { }
+
+            this.Refresh();
 		}
 	}
 }

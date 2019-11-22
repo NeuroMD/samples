@@ -30,7 +30,7 @@ namespace EmotionalStates
         /// </summary>
         private void InitializeComponent()
         {
-            EmotionalStates.Drawable.EmptyDrawable emptyDrawable2 = new EmotionalStates.Drawable.EmptyDrawable();
+            EmotionalStates.Drawable.EmptyDrawable emptyDrawable1 = new EmotionalStates.Drawable.EmptyDrawable();
             this.label1 = new System.Windows.Forms.Label();
             this._deviceLabel = new System.Windows.Forms.Label();
             this._findDeviceButton = new System.Windows.Forms.Button();
@@ -118,7 +118,7 @@ namespace EmotionalStates
             this._broadcastCheckBox.AutoSize = true;
             this._broadcastCheckBox.Checked = true;
             this._broadcastCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._broadcastCheckBox.Location = new System.Drawing.Point(946, 12);
+            this._broadcastCheckBox.Location = new System.Drawing.Point(1478, 12);
             this._broadcastCheckBox.Name = "_broadcastCheckBox";
             this._broadcastCheckBox.Size = new System.Drawing.Size(74, 17);
             this._broadcastCheckBox.TabIndex = 10;
@@ -130,7 +130,7 @@ namespace EmotionalStates
             // 
             this._applyNetSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._applyNetSettingsButton.Enabled = false;
-            this._applyNetSettingsButton.Location = new System.Drawing.Point(1026, 8);
+            this._applyNetSettingsButton.Location = new System.Drawing.Point(1558, 8);
             this._applyNetSettingsButton.Name = "_applyNetSettingsButton";
             this._applyNetSettingsButton.Size = new System.Drawing.Size(75, 23);
             this._applyNetSettingsButton.TabIndex = 11;
@@ -142,7 +142,7 @@ namespace EmotionalStates
             // 
             this._ipAddressTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._ipAddressTextBox.Enabled = false;
-            this._ipAddressTextBox.Location = new System.Drawing.Point(744, 10);
+            this._ipAddressTextBox.Location = new System.Drawing.Point(1276, 10);
             this._ipAddressTextBox.Name = "_ipAddressTextBox";
             this._ipAddressTextBox.Size = new System.Drawing.Size(100, 20);
             this._ipAddressTextBox.TabIndex = 12;
@@ -152,7 +152,7 @@ namespace EmotionalStates
             // _portTextBox
             // 
             this._portTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._portTextBox.Location = new System.Drawing.Point(880, 10);
+            this._portTextBox.Location = new System.Drawing.Point(1412, 10);
             this._portTextBox.Name = "_portTextBox";
             this._portTextBox.Size = new System.Drawing.Size(60, 20);
             this._portTextBox.TabIndex = 13;
@@ -163,7 +163,7 @@ namespace EmotionalStates
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(850, 13);
+            this.label2.Location = new System.Drawing.Point(1382, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 13);
             this.label2.TabIndex = 14;
@@ -173,7 +173,7 @@ namespace EmotionalStates
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(721, 13);
+            this.label3.Location = new System.Drawing.Point(1253, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(17, 13);
             this.label3.TabIndex = 15;
@@ -194,29 +194,29 @@ namespace EmotionalStates
             // 
             this._spectrumAmplitudeTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._spectrumAmplitudeTrackBar.Location = new System.Drawing.Point(1060, 37);
+            this._spectrumAmplitudeTrackBar.Location = new System.Drawing.Point(1592, 37);
             this._spectrumAmplitudeTrackBar.Maximum = 500;
             this._spectrumAmplitudeTrackBar.Minimum = 10;
             this._spectrumAmplitudeTrackBar.Name = "_spectrumAmplitudeTrackBar";
             this._spectrumAmplitudeTrackBar.Orientation = System.Windows.Forms.Orientation.Vertical;
             this._spectrumAmplitudeTrackBar.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._spectrumAmplitudeTrackBar.RightToLeftLayout = true;
-            this._spectrumAmplitudeTrackBar.Size = new System.Drawing.Size(45, 619);
+            this._spectrumAmplitudeTrackBar.Size = new System.Drawing.Size(45, 937);
             this._spectrumAmplitudeTrackBar.TabIndex = 18;
             this._spectrumAmplitudeTrackBar.Value = 100;
             // 
             // _indexSettingsControl
             // 
             this._indexSettingsControl.AlphaWeight = 1D;
-            this._indexSettingsControl.BetaWeight = 1D;
-            this._indexSettingsControl.Delay = 3D;
-            this._indexSettingsControl.DeltaWeight = 0.5D;
+            this._indexSettingsControl.BetaWeight = 1.7D;
+            this._indexSettingsControl.Delay = 2D;
+            this._indexSettingsControl.DeltaWeight = 0.00D;
             this._indexSettingsControl.Enabled = false;
             this._indexSettingsControl.Location = new System.Drawing.Point(6, 37);
             this._indexSettingsControl.Name = "_indexSettingsControl";
             this._indexSettingsControl.Size = new System.Drawing.Size(141, 190);
             this._indexSettingsControl.TabIndex = 21;
-            this._indexSettingsControl.ThetaWeight = 1D;
+            this._indexSettingsControl.ThetaWeight = 0.3D;
             // 
             // _emotionCoefficientsControl
             // 
@@ -247,10 +247,10 @@ namespace EmotionalStates
             this._drawableControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._drawableControl.Drawable = emptyDrawable2;
+            this._drawableControl.Drawable = emptyDrawable1;
             this._drawableControl.Location = new System.Drawing.Point(153, 37);
             this._drawableControl.Name = "_drawableControl";
-            this._drawableControl.Size = new System.Drawing.Size(930, 666);
+            this._drawableControl.Size = new System.Drawing.Size(1416, 984);
             this._drawableControl.TabIndex = 0;
             this._drawableControl.Text = "drawableControl1";
             // 
@@ -258,7 +258,7 @@ namespace EmotionalStates
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1113, 707);
+            this.ClientSize = new System.Drawing.Size(1645, 1025);
             this.Controls.Add(this._indexSettingsControl);
             this.Controls.Add(this._emotionCoefficientsControl);
             this.Controls.Add(this._statesStopButton);
@@ -304,6 +304,8 @@ namespace EmotionalStates
         private System.Windows.Forms.TrackBar _spectrumAmplitudeTrackBar;
         private EmotionsChart.EmotionCoefficientsControl _emotionCoefficientsControl;
         private IndexChart.IndexSettingsControl _indexSettingsControl;
+//        private SignalView.SignalChart signalChart1;
+//        private SignalView.SignalChart signalChart2;
     }
 }
 
