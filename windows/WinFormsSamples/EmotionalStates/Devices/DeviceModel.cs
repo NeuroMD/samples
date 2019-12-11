@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Neuro;
 
@@ -8,6 +9,10 @@ namespace EmotionalStates
     {
         private Device _currentDevice;
 
+        public SpectrumPowerChannel AlphaLeftPowerChannel { get; private set; }
+        public SpectrumPowerChannel BetaLeftPowerChannel { get; private set; }
+        public SpectrumPowerChannel AlphaRightPowerChannel { get; private set; }
+        public SpectrumPowerChannel BetaRightPowerChannel { get; private set; }
         public EegIndexChannel IndexChannel { get; private set; }
         public SpectrumChannel T3O1SpectrumChannel { get; private set; }
         public SpectrumChannel T4O2SpectrumChannel { get; private set; }
@@ -21,7 +26,7 @@ namespace EmotionalStates
         {
             _currentDevice?.Dispose();
             ChannelsChanged?.Invoke(this, null);
-            _currentDevice = new Device(deviceInfo);
+            _currentDevice = new DeviceEnumerator(DeviceType.Brainbit).CreateDevice(deviceInfo);
             _currentDevice.Connect();
             if (_currentDevice.ReadParam<DeviceState>(Parameter.State) != DeviceState.Connected)
             {
@@ -57,7 +62,14 @@ namespace EmotionalStates
                     T4O2SpectrumChannel = new SpectrumChannel(T4O21SignalChannel);
                     IndexChannel = new EegIndexChannel(deviceChannels["T3"], deviceChannels["T4"], deviceChannels["O1"],
                         deviceChannels["O2"]);
-                    IndexChannel.SetWeights(1.00, 1.70, 0.00, 0.3);
+                    IndexChannel.SetWeights(1.00, 1.00, 0.00, 0.00);
+                    IndexChannel.Delay = 0.0;
+
+                    AlphaLeftPowerChannel = new SpectrumPowerChannel(new List<SpectrumChannel>{T3O1SpectrumChannel}, 8, 14, "AlphaLeft");
+                    BetaLeftPowerChannel = new SpectrumPowerChannel(new List<SpectrumChannel>{T3O1SpectrumChannel}, 14, 34, "BetaLeft");
+                    AlphaRightPowerChannel = new SpectrumPowerChannel(new List<SpectrumChannel>{T4O2SpectrumChannel}, 8, 14, "AlphaRight");
+                    BetaRightPowerChannel = new SpectrumPowerChannel(new List<SpectrumChannel>{T4O2SpectrumChannel}, 14, 34, "BetaRight");
+
                     ChannelsChanged?.Invoke(this, null);
                 }
             }

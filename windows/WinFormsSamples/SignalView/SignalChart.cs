@@ -206,14 +206,20 @@ namespace SignalView
 
 		private void RecalcVariables()
 		{
-			uSPixel = scaleXuS[scaleX] / gridStepX;		// микросекунд на пиксел
-			pixelsBetweenSampels = (float)(inputTuS / uSPixel);		// количество пикселов между соседними отсчетами входных данных
-			nVPixel = scaleYnV[scaleY] / gridStepY;		// нановольт на пиксел
+            try
+            {
+                uSPixel = scaleXuS[scaleX] / gridStepX; // микросекунд на пиксел
+                pixelsBetweenSampels =
+                    (float) (inputTuS / uSPixel); // количество пикселов между соседними отсчетами входных данных
+                nVPixel = scaleYnV[scaleY] / gridStepY; // нановольт на пиксел
 
-			samplesOnScreen = 2 * Convert.ToInt32(Math.Ceiling((pointOrigin.X - pointLeftUp.X) / pixelsBetweenSampels));
+                samplesOnScreen =
+                    2 * Convert.ToInt32(Math.Ceiling((pointOrigin.X - pointLeftUp.X) / pixelsBetweenSampels));
 
-			nVOnScreen = 2 * Convert.ToInt64(Math.Ceiling((pointOrigin.Y - pointLeftUp.Y) *nVPixel));
-		}
+                nVOnScreen = 2 * Convert.ToInt64(Math.Ceiling((pointOrigin.Y - pointLeftUp.Y) * nVPixel));
+            }
+            catch { }
+        }
 
 		/// <summary>
 		/// Изменение размеров компонента, изменяем размеры панелей

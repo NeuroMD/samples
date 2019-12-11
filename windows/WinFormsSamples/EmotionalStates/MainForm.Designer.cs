@@ -1,4 +1,5 @@
-﻿using EmotionalStates.Drawable;
+﻿using System.Windows.Forms;
+using EmotionalStates.Drawable;
 
 namespace EmotionalStates
 {
@@ -45,8 +46,6 @@ namespace EmotionalStates
             this.label3 = new System.Windows.Forms.Label();
             this._statesStopButton = new System.Windows.Forms.Button();
             this._spectrumAmplitudeTrackBar = new System.Windows.Forms.TrackBar();
-            this._indexSettingsControl = new EmotionalStates.IndexChart.IndexSettingsControl();
-            this._emotionCoefficientsControl = new EmotionalStates.EmotionsChart.EmotionCoefficientsControl();
             this._drawableControl = new EmotionalStates.Drawable.DrawableControl();
             ((System.ComponentModel.ISupportInitialize)(this._spectrumAmplitudeTrackBar)).BeginInit();
             this.SuspendLayout();
@@ -54,7 +53,7 @@ namespace EmotionalStates
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
+            this.label1.Location = new System.Drawing.Point(440, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 13);
             this.label1.TabIndex = 3;
@@ -63,7 +62,7 @@ namespace EmotionalStates
             // _deviceLabel
             // 
             this._deviceLabel.AutoSize = true;
-            this._deviceLabel.Location = new System.Drawing.Point(63, 13);
+            this._deviceLabel.Location = new System.Drawing.Point(490, 13);
             this._deviceLabel.Name = "_deviceLabel";
             this._deviceLabel.Size = new System.Drawing.Size(67, 13);
             this._deviceLabel.TabIndex = 4;
@@ -71,7 +70,7 @@ namespace EmotionalStates
             // 
             // _findDeviceButton
             // 
-            this._findDeviceButton.Location = new System.Drawing.Point(207, 8);
+            this._findDeviceButton.Location = new System.Drawing.Point(12, 8);
             this._findDeviceButton.Name = "_findDeviceButton";
             this._findDeviceButton.Size = new System.Drawing.Size(75, 23);
             this._findDeviceButton.TabIndex = 5;
@@ -82,7 +81,7 @@ namespace EmotionalStates
             // _startSignalButton
             // 
             this._startSignalButton.Enabled = false;
-            this._startSignalButton.Location = new System.Drawing.Point(288, 8);
+            this._startSignalButton.Location = new System.Drawing.Point(93, 8);
             this._startSignalButton.Name = "_startSignalButton";
             this._startSignalButton.Size = new System.Drawing.Size(75, 23);
             this._startSignalButton.TabIndex = 6;
@@ -93,7 +92,7 @@ namespace EmotionalStates
             // _stopSignalButton
             // 
             this._stopSignalButton.Enabled = false;
-            this._stopSignalButton.Location = new System.Drawing.Point(369, 8);
+            this._stopSignalButton.Location = new System.Drawing.Point(174, 8);
             this._stopSignalButton.Name = "_stopSignalButton";
             this._stopSignalButton.Size = new System.Drawing.Size(75, 23);
             this._stopSignalButton.TabIndex = 7;
@@ -104,7 +103,7 @@ namespace EmotionalStates
             // _emotionsStartButton
             // 
             this._emotionsStartButton.Enabled = false;
-            this._emotionsStartButton.Location = new System.Drawing.Point(450, 8);
+            this._emotionsStartButton.Location = new System.Drawing.Point(255, 8);
             this._emotionsStartButton.Name = "_emotionsStartButton";
             this._emotionsStartButton.Size = new System.Drawing.Size(98, 23);
             this._emotionsStartButton.TabIndex = 8;
@@ -182,7 +181,7 @@ namespace EmotionalStates
             // _statesStopButton
             // 
             this._statesStopButton.Enabled = false;
-            this._statesStopButton.Location = new System.Drawing.Point(554, 8);
+            this._statesStopButton.Location = new System.Drawing.Point(359, 8);
             this._statesStopButton.Name = "_statesStopButton";
             this._statesStopButton.Size = new System.Drawing.Size(75, 23);
             this._statesStopButton.TabIndex = 16;
@@ -205,52 +204,15 @@ namespace EmotionalStates
             this._spectrumAmplitudeTrackBar.TabIndex = 18;
             this._spectrumAmplitudeTrackBar.Value = 100;
             // 
-            // _indexSettingsControl
-            // 
-            this._indexSettingsControl.AlphaWeight = 1D;
-            this._indexSettingsControl.BetaWeight = 1.7D;
-            this._indexSettingsControl.Delay = 2D;
-            this._indexSettingsControl.DeltaWeight = 0.00D;
-            this._indexSettingsControl.Enabled = false;
-            this._indexSettingsControl.Location = new System.Drawing.Point(6, 37);
-            this._indexSettingsControl.Name = "_indexSettingsControl";
-            this._indexSettingsControl.Size = new System.Drawing.Size(141, 190);
-            this._indexSettingsControl.TabIndex = 21;
-            this._indexSettingsControl.ThetaWeight = 0.3D;
-            // 
-            // _emotionCoefficientsControl
-            // 
-            this._emotionCoefficientsControl.Enabled = false;
-            this._emotionCoefficientsControl.Location = new System.Drawing.Point(6, 233);
-            this._emotionCoefficientsControl.Name = "_emotionCoefficientsControl";
-            this._emotionCoefficientsControl.NX1 = 0D;
-            this._emotionCoefficientsControl.NX2 = 0D;
-            this._emotionCoefficientsControl.NX3 = 0D;
-            this._emotionCoefficientsControl.NX4 = 0D;
-            this._emotionCoefficientsControl.NY1 = 0D;
-            this._emotionCoefficientsControl.NY2 = 0D;
-            this._emotionCoefficientsControl.NY3 = 0D;
-            this._emotionCoefficientsControl.NY4 = 0D;
-            this._emotionCoefficientsControl.PX1 = 0D;
-            this._emotionCoefficientsControl.PX2 = 0D;
-            this._emotionCoefficientsControl.PX3 = 0D;
-            this._emotionCoefficientsControl.PX4 = 0D;
-            this._emotionCoefficientsControl.PY1 = 0D;
-            this._emotionCoefficientsControl.PY2 = 0D;
-            this._emotionCoefficientsControl.PY3 = 0D;
-            this._emotionCoefficientsControl.PY4 = 0D;
-            this._emotionCoefficientsControl.Size = new System.Drawing.Size(141, 470);
-            this._emotionCoefficientsControl.TabIndex = 20;
-            // 
             // _drawableControl
             // 
             this._drawableControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this._drawableControl.Drawable = emptyDrawable1;
-            this._drawableControl.Location = new System.Drawing.Point(153, 37);
+            this._drawableControl.Location = new System.Drawing.Point(12, 37);
             this._drawableControl.Name = "_drawableControl";
-            this._drawableControl.Size = new System.Drawing.Size(1416, 984);
+            this._drawableControl.Size = new System.Drawing.Size(1557, 984);
             this._drawableControl.TabIndex = 0;
             this._drawableControl.Text = "drawableControl1";
             // 
@@ -259,8 +221,6 @@ namespace EmotionalStates
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1645, 1025);
-            this.Controls.Add(this._indexSettingsControl);
-            this.Controls.Add(this._emotionCoefficientsControl);
             this.Controls.Add(this._statesStopButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -278,6 +238,7 @@ namespace EmotionalStates
             this.Controls.Add(this._spectrumAmplitudeTrackBar);
             this.Name = "MainForm";
             this.Text = "Emotional states";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this._spectrumAmplitudeTrackBar)).EndInit();
             this.ResumeLayout(false);
@@ -302,8 +263,6 @@ namespace EmotionalStates
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button _statesStopButton;
         private System.Windows.Forms.TrackBar _spectrumAmplitudeTrackBar;
-        private EmotionsChart.EmotionCoefficientsControl _emotionCoefficientsControl;
-        private IndexChart.IndexSettingsControl _indexSettingsControl;
 //        private SignalView.SignalChart signalChart1;
 //        private SignalView.SignalChart signalChart2;
     }

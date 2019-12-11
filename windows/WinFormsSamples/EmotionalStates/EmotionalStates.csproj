@@ -95,16 +95,9 @@
     </Compile>
     <Compile Include="Drawable\IMouseEventsSubscriber.cs" />
     <Compile Include="Drawable\SignalViewController.cs" />
-    <Compile Include="EmotionsChart\EmotionCoefficientsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="EmotionsChart\EmotionCoefficientsControl.Designer.cs">
-      <DependentUpon>EmotionCoefficientsControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="EmotionsChart\EmotionsChart.cs" />
     <Compile Include="EmotionsChart\EmotionsChartPresenter.cs" />
     <Compile Include="EmotionsChart\IEmotionsChart.cs" />
-    <Compile Include="EmotionsChart\StatesSettingsPresenter.cs" />
     <Compile Include="IndexChart\EegIndexChart.cs" />
     <Compile Include="IndexChart\IEegIndexChart.cs" />
     <Compile Include="Drawable\IDrawable.cs" />
@@ -136,9 +129,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Drawable\DrawableControl.resx">
       <DependentUpon>DrawableControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EmotionsChart\EmotionCoefficientsControl.resx">
-      <DependentUpon>EmotionCoefficientsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="IndexChart\IndexSettingsControl.resx">
       <DependentUpon>IndexSettingsControl.cs</DependentUpon>

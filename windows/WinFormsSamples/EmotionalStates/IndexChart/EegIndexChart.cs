@@ -17,7 +17,8 @@ namespace EmotionalStates.IndexChart
         private readonly int TimeAxisHeight = 20;
         private int _lastIndexTime;
 
-        public int LastIndexTime {
+        public int LastIndexTime
+        {
             get => _lastIndexTime;
             set
             {
@@ -33,7 +34,7 @@ namespace EmotionalStates.IndexChart
             {
                 _drawableSize = value;
 
-                var chartSize = new Size(_drawableSize.Width, _drawableSize.Height-TimeAxisHeight);
+                var chartSize = new Size(_drawableSize.Width, _drawableSize.Height - TimeAxisHeight);
                 _chartMap.DrawableSize = chartSize;
                 _chartCursor.DrawableSize = chartSize;
                 _timeAxis.DrawableSize = new Size(_drawableSize.Width, TimeAxisHeight);
@@ -46,15 +47,19 @@ namespace EmotionalStates.IndexChart
         {
             using (var backgroundBrush = new SolidBrush(Color.LightYellow))
             {
-                graphics.FillRectangle(backgroundBrush, 0, 0, _drawableSize.Width+1, _drawableSize.Height+1);
+                graphics.FillRectangle(backgroundBrush, 0, 0, _drawableSize.Width + 1, _drawableSize.Height + 1);
             }
 
             if (Mode == EegIndexChartMode.Signal)
             {
                 _chartMap.Draw(graphics);
+                using (var channelNameFont = new Font("Arial", 14))
+                {
+                    graphics.DrawString(ChannelName??"No channel", channelNameFont, Brushes.Black, 10f, 10f);
+                }
                 _chartCursor.Draw(graphics);
                 var state = graphics.Save();
-                graphics.TranslateTransform(0,_drawableSize.Height-TimeAxisHeight);
+                graphics.TranslateTransform(0, _drawableSize.Height - TimeAxisHeight);
                 _timeAxis.Draw(graphics);
                 graphics.Restore(state);
 
@@ -82,8 +87,8 @@ namespace EmotionalStates.IndexChart
         }
 
         public EegIndexChartMode Mode { get; set; }
-
         public event EventHandler<Size> SizeChanged;
+        public string ChannelName { private get; set; }
 
         public override bool OnMouseMove(MouseEventArgs mouseEventArgs)
         {
@@ -130,11 +135,11 @@ namespace EmotionalStates.IndexChart
             var subTimeX = step * subTime / stepSec;
             int curX = _drawableSize.Width - subTimeX;
 
-            for (int i = 0; i<= _drawableSize.Width/step; i++)
+            for (int i = 0; i <= _drawableSize.Width / step; i++)
             {
-                var curTime = (lastIndexTimeSec/stepSec - i)*stepSec;
-                graphics.DrawLine(curTime/ stepSec % 5 == 0 ? rulerPenThick : rulerPenThin, new Point(curX , 0), new Point(curX , _drawableSize.Height - (curTime/ stepSec % 5 == 0 ? textHeight : textHeight+5)));
-                graphics.DrawString(((int)(10.0+curTime/12.5)).ToString(), timelineFont, new SolidBrush(timelineColor), curX  - 8, _drawableSize.Height - textHeight);
+                var curTime = (lastIndexTimeSec / stepSec - i) * stepSec;
+                graphics.DrawLine(curTime / stepSec % 5 == 0 ? rulerPenThick : rulerPenThin, new Point(curX, 0), new Point(curX, _drawableSize.Height - (curTime / stepSec % 5 == 0 ? textHeight : textHeight + 5)));
+                graphics.DrawString(((int)(10.0 + curTime / 12.5)).ToString(), timelineFont, new SolidBrush(timelineColor), curX - 8, _drawableSize.Height - textHeight);
 
                 curX -= step;
             }
@@ -232,7 +237,7 @@ namespace EmotionalStates.IndexChart
         private Color _cursorBackgroundColor = Color.FromArgb(50, Color.White);
         private readonly Font _cursorLabelFont = new Font("Arial", 14);
         private double _cursorPosition = 0.95;
-        private Size _drawableSize = new Size(10,10);
+        private Size _drawableSize = new Size(10, 10);
         private EegIndexValues[] _indicesData = new EegIndexValues[0];
         private Rectangle _cursorRectangle = new Rectangle(100, 0, 100, 100);
         private int _alphaLabelY = 20;
@@ -249,7 +254,7 @@ namespace EmotionalStates.IndexChart
         {
             set
             {
-                _drawableSize = value; 
+                _drawableSize = value;
                 RecalculateLabels(_indicesData, _drawableSize);
             }
         }
@@ -265,7 +270,7 @@ namespace EmotionalStates.IndexChart
 
         private void RecalculateLabels(EegIndexValues[] indicesData, Size drawableSize)
         {
-            _cursorRectangle.X = (int) ((drawableSize.Width - _cursorRectangle.Width) * _cursorPosition);
+            _cursorRectangle.X = (int)((drawableSize.Width - _cursorRectangle.Width) * _cursorPosition);
             _cursorRectangle.Height = drawableSize.Height;
             var alpha = 0.25;
             var beta = 0.25;
@@ -281,7 +286,7 @@ namespace EmotionalStates.IndexChart
                 delta = indicesData[dataIndex].DeltaRate;
                 theta = indicesData[dataIndex].ThetaRate;
             }
-            
+
             _alphaLabelText = $"α {alpha * 100.0:F1} %";
             _betaLabelText = $"β {beta * 100.0:F1} %";
             _deltaLabelText = $"δ {delta * 100.0:F1} %";
@@ -352,7 +357,7 @@ namespace EmotionalStates.IndexChart
                     cursorX = _drawableSize.Width - _cursorRectangle.Width;
                 }
 
-                _cursorPosition = (double) cursorX / (_drawableSize.Width - _cursorRectangle.Width);
+                _cursorPosition = (double)cursorX / (_drawableSize.Width - _cursorRectangle.Width);
                 RecalculateLabels(_indicesData, _drawableSize);
             }
             else

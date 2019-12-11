@@ -19,8 +19,6 @@ namespace EmotionalStates
         private IndexChartPresenter _indexChartPresenter;
         private EmotionsChartPresenter _emotionsChartPresenter;
         private SpectrumChartPresenter _spectrumChartPresenter;
-        private StatesSettingsPresenter _statesSettingsPresenter;
-        private IndexSettingsPresenter _indexSettingsPresenter;
         private readonly DeviceModel _deviceModel = new DeviceModel();
         private readonly EmotionsChart.EmotionsChart _statesChart = new EmotionsChart.EmotionsChart {Mode = EmotionBarMode.Empty};
 //        private readonly SignalViewController[] _signalViewController = new SignalViewController[2];
@@ -57,8 +55,7 @@ namespace EmotionalStates
                     var indexChart = new EegIndexChart();
                     _indexChartPresenter = new IndexChartPresenter(indexChart, _deviceModel.IndexChannel,
                         _emotionsStartButton, _statesStopButton, this);
-                    _indexSettingsPresenter = new IndexSettingsPresenter(_indexSettingsControl, _deviceModel.IndexChannel);
-                    _indexSettingsControl.Enabled = true;
+
                     var spectrumChartT3O1 = new SpectrumChart();
                     var spectrumChartT4O2 = new SpectrumChart();
                     _spectrumChartPresenter = new SpectrumChartPresenter(spectrumChartT3O1, _spectrumAmplitudeTrackBar,
@@ -90,19 +87,27 @@ namespace EmotionalStates
 
         private void _findDeviceButton_Click(object sender, System.EventArgs e)
         {
-            _deviceModel.StopSignal();
-            var deviceSearchForm = new DeviceSearchForm();
-            if (deviceSearchForm.ShowDialog(this) == DialogResult.OK)
+            try
             {
-                if (deviceSearchForm.SelectedDevice != null)
+                _deviceModel.StopSignal();
+                var deviceSearchForm = new DeviceSearchForm();
+                if (deviceSearchForm.ShowDialog(this) == DialogResult.OK)
                 {
-                    _deviceLabel.Text = deviceSearchForm.SelectedDevice.ToString();
-                    _deviceModel.SelectDevice(deviceSearchForm.SelectedDevice);
+                    if (deviceSearchForm.SelectedDevice != null)
+                    {
+                        _deviceLabel.Text = deviceSearchForm.SelectedDevice.ToString();
+                        _deviceModel.SelectDevice(deviceSearchForm.SelectedDevice);
+                    }
+                    else
+                    {
+                        _deviceLabel.Text = "Not selected";
+                    }
                 }
-                else
-                {
-                    _deviceLabel.Text = "Not selected";
-                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Cannot connect to device: {exc.Message}", "Connection error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -132,9 +137,15 @@ namespace EmotionalStates
             try
             {
                 var channel = _deviceModel.CreateEmotionChannel();
-                _emotionsChartPresenter = new EmotionsChartPresenter(_statesChart, channel);
-                _statesSettingsPresenter = new StatesSettingsPresenter(_emotionCoefficientsControl, channel);
-                _emotionCoefficientsControl.Enabled = true;
+                _emotionsChartPresenter = new EmotionsChartPresenter(
+                    _statesChart, 
+                    channel,
+                    _deviceModel.AlphaLeftPowerChannel, 
+                    _deviceModel.BetaLeftPowerChannel, 
+                    _deviceModel.AlphaRightPowerChannel,
+                    _deviceModel.BetaRightPowerChannel,
+                    _deviceModel.IndexChannel
+                );
                 SetDestination();
             }
             catch (Exception exc)
@@ -145,7 +156,6 @@ namespace EmotionalStates
 
         private void _statesStopButton_Click(object sender, EventArgs e)
         {
-            _emotionCoefficientsControl.Enabled = false;
             _deviceModel.StopSignal();
             _emotionsChartPresenter?.Dispose();
             _emotionsChartPresenter = null;

@@ -71,7 +71,7 @@ namespace SignalAndResistance
                 return;
             }
 
-            Device = new Device(deviceInfo);
+            Device = _enumerator.CreateDevice(deviceInfo);
             Device.ParameterChanged += OnDeviceParamChanged;
             Device.Connect();
         }

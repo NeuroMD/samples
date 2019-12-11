@@ -108,7 +108,7 @@
             this._betaWeightTextBox.Name = "_betaWeightTextBox";
             this._betaWeightTextBox.Size = new System.Drawing.Size(49, 20);
             this._betaWeightTextBox.TabIndex = 7;
-            this._betaWeightTextBox.Text = "1.5";
+            this._betaWeightTextBox.Text = "1.1";
             this._betaWeightTextBox.TextChanged += new System.EventHandler(this.SettingTextChanged);
             // 
             // label6
@@ -135,7 +135,7 @@
             this._alphaWeightTextBox.Name = "_alphaWeightTextBox";
             this._alphaWeightTextBox.Size = new System.Drawing.Size(49, 20);
             this._alphaWeightTextBox.TabIndex = 4;
-            this._alphaWeightTextBox.Text = "1";
+            this._alphaWeightTextBox.Text = "1.00";
             this._alphaWeightTextBox.TextChanged += new System.EventHandler(this.SettingTextChanged);
             // 
             // _thetaWeightTextBox
@@ -144,7 +144,7 @@
             this._thetaWeightTextBox.Name = "_thetaWeightTextBox";
             this._thetaWeightTextBox.Size = new System.Drawing.Size(49, 20);
             this._thetaWeightTextBox.TabIndex = 3;
-            this._thetaWeightTextBox.Text = "0.3";
+            this._thetaWeightTextBox.Text = "0.00";
             this._thetaWeightTextBox.TextChanged += new System.EventHandler(this.SettingTextChanged);
             // 
             // label5

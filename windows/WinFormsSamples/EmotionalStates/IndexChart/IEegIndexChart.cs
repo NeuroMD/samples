@@ -18,5 +18,6 @@ namespace EmotionalStates.IndexChart
         EegIndexValues[] IndicesData { set; }
         EegIndexChartMode Mode { get; set; }
         event EventHandler<Size> SizeChanged;
+        string ChannelName { set; }
     }
 }
