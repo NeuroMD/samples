@@ -85,6 +85,16 @@ namespace EmotionalStates
            _currentDevice?.Execute(Command.StartSignal);
         }
 
+        public void StartResist()
+        {
+            _currentDevice?.Execute(Command.StartResist);
+        }
+
+        public void StopResist()
+        {
+            _currentDevice?.Execute(Command.StopResist);
+        }
+
         public void StopSignal()
         {
             try
@@ -103,6 +113,14 @@ namespace EmotionalStates
                 throw new ArgumentNullException("Index channel is not initialized");
 
             return new EmotionStateChannel(IndexChannel);
+        }
+
+        public IDictionary<string, ResistanceChannel> CreateResistanceChannels()
+        {
+            return _currentDevice?
+                .Channels?
+                .Where(x => x.Type == ChannelType.Resistance)?
+                .ToDictionary(channelInfo => channelInfo.Name, channelInfo => new ResistanceChannel(_currentDevice, channelInfo));
         }
     }
 }

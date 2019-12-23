@@ -46,6 +46,7 @@ namespace EmotionalStates
             this.label3 = new System.Windows.Forms.Label();
             this._statesStopButton = new System.Windows.Forms.Button();
             this._spectrumAmplitudeTrackBar = new System.Windows.Forms.TrackBar();
+            this.ResistanceCheckButton = new System.Windows.Forms.Button();
             this._drawableControl = new EmotionalStates.Drawable.DrawableControl();
             ((System.ComponentModel.ISupportInitialize)(this._spectrumAmplitudeTrackBar)).BeginInit();
             this.SuspendLayout();
@@ -53,7 +54,7 @@ namespace EmotionalStates
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(440, 13);
+            this.label1.Location = new System.Drawing.Point(580, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 13);
             this.label1.TabIndex = 3;
@@ -62,7 +63,7 @@ namespace EmotionalStates
             // _deviceLabel
             // 
             this._deviceLabel.AutoSize = true;
-            this._deviceLabel.Location = new System.Drawing.Point(490, 13);
+            this._deviceLabel.Location = new System.Drawing.Point(630, 13);
             this._deviceLabel.Name = "_deviceLabel";
             this._deviceLabel.Size = new System.Drawing.Size(67, 13);
             this._deviceLabel.TabIndex = 4;
@@ -81,7 +82,7 @@ namespace EmotionalStates
             // _startSignalButton
             // 
             this._startSignalButton.Enabled = false;
-            this._startSignalButton.Location = new System.Drawing.Point(93, 8);
+            this._startSignalButton.Location = new System.Drawing.Point(233, 8);
             this._startSignalButton.Name = "_startSignalButton";
             this._startSignalButton.Size = new System.Drawing.Size(75, 23);
             this._startSignalButton.TabIndex = 6;
@@ -92,7 +93,7 @@ namespace EmotionalStates
             // _stopSignalButton
             // 
             this._stopSignalButton.Enabled = false;
-            this._stopSignalButton.Location = new System.Drawing.Point(174, 8);
+            this._stopSignalButton.Location = new System.Drawing.Point(314, 8);
             this._stopSignalButton.Name = "_stopSignalButton";
             this._stopSignalButton.Size = new System.Drawing.Size(75, 23);
             this._stopSignalButton.TabIndex = 7;
@@ -103,7 +104,7 @@ namespace EmotionalStates
             // _emotionsStartButton
             // 
             this._emotionsStartButton.Enabled = false;
-            this._emotionsStartButton.Location = new System.Drawing.Point(255, 8);
+            this._emotionsStartButton.Location = new System.Drawing.Point(395, 8);
             this._emotionsStartButton.Name = "_emotionsStartButton";
             this._emotionsStartButton.Size = new System.Drawing.Size(98, 23);
             this._emotionsStartButton.TabIndex = 8;
@@ -181,7 +182,7 @@ namespace EmotionalStates
             // _statesStopButton
             // 
             this._statesStopButton.Enabled = false;
-            this._statesStopButton.Location = new System.Drawing.Point(359, 8);
+            this._statesStopButton.Location = new System.Drawing.Point(499, 8);
             this._statesStopButton.Name = "_statesStopButton";
             this._statesStopButton.Size = new System.Drawing.Size(75, 23);
             this._statesStopButton.TabIndex = 16;
@@ -204,6 +205,17 @@ namespace EmotionalStates
             this._spectrumAmplitudeTrackBar.TabIndex = 18;
             this._spectrumAmplitudeTrackBar.Value = 100;
             // 
+            // ResistanceCheckButton
+            // 
+            this.ResistanceCheckButton.Enabled = false;
+            this.ResistanceCheckButton.Location = new System.Drawing.Point(93, 8);
+            this.ResistanceCheckButton.Name = "ResistanceCheckButton";
+            this.ResistanceCheckButton.Size = new System.Drawing.Size(134, 23);
+            this.ResistanceCheckButton.TabIndex = 19;
+            this.ResistanceCheckButton.Text = "Resistance check";
+            this.ResistanceCheckButton.UseVisualStyleBackColor = true;
+            this.ResistanceCheckButton.Click += new System.EventHandler(this.ResistanceCheckButton_Click);
+            // 
             // _drawableControl
             // 
             this._drawableControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -221,6 +233,7 @@ namespace EmotionalStates
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1645, 1025);
+            this.Controls.Add(this.ResistanceCheckButton);
             this.Controls.Add(this._statesStopButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -263,8 +276,9 @@ namespace EmotionalStates
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button _statesStopButton;
         private System.Windows.Forms.TrackBar _spectrumAmplitudeTrackBar;
-//        private SignalView.SignalChart signalChart1;
-//        private SignalView.SignalChart signalChart2;
+        private Button ResistanceCheckButton;
+        //        private SignalView.SignalChart signalChart1;
+        //        private SignalView.SignalChart signalChart2;
     }
 }
 

@@ -51,6 +51,7 @@ namespace EmotionalStates
 
                     _startSignalButton.Enabled = true;
                     _stopSignalButton.Enabled = true;
+                    ResistanceCheckButton.Enabled = true;
 
                     var indexChart = new EegIndexChart();
                     _indexChartPresenter = new IndexChartPresenter(indexChart, _deviceModel.IndexChannel,
@@ -80,6 +81,7 @@ namespace EmotionalStates
                 {
                     _startSignalButton.Enabled = false;
                     _stopSignalButton.Enabled = false;
+                    ResistanceCheckButton.Enabled = false;
                 });
                 _drawableControl.Drawable = new EmptyDrawable();
             }
@@ -206,6 +208,20 @@ namespace EmotionalStates
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             _deviceModel.StopSignal();
+        }
+
+        private void ResistanceCheckButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var resistanceForm = new ResistanceForm(_deviceModel);
+                resistanceForm.ShowDialog();
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Cannot measure resistance: {exc.Message}", "Resistance error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
     }
 }
