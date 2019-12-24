@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Windows.Forms;
 using EmotionalStates.Devices;
 using EmotionalStates.Drawable;
@@ -16,6 +17,7 @@ namespace EmotionalStates
 {
     public partial class MainForm : Form
     {
+        private bool _signalIsActive = false;
         private IndexChartPresenter _indexChartPresenter;
         private EmotionsChartPresenter _emotionsChartPresenter;
         private SpectrumChartPresenter _spectrumChartPresenter;
@@ -119,6 +121,7 @@ namespace EmotionalStates
             {
                 _deviceModel.StartSignal();
                 _indexChartPresenter.OnSignalStarted();
+                _signalIsActive = true;
             }
             catch (Exception exc)
             {
@@ -129,6 +132,7 @@ namespace EmotionalStates
         private void _stopSignalButton_Click(object sender, System.EventArgs e)
         {
             _deviceModel.StopSignal();
+            _signalIsActive = false;
         }
 
         private void _emotionsStartButton_Click(object sender, System.EventArgs e)
@@ -216,6 +220,10 @@ namespace EmotionalStates
             {
                 var resistanceForm = new ResistanceForm(_deviceModel);
                 resistanceForm.ShowDialog();
+                if (_signalIsActive)
+                {
+                    _deviceModel.StartSignal();
+                }
             }
             catch (Exception exc)
             {

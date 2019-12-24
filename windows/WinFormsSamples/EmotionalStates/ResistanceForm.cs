@@ -18,34 +18,22 @@ namespace EmotionalStates
             _resistanceChannels["T3"].LengthChanged += (sender, length) =>
             {
                 if (length < 0) return;
-                if (sender is ResistanceChannel channel)
-                {
-                    ShowResistanceOnLabel(T3ResistanceLabel, channel);
-                }
+                ShowResistanceOnLabel(T3ResistanceLabel, _resistanceChannels["T3"]);
             };
             _resistanceChannels["T4"].LengthChanged += (sender, length) =>
             {
                 if (length < 0) return;
-                if (sender is ResistanceChannel channel)
-                {
-                    ShowResistanceOnLabel(T4ResistanceLabel, channel);
-                }
+                ShowResistanceOnLabel(T4ResistanceLabel, _resistanceChannels["T4"]);
             };
             _resistanceChannels["O1"].LengthChanged += (sender, length) =>
             {
                 if (length < 0) return;
-                if (sender is ResistanceChannel channel)
-                {
-                    ShowResistanceOnLabel(T3ResistanceLabel, channel);
-                }
+                ShowResistanceOnLabel(O1ResistanceLabel, _resistanceChannels["O1"]);
             };
             _resistanceChannels["O2"].LengthChanged += (sender, length) =>
             {
                 if (length < 0) return;
-                if (sender is ResistanceChannel channel)
-                {
-                    ShowResistanceOnLabel(T3ResistanceLabel, channel);
-                }
+                ShowResistanceOnLabel(O2ResistanceLabel, _resistanceChannels["O2"]);
             };
         }
 
@@ -59,7 +47,7 @@ namespace EmotionalStates
             try
             {
                 var resistanceOhms = channel.ReadData(channel.TotalLength - 1, 1)[0];
-                BeginInvoke((MethodInvoker)delegate { label.Text = $"T3: {resistanceOhms / 1000} k"; });
+                BeginInvoke((MethodInvoker)delegate { label.Text = $"{channel.Info.Name}: {resistanceOhms / 1000} k"; });
             }
             catch { }
         }
