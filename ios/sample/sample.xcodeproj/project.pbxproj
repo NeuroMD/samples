@@ -14,6 +14,7 @@
 		843650C82273471900D018A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 843650C72273471900D018A6 /* Assets.xcassets */; };
 		843650CB2273471900D018A6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 843650C92273471900D018A6 /* LaunchScreen.storyboard */; };
 		843650D622734D5400D018A6 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 843650D522734D5400D018A6 /* libc++.tbd */; };
+		849AC1C023B3AA6F004BEEA4 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849AC1BF23B3AA6F004BEEA4 /* CoreBluetooth.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		843650CA2273471900D018A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		843650CC2273471900D018A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		843650D522734D5400D018A6 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		849AC1BF23B3AA6F004BEEA4 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +36,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				843650D622734D5400D018A6 /* libc++.tbd in Frameworks */,
+				849AC1C023B3AA6F004BEEA4 /* CoreBluetooth.framework in Frameworks */,
 				84261F252276E50E00CC1F3B /* neurosdk.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,6 +77,7 @@
 		843650D422734D5400D018A6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				849AC1BF23B3AA6F004BEEA4 /* CoreBluetooth.framework */,
 				84261F242276E50E00CC1F3B /* neurosdk.framework */,
 				843650D522734D5400D018A6 /* libc++.tbd */,
 			);
@@ -320,7 +324,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 84ZC9ZC455;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -331,7 +335,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.techround.sample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.techround.sample213;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -343,7 +347,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 84ZC9ZC455;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -354,7 +358,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.techround.sample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.techround.sample213;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

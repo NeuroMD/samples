@@ -10,7 +10,7 @@ import UIKit
 import neurosdk
 
 class ViewController: UIViewController {
-    let scanner = NTDeviceScanner()
+    let scanner = NTDeviceEnumerator(deviceType: .TypeBrainbit)
     var device: NTDevice?
     let label: UILabel = {
         let l = UILabel(frame: .init(x: 64, y: 64, width: 100, height: 100))
@@ -21,41 +21,36 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(label)
-        scanner.subscribeFoundDevice { [weak self] (deviceInfo) in
-            if let safe = self {
-                safe.device = NTDevice(deviceInfo)
-                guard let d = safe.device else {return}
-                d.connect()
-                d.subscribeParameterChanged(subscriber: { (param) in
-                    if(param == .State) {
-                        let state = d.readState()!
-                        if( state == .Connected) {
-                            print("Connected")
-                            for ch in d.channels() {
-                                print(ch)
-                            }
-                            for p in d.parameters() {
-                                print(p)
-                            }
-                            for c in d.commands() {
-                                print(c)
-                            }
-                            let name = safe.device?.readName()
-                            if(Thread.isMainThread) {
-                                safe.label.text = name
-
-                            } else {
-                                DispatchQueue.main.sync {
-                                    safe.label.text = name
-                                }
-                            }
-                        } else {
-                            print("Disconnected")
-                        }
-
-                    }
-                })
+        scanner.subscribeFoundDevice { (deviceInfo) in
+            self.device = NTDevice(enumerator: self.scanner, deviceInfo)
+            guard let device = self.device else {
+                return;
             }
+            device.connect()
+            device.subscribeParameterChanged(subscriber: { (param) in
+                if(param == .state) {
+                    let state = device.readState
+                    if( state == .connected) {
+                        print("Connected")
+                        for ch in device.channels {
+                            print(ch)
+                        }
+                        for p in device.parameters {
+                            print(p)
+                        }
+                        for c in device.commands {
+                            print(c)
+                        }
+                        DispatchQueue.main.sync {
+                            self.label.text = "Connected"
+                        }
+                        
+                    } else {
+                        print("Disconnected")
+                    }
+
+                }
+            })
         }
     }
 

@@ -1,16 +1,6 @@
-framework module neurosdk [system] {
-    
-    umbrella header "neurosdk.h"
-    
-    export *
-    module * {export *}
-    
-    private header "neurosdk-private.h"
-    
-}
+framework module neurosdk {
+  umbrella header "neurosdk.h"
 
-
-module neurosdk.Swift {
-    header "neurosdk-Swift.h"
-    requires objc
+  export *
+  module * { export * }
 }

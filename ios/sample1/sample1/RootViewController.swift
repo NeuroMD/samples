@@ -22,7 +22,7 @@ class RootViewController: UIViewController{
     var timer: CADisplayLink!
     
     //MARK: neurosdk classes
-    var scanner: NTDeviceScanner? = NTDeviceScanner(.TypeAny)
+    var scanner: NTDeviceEnumerator? = NTDeviceEnumerator(deviceType: .TypeAny)
     var device: NTDevice?
     var batteryChannel: NTBatteryChannel?
     var signal: NTEegChannel?
@@ -197,70 +197,53 @@ class RootViewController: UIViewController{
         
     }
     func initSystem() {
-        scanner?.subscribeFoundDevice { [ weak self ]  (deviceInfo) in
+        scanner?.subscribeFoundDevice { (deviceInfo) in
             print("- founded device state -")
-            guard let safe = self else { return }
-            safe.device = NTDevice(deviceInfo)
-            if let d = safe.device {
-
-                d.subscribeParameterChanged(subscriber: { (param) in
-                    let _ = d.readName()
-                    let _ = d.readAddress()
-                    let _ = d.readState()
-                    let _ = d.readSerialNumber()
-                    let _ = d.readOffset()
-                    let _ = d.readHardwareFilterState()
-                    let _ = d.readFirmwareMode()
-                    let _ = d.readSamplingFrequency()
-                    let _ = d.readGain()
-                    let _ = d.readExternalSwitchState()
-                    let _ = d.readADCInputState()
-                    let _ = d.readAccelerometerSens()
-                    let _ = d.readGyroscopeSens()
-                    let _ = d.readStimulatorAndMAState()
-                    let _ = d.readStimulatorParamPack()
-                    let _ = d.readMotionAssistantParamPack()
-                    let _ = d.readFirmwareVersion()
-                    
-                    if( param == .State) {
-                        let stateDevice = d.readState()!
-                        safe.connected = stateDevice == .Connected
+            guard let scanner = self.scanner else {
+                return
+            }
+            self.device = NTDevice(enumerator: scanner, deviceInfo)
+            if let device = self.device {
+                device.subscribeParameterChanged(subscriber: { (param) in
+                    if( param == .state) {
+                        let stateDevice = device.readState
+                        self.connected = stateDevice == .connected
                         DispatchQueue.main.sync {
-                            safe.connected = stateDevice == .Connected
-                            if(safe.connected) {
-                                safe.statusView.isHidden = false
-                                safe.nameDeviceLabel.text = d.readName()!
+                            self.connected = stateDevice == .connected
+                            if(self.connected) {
+                                self.statusView.isHidden = false
+                                self.nameDeviceLabel.text = "BrainBit"
                                 var chnl: NTChannelInfo!
 
-                                for channel in d.channels() {
-                                    if( channel.type == .TypeSignal) {
+                                for channel in device.channels {
+                                    if( channel.type == .signal) {
                                         chnl = channel
                                         break
                                     }
                                     print("Device: ChannelInfo(", channel.index, channel.name, channel.type, ")\n")
                                 }
 
-                                safe.signal = NTEegChannel(safe.device!, chnl)
+                                self.signal = NTEegChannel(device: device, channelInfo: chnl)
 
-                                safe.signal?.subscribeLengthChanged(subscribe: { (length) in
-                                    let newdata = safe.signal?.readData(offset: length-1, length: 1).first
+                                self.signal?.subscribeLengthChanged(subscribe: { (length) in
+                                    let newdata = self.signal?.readData(offset: length-1, length: 1).first
 
-                                    let duration = safe.timer.targetTimestamp - safe.timer.timestamp
-                                    safe.startTimestamp = safe.startTimestamp + duration
-                                    print(newdata, safe.startTimestamp)
-                                    safe.vertexData.append(Float(safe.startTimestamp))
-                                    safe.vertexData.append(Float(newdata!))
+                                    let duration = self.timer.targetTimestamp - self.timer.timestamp
+                                    self.startTimestamp = self.startTimestamp + duration
+                                    print(newdata, self.startTimestamp)
+                                    self.vertexData.append(Float(self.startTimestamp))
+                                    self.vertexData.append(Float(newdata!))
                                 })
-                                safe.signalBtn.setTitle("Start Signal", for: .normal)
-                                if let _ =  safe.batteryChannel {
+                                self.signalBtn.setTitle("Start Signal", for: .normal)
+                                if let _ =  self.batteryChannel {
                                     print("NTBatteryChannel: - allraady init")
 
                                 } else {
-                                    safe.batteryChannel = NTBatteryChannel(safe.device)
-                                    safe.batteryChannel?.subscribeLengthChanged(subscribe: { (length) in
-                                        let level = safe.batteryChannel?.readData(offset: length-1, length: 1).first
+                                    self.batteryChannel = NTBatteryChannel(device: device)
+                                    self.batteryChannel?.subscribeLengthChanged(subscribe: { (length) in
+                                        let level = self.batteryChannel?.readData(offset: length-1, length: 1).first
                                         DispatchQueue.main.sync {
-                                            safe.batteryDeviceLabel.text = String(format: "Battery level: %d %", arguments: [level!])
+                                            self.batteryDeviceLabel.text = String(format: "Battery level: %d %", arguments: [level!])
                                         }
                                     })
                                 }
@@ -272,7 +255,7 @@ class RootViewController: UIViewController{
                     }
                 })
             }
-            safe.founded = true
+            self.founded = true
         }
         founded = false
     }
@@ -411,7 +394,7 @@ class RootViewController: UIViewController{
     //MARK: Signal Commands
     func signalSend() {
         print("- signal send -")
-        self.device?.execute(command: .StartSignal)
+        self.device?.execute(command: .startSignal)
         startTimestamp = 0
         vertexData = []
         signalBtn.setTitle("Stop Signal", for: .normal)
@@ -427,7 +410,7 @@ class RootViewController: UIViewController{
     }
     func stopsignalSend() {
         print("- signal stop send -")
-        self.device?.execute(command: .StopSignal)
+        self.device?.execute(command: .stopSignal)
         vertexData = []
         startTimestamp = 0.0
         if( Thread.isMainThread) {
