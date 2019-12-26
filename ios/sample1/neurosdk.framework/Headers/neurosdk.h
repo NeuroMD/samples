@@ -19,7 +19,7 @@ FOUNDATION_EXPORT const unsigned char neurosdkVersionString[];
 #import <neurosdk/NTDeviceEnumerator.h>
 #import <neurosdk/NTDeviceInfo.h>
 #import <neurosdk/NTDevice.h>
-//#import <neurosdk/NTDevice+Extension.h>
+#import <neurosdk/NTDevice+Extension.h>
 
 #import <neurosdk/NTBaseChannel.h>
 #import <neurosdk/NTBatteryChannel.h>

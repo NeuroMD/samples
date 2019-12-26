@@ -9,29 +9,21 @@
 
 #import "NTDeviceEnumerator.h"
 
-#import "NTDevice+Extension.h"
-
 NS_ASSUME_NONNULL_BEGIN
-
 
 @interface NTDevice : NSObject
 
-- (nonnull instancetype)initWithEnumerator:(NTDeviceEnumerator * _Nonnull)enumerator :(NTDeviceInfo * _Nonnull)deviceInfo NS_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithEnumerator:(NTDeviceEnumerator *_Nonnull) enumerator deviceInfo:(NTDeviceInfo *_Nonnull)deviceInfo;
 
-- (void)subscribeParameterChangedWithSubscriber:(void (^ _Nonnull)(enum NTParameter))subscriber;
+- (void)subscribeParameterChangedWithSubscriber:(void (^_Nonnull)(enum NTParameter))subscriber;
 
 - (void)connect;
 - (void)disconnect;
 
+- (void)executeWithCommand:(enum NTCommand) command NS_SWIFT_NAME(execute(command:));
 
-- (void)executeWithCommand:(enum NTCommand)command NS_SWIFT_NAME(execute(command:));
-
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray<NTChannelInfo *> * _Nonnull channels;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray<NSNumber *> * _Nonnull commands;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray<NTParameterInfo *> * _Nonnull parameters;
-
-
-@property (NS_NONATOMIC_IOSONLY, readonly) NTState readState;
-
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray<NTChannelInfo *> *_Nonnull channels;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray<NSNumber *> *_Nonnull commands;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray<NTParameterInfo *> *_Nonnull parameters;
 @end
 NS_ASSUME_NONNULL_END

@@ -14,15 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NTBaseChannel : NSObject
 
-- (nonnull instancetype)initWithDevice:(NTDevice *) device channelInfo: (NTChannelInfo *__nullable) channelInfo NS_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithDevice:(NTDevice *)device channelInfo:(NTChannelInfo *__nullable)channelInfo;
 
-
-- (void)subscribeLengthChangedWithSubscribe:(void (^ _Nonnull)(NSInteger))subscribe;
+- (void)subscribeLengthChangedWithSubscribe:(void (^_Nonnull)(NSInteger))subscribe;
 
 @property (NS_NONATOMIC_IOSONLY, readonly) NSInteger totalLength;
 @property (NS_NONATOMIC_IOSONLY, readonly) float samplingFrequency;
 
-@property (NS_NONATOMIC_IOSONLY, readonly, strong) NTChannelInfo * _Nullable info;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) NTChannelInfo *_Nullable info;
 @end
 
 NS_ASSUME_NONNULL_END

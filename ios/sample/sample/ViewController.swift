@@ -22,14 +22,14 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(label)
         scanner.subscribeFoundDevice { (deviceInfo) in
-            self.device = NTDevice(enumerator: self.scanner, deviceInfo)
+            self.device = NTDevice(enumerator: self.scanner, deviceInfo: deviceInfo)
             guard let device = self.device else {
                 return;
             }
             device.connect()
             device.subscribeParameterChanged(subscriber: { (param) in
                 if(param == .state) {
-                    let state = device.readState
+                    let state = device.state()
                     if( state == .connected) {
                         print("Connected")
                         for ch in device.channels {

@@ -9,25 +9,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, NTSpectrumWindow) {
-  NTSpectrumWindowRectangular,
-  NTSpectrumWindowSine,
-  NTSpectrumWindowHamming,
-  NTSpectrumWindowBlackman
+typedef NS_ENUM (NSUInteger, NTSpectrumWindow) {
+    NTSpectrumWindowRectangular,
+    NTSpectrumWindowSine,
+    NTSpectrumWindowHamming,
+    NTSpectrumWindowBlackman
 };
 
 @interface NTSpectrumChannel : NTBaseChannel
 
-- (nonnull instancetype)initWithChannel:(NTBaseChannel *) channel windowType: (NTSpectrumWindow) windowType NS_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithChannel:(NTBaseChannel *)channel windowType:(NTSpectrumWindow)windowType;
 
 /// Read array of Double from spectrum channel
 /// @param offset Offset from first received value
 /// @param length Size of chunk that you will read
--(NSArray<NSNumber *> *) readDataWithOffset:(NSInteger)offset length:(NSInteger)length  NS_SWIFT_NAME(readData(offset:length:));
+- (NSArray<NSNumber *> *)readDataWithOffset:(NSInteger)offset length:(NSInteger) length  NS_SWIFT_NAME(readData(offset:length:));
 
-@property (NS_NONATOMIC_IOSONLY, getter=getHzPerSpectrumSample, readonly) double hzPerSpectrumSample;
-@property (NS_NONATOMIC_IOSONLY, getter=getSpectrumlength, readonly) NSInteger spectrumlength;
-
+@property (NS_NONATOMIC_IOSONLY, getter = getHzPerSpectrumSample, readonly) double hzPerSpectrumSample;
+@property (NS_NONATOMIC_IOSONLY, getter = getSpectrumlength, readonly) NSInteger spectrumlength;
 
 @end
 

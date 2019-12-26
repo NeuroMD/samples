@@ -202,11 +202,11 @@ class RootViewController: UIViewController{
             guard let scanner = self.scanner else {
                 return
             }
-            self.device = NTDevice(enumerator: scanner, deviceInfo)
+            self.device = NTDevice(enumerator: scanner, deviceInfo: deviceInfo)
             if let device = self.device {
                 device.subscribeParameterChanged(subscriber: { (param) in
                     if( param == .state) {
-                        let stateDevice = device.readState
+                        let stateDevice = device.state()
                         self.connected = stateDevice == .connected
                         DispatchQueue.main.sync {
                             self.connected = stateDevice == .connected
