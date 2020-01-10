@@ -47,6 +47,7 @@ namespace EmotionalStates
             this._statesStopButton = new System.Windows.Forms.Button();
             this._spectrumAmplitudeTrackBar = new System.Windows.Forms.TrackBar();
             this.ResistanceCheckButton = new System.Windows.Forms.Button();
+            this.BatteryLabel = new System.Windows.Forms.Label();
             this._drawableControl = new EmotionalStates.Drawable.DrawableControl();
             ((System.ComponentModel.ISupportInitialize)(this._spectrumAmplitudeTrackBar)).BeginInit();
             this.SuspendLayout();
@@ -216,6 +217,16 @@ namespace EmotionalStates
             this.ResistanceCheckButton.UseVisualStyleBackColor = true;
             this.ResistanceCheckButton.Click += new System.EventHandler(this.ResistanceCheckButton_Click);
             // 
+            // BatteryLabel
+            // 
+            this.BatteryLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BatteryLabel.AutoSize = true;
+            this.BatteryLabel.Location = new System.Drawing.Point(1164, 13);
+            this.BatteryLabel.Name = "BatteryLabel";
+            this.BatteryLabel.Size = new System.Drawing.Size(60, 13);
+            this.BatteryLabel.TabIndex = 20;
+            this.BatteryLabel.Text = "Battery: 0%";
+            // 
             // _drawableControl
             // 
             this._drawableControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -233,6 +244,7 @@ namespace EmotionalStates
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1645, 1025);
+            this.Controls.Add(this.BatteryLabel);
             this.Controls.Add(this.ResistanceCheckButton);
             this.Controls.Add(this._statesStopButton);
             this.Controls.Add(this.label3);
@@ -277,6 +289,7 @@ namespace EmotionalStates
         private System.Windows.Forms.Button _statesStopButton;
         private System.Windows.Forms.TrackBar _spectrumAmplitudeTrackBar;
         private Button ResistanceCheckButton;
+        private Label BatteryLabel;
         //        private SignalView.SignalChart signalChart1;
         //        private SignalView.SignalChart signalChart2;
     }

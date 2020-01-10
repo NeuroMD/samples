@@ -16,6 +16,7 @@ namespace EmotionalStates
         public EegIndexChannel IndexChannel { get; private set; }
         public SpectrumChannel T3O1SpectrumChannel { get; private set; }
         public SpectrumChannel T4O2SpectrumChannel { get; private set; }
+        public BatteryChannel BatteryChannel { get; private set; }
 
         public BipolarDoubleChannel T3O1SignalChannel { get; private set; }
         public BipolarDoubleChannel T4O21SignalChannel { get; private set; }
@@ -48,6 +49,8 @@ namespace EmotionalStates
         }
 
         private void OnDeviceConnected(){
+            BatteryChannel = new BatteryChannel(_currentDevice);
+
             var deviceChannels = _currentDevice.Channels
                 .Where(x=>x.Type == ChannelType.Signal)
                 .ToDictionary(channelInfo => channelInfo.Name, channelInfo => new EegChannel(_currentDevice, channelInfo));

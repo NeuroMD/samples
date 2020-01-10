@@ -22,16 +22,16 @@ namespace EmotionalStates
         private EmotionsChartPresenter _emotionsChartPresenter;
         private SpectrumChartPresenter _spectrumChartPresenter;
         private readonly DeviceModel _deviceModel = new DeviceModel();
-        private readonly EmotionsChart.EmotionsChart _statesChart = new EmotionsChart.EmotionsChart {Mode = EmotionBarMode.Empty};
-//        private readonly SignalViewController[] _signalViewController = new SignalViewController[2];
+        private readonly EmotionsChart.EmotionsChart _statesChart = new EmotionsChart.EmotionsChart { Mode = EmotionBarMode.Empty };
+        //        private readonly SignalViewController[] _signalViewController = new SignalViewController[2];
 
         public MainForm()
         {
             InitializeComponent();
             _deviceModel.ChannelsChanged += _deviceModel_ChannelsChanged;
-            
-//            _signalViewController[0] = new SignalViewController(this, signalChart1);
-//            _signalViewController[1] = new SignalViewController(this, signalChart2);
+
+            //            _signalViewController[0] = new SignalViewController(this, signalChart1);
+            //            _signalViewController[1] = new SignalViewController(this, signalChart2);
 
 
         }
@@ -41,41 +41,51 @@ namespace EmotionalStates
         {
             if (_deviceModel.IndexChannel != null)
             {
-                BeginInvoke((MethodInvoker) delegate
-                {
-                    var signalChart1 = new DrawableSignalChart();
-                    var signalChart2 = new DrawableSignalChart();
+                BeginInvoke((MethodInvoker)delegate
+               {
+                   var signalChart1 = new DrawableSignalChart();
+                   var signalChart2 = new DrawableSignalChart();
 
-                    signalChart1.SetChannel(_deviceModel.T3O1SignalChannel);
-                    signalChart2.SetChannel(_deviceModel.T4O21SignalChannel);
-//                    _signalViewController[0].SetChannel(_deviceModel.T3O1SignalChannel);
+                   signalChart1.SetChannel(_deviceModel.T3O1SignalChannel);
+                   signalChart2.SetChannel(_deviceModel.T4O21SignalChannel);
+                    //                    _signalViewController[0].SetChannel(_deviceModel.T3O1SignalChannel);
                     //                    _signalViewController[1].SetChannel(_deviceModel.T4O21SignalChannel);
 
                     _startSignalButton.Enabled = true;
-                    _stopSignalButton.Enabled = true;
-                    ResistanceCheckButton.Enabled = true;
+                   _stopSignalButton.Enabled = true;
+                   ResistanceCheckButton.Enabled = true;
 
-                    var indexChart = new EegIndexChart();
-                    _indexChartPresenter = new IndexChartPresenter(indexChart, _deviceModel.IndexChannel,
-                        _emotionsStartButton, _statesStopButton, this);
+                   _deviceModel.BatteryChannel.LengthChanged += BatteryChannel_LengthChanged;
+                   try
+                   {
+                       if (_deviceModel.BatteryChannel.TotalLength > 0)
+                       {
+                           BatteryLabel.Text = $"{_deviceModel.BatteryChannel.ReadData(_deviceModel.BatteryChannel.TotalLength - 1, 1)[0]} %";
+                       }
+                   }
+                   catch { }
 
-                    var spectrumChartT3O1 = new SpectrumChart();
-                    var spectrumChartT4O2 = new SpectrumChart();
-                    _spectrumChartPresenter = new SpectrumChartPresenter(spectrumChartT3O1, _spectrumAmplitudeTrackBar,
-                        new SpectrumModel(_deviceModel.T3O1SpectrumChannel));
-                    _spectrumChartPresenter = new SpectrumChartPresenter(spectrumChartT4O2, _spectrumAmplitudeTrackBar,
-                        new SpectrumModel(_deviceModel.T4O2SpectrumChannel));
+                   var indexChart = new EegIndexChart();
+                   _indexChartPresenter = new IndexChartPresenter(indexChart, _deviceModel.IndexChannel,
+                       _emotionsStartButton, _statesStopButton, this);
 
-                    var compositeDrawable = new CompoundDrawable();
-                    compositeDrawable.AddDrawable(indexChart, new PointF(0f, 0f), new SizeF(0.35f, 0.94f));
-                    compositeDrawable.AddDrawable(spectrumChartT3O1, new PointF(0.35f, 0.0f), new SizeF(0.3f, 0.47f));
-                    compositeDrawable.AddDrawable(spectrumChartT4O2, new PointF(0.35f, 0.47f), new SizeF(0.3f, 0.47f));
-                    compositeDrawable.AddDrawable(_statesChart, new PointF(0f, 0.94f), new SizeF(1.0f, 0.06f));
-                    compositeDrawable.AddDrawable(signalChart1, new PointF(0.65f, 0.0f), new SizeF(0.35f, 0.47f));
-                    compositeDrawable.AddDrawable(signalChart2, new PointF(0.65f, 0.47f), new SizeF(0.35f, 0.47f));
-                    _drawableControl.Drawable = compositeDrawable;
+                   var spectrumChartT3O1 = new SpectrumChart();
+                   var spectrumChartT4O2 = new SpectrumChart();
+                   _spectrumChartPresenter = new SpectrumChartPresenter(spectrumChartT3O1, _spectrumAmplitudeTrackBar,
+                       new SpectrumModel(_deviceModel.T3O1SpectrumChannel));
+                   _spectrumChartPresenter = new SpectrumChartPresenter(spectrumChartT4O2, _spectrumAmplitudeTrackBar,
+                       new SpectrumModel(_deviceModel.T4O2SpectrumChannel));
 
-                });
+                   var compositeDrawable = new CompoundDrawable();
+                   compositeDrawable.AddDrawable(indexChart, new PointF(0f, 0f), new SizeF(0.35f, 0.94f));
+                   compositeDrawable.AddDrawable(spectrumChartT3O1, new PointF(0.35f, 0.0f), new SizeF(0.3f, 0.47f));
+                   compositeDrawable.AddDrawable(spectrumChartT4O2, new PointF(0.35f, 0.47f), new SizeF(0.3f, 0.47f));
+                   compositeDrawable.AddDrawable(_statesChart, new PointF(0f, 0.94f), new SizeF(1.0f, 0.06f));
+                   compositeDrawable.AddDrawable(signalChart1, new PointF(0.65f, 0.0f), new SizeF(0.35f, 0.47f));
+                   compositeDrawable.AddDrawable(signalChart2, new PointF(0.65f, 0.47f), new SizeF(0.35f, 0.47f));
+                   _drawableControl.Drawable = compositeDrawable;
+
+               });
             }
             else
             {
@@ -87,6 +97,21 @@ namespace EmotionalStates
                 });
                 _drawableControl.Drawable = new EmptyDrawable();
             }
+        }
+
+        private void BatteryChannel_LengthChanged(object sender, int length)
+        {
+            BeginInvoke((MethodInvoker)delegate
+            {
+                try
+                {
+                    if (length > 0)
+                    {
+                        BatteryLabel.Text = $"{_deviceModel.BatteryChannel.ReadData(length - 1, 1)[0]} %";
+                    }
+                }
+                catch { }
+            });
         }
 
         private void _findDeviceButton_Click(object sender, System.EventArgs e)
@@ -144,10 +169,10 @@ namespace EmotionalStates
             {
                 var channel = _deviceModel.CreateEmotionChannel();
                 _emotionsChartPresenter = new EmotionsChartPresenter(
-                    _statesChart, 
+                    _statesChart,
                     channel,
-                    _deviceModel.AlphaLeftPowerChannel, 
-                    _deviceModel.BetaLeftPowerChannel, 
+                    _deviceModel.AlphaLeftPowerChannel,
+                    _deviceModel.BetaLeftPowerChannel,
                     _deviceModel.AlphaRightPowerChannel,
                     _deviceModel.BetaRightPowerChannel,
                     _deviceModel.IndexChannel

@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CD400944-BA48-406F-AFD8-63E395B7F7D5}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>CallibriFeatures</RootNamespace>
+    <AssemblyName>CallibriFeatures</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Include="net-neurosdk-x64">
+      <HintPath>$(NEUROSDK_64)\net-neurosdk-x64.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Include="net-neurosdk-x64d">
+      <HintPath>$(NEUROSDK_64)\net-neurosdk-x64d.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Include="net-neurosdk-AnyCPU">
+      <HintPath>$(NEUROSDK_86)\net-neurosdk-AnyCPU.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" Include="net-neurosdk-AnyCPUd">
+      <HintPath>$(NEUROSDK_86)\net-neurosdk-AnyCPUd.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.8\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Devices\DeviceFinder.cs" />
+    <Compile Include="Devices\DeviceInfoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devices\DeviceInfoControl.Designer.cs">
+      <DependentUpon>DeviceInfoControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Devices\DeviceInfoPresenter.cs" />
+    <Compile Include="Devices\CallibriSearchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Devices\CallibriSearchForm.Designer.cs">
+      <DependentUpon>CallibriSearchForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Devices\DeviceTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devices\DeviceTab.Designer.cs">
+      <DependentUpon>DeviceTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Devices\DeviceTabControlPresenter.cs" />
+    <Compile Include="Devices\DeviceTabPresenter.cs" />
+    <Compile Include="Devices\DeviceWrapper.cs" />
+    <Compile Include="Devices\ElectrodesControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devices\ElectrodesControl.Designer.cs">
+      <DependentUpon>ElectrodesControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Devices\IModuleControlPresenter.cs" />
+    <Compile Include="DrawableControl\CompoundDrawable.cs" />
+    <Compile Include="DrawableControl\DrawableControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DrawableControl\DrawableControl.Designer.cs" />
+    <Compile Include="DrawableControl\EmptyDrawable.cs" />
+    <Compile Include="DrawableControl\IDrawable.cs" />
+    <Compile Include="DrawableControl\IMouseEventsSubscriber.cs" />
+    <Compile Include="DrawableControl\IPosition.cs" />
+    <Compile Include="DrawableControl\ISize.cs" />
+    <Compile Include="FeaturesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FeaturesForm.Designer.cs">
+      <DependentUpon>FeaturesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Signal\ICalculationSpan.cs" />
+    <Compile Include="Signal\ScanInterfaces.cs" />
+    <Compile Include="Spectrum\IFrequencyBand.cs" />
+    <Compile Include="Spectrum\View\EmptySpectrumField.cs" />
+    <Compile Include="Spectrum\View\HorizontalRuler.cs" />
+    <Compile Include="Spectrum\View\ISpectrumField.cs" />
+    <Compile Include="Spectrum\View\IVerticalRuler.cs" />
+    <Compile Include="Spectrum\View\SpectrumChartDrawable.cs" />
+    <Compile Include="Spectrum\View\SpectrumField.cs" />
+    <Compile Include="Spectrum\View\UnitsField.cs" />
+    <Compile Include="Spectrum\View\VerticalRuler.cs" />
+    <EmbeddedResource Include="Devices\CallibriSearchForm.resx">
+      <DependentUpon>CallibriSearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Devices\DeviceInfoControl.resx">
+      <DependentUpon>DeviceInfoControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Devices\DeviceTab.resx">
+      <DependentUpon>DeviceTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Devices\ElectrodesControl.resx">
+      <DependentUpon>ElectrodesControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DrawableControl\DrawableControl.resx" />
+    <EmbeddedResource Include="FeaturesForm.resx">
+      <DependentUpon>FeaturesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

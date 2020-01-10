@@ -46,8 +46,9 @@ namespace EmotionalStates
         {
             try
             {
-                var resistanceOhms = channel.ReadData(channel.TotalLength - 1, 1)[0];
-                BeginInvoke((MethodInvoker)delegate { label.Text = $"{channel.Info.Name}: {resistanceOhms / 1000} k"; });
+                var resistanceKOhms = channel.ReadData(channel.TotalLength - 1, 1)[0] / 1000;
+                //if (resistanceKOhms > 2500.0) resistanceKOhms = double.PositiveInfinity;
+                BeginInvoke((MethodInvoker)delegate { label.Text = $"{channel.Info.Name}: {resistanceKOhms:F0} k"; });
             }
             catch { }
         }
