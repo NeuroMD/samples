@@ -50,18 +50,18 @@
             this.DeviceTabControl.Location = new System.Drawing.Point(0, 41);
             this.DeviceTabControl.Name = "DeviceTabControl";
             this.DeviceTabControl.SelectedIndex = 0;
-            this.DeviceTabControl.Size = new System.Drawing.Size(801, 410);
+            this.DeviceTabControl.Size = new System.Drawing.Size(894, 551);
             this.DeviceTabControl.TabIndex = 1;
             // 
             // FeaturesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(893, 591);
             this.Controls.Add(this.DeviceTabControl);
             this.Controls.Add(this.AddDeviceButton);
             this.Name = "FeaturesForm";
-            this.Text = "Form1";
+            this.Text = "Callibri";
             this.ResumeLayout(false);
 
         }

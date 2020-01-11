@@ -29,18 +29,20 @@
         private void InitializeComponent()
         {
             this.InfoGroupBox = new System.Windows.Forms.GroupBox();
+            this.BatteryLabel = new System.Windows.Forms.Label();
             this.ConnectDisconnectButton = new System.Windows.Forms.Button();
             this.FindMeButton = new System.Windows.Forms.Button();
             this.ConncetionStateLabel = new System.Windows.Forms.Label();
             this.SerialNumberLabel = new System.Windows.Forms.Label();
             this.AddressLabel = new System.Windows.Forms.Label();
             this.NameLabel = new System.Windows.Forms.Label();
-            this.BatteryLabel = new System.Windows.Forms.Label();
+            this.FirmwareVersionLabel = new System.Windows.Forms.Label();
             this.InfoGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // InfoGroupBox
             // 
+            this.InfoGroupBox.Controls.Add(this.FirmwareVersionLabel);
             this.InfoGroupBox.Controls.Add(this.BatteryLabel);
             this.InfoGroupBox.Controls.Add(this.ConnectDisconnectButton);
             this.InfoGroupBox.Controls.Add(this.FindMeButton);
@@ -51,10 +53,19 @@
             this.InfoGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InfoGroupBox.Location = new System.Drawing.Point(0, 0);
             this.InfoGroupBox.Name = "InfoGroupBox";
-            this.InfoGroupBox.Size = new System.Drawing.Size(254, 131);
+            this.InfoGroupBox.Size = new System.Drawing.Size(254, 155);
             this.InfoGroupBox.TabIndex = 0;
             this.InfoGroupBox.TabStop = false;
             this.InfoGroupBox.Text = "Info";
+            // 
+            // BatteryLabel
+            // 
+            this.BatteryLabel.AutoSize = true;
+            this.BatteryLabel.Location = new System.Drawing.Point(6, 130);
+            this.BatteryLabel.Name = "BatteryLabel";
+            this.BatteryLabel.Size = new System.Drawing.Size(72, 13);
+            this.BatteryLabel.TabIndex = 12;
+            this.BatteryLabel.Text = "Battery: 101%";
             // 
             // ConnectDisconnectButton
             // 
@@ -110,14 +121,14 @@
             this.NameLabel.TabIndex = 6;
             this.NameLabel.Text = "Name: Callibri Gray";
             // 
-            // BatteryLabel
+            // FirmwareVersionLabel
             // 
-            this.BatteryLabel.AutoSize = true;
-            this.BatteryLabel.Location = new System.Drawing.Point(6, 107);
-            this.BatteryLabel.Name = "BatteryLabel";
-            this.BatteryLabel.Size = new System.Drawing.Size(72, 13);
-            this.BatteryLabel.TabIndex = 12;
-            this.BatteryLabel.Text = "Battery: 101%";
+            this.FirmwareVersionLabel.AutoSize = true;
+            this.FirmwareVersionLabel.Location = new System.Drawing.Point(6, 108);
+            this.FirmwareVersionLabel.Name = "FirmwareVersionLabel";
+            this.FirmwareVersionLabel.Size = new System.Drawing.Size(134, 13);
+            this.FirmwareVersionLabel.TabIndex = 13;
+            this.FirmwareVersionLabel.Text = "Firmware version: 10.10.90";
             // 
             // DeviceInfoControl
             // 
@@ -125,7 +136,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.InfoGroupBox);
             this.Name = "DeviceInfoControl";
-            this.Size = new System.Drawing.Size(254, 131);
+            this.Size = new System.Drawing.Size(254, 155);
             this.InfoGroupBox.ResumeLayout(false);
             this.InfoGroupBox.PerformLayout();
             this.ResumeLayout(false);
@@ -142,5 +153,6 @@
         private System.Windows.Forms.Label NameLabel;
         private System.Windows.Forms.Button ConnectDisconnectButton;
         private System.Windows.Forms.Label BatteryLabel;
+        private System.Windows.Forms.Label FirmwareVersionLabel;
     }
 }

@@ -28,32 +28,51 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.SignalControlPanel = new CallibriFeatures.Devices.SignalControl();
+            this.ElectrodesControlPanel = new CallibriFeatures.Devices.ElectrodesControl();
             this.DeviceInfoControl = new CallibriFeatures.Devices.DeviceInfoControl();
-            this.electrodesControl1 = new CallibriFeatures.Devices.ElectrodesControl();
+            this.MemsControlPanel = new CallibriFeatures.Devices.MEMSControl();
             this.SuspendLayout();
+            // 
+            // SignalControlPanel
+            // 
+            this.SignalControlPanel.Location = new System.Drawing.Point(4, 282);
+            this.SignalControlPanel.Name = "SignalControlPanel";
+            this.SignalControlPanel.Size = new System.Drawing.Size(282, 181);
+            this.SignalControlPanel.TabIndex = 2;
+            // 
+            // ElectrodesControlPanel
+            // 
+            this.ElectrodesControlPanel.Location = new System.Drawing.Point(4, 163);
+            this.ElectrodesControlPanel.Name = "ElectrodesControlPanel";
+            this.ElectrodesControlPanel.Size = new System.Drawing.Size(282, 113);
+            this.ElectrodesControlPanel.TabIndex = 1;
             // 
             // DeviceInfoControl
             // 
             this.DeviceInfoControl.Location = new System.Drawing.Point(4, 4);
             this.DeviceInfoControl.Name = "DeviceInfoControl";
-            this.DeviceInfoControl.Size = new System.Drawing.Size(259, 154);
+            this.DeviceInfoControl.Size = new System.Drawing.Size(282, 153);
             this.DeviceInfoControl.TabIndex = 0;
             // 
-            // electrodesControl1
+            // MemsControlPanel
             // 
-            this.electrodesControl1.Location = new System.Drawing.Point(4, 164);
-            this.electrodesControl1.Name = "electrodesControl1";
-            this.electrodesControl1.Size = new System.Drawing.Size(259, 86);
-            this.electrodesControl1.TabIndex = 1;
+            this.MemsControlPanel.Location = new System.Drawing.Point(4, 469);
+            this.MemsControlPanel.Name = "MemsControlPanel";
+            this.MemsControlPanel.Size = new System.Drawing.Size(282, 201);
+            this.MemsControlPanel.TabIndex = 3;
             // 
             // DeviceTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.electrodesControl1);
+            this.Controls.Add(this.MemsControlPanel);
+            this.Controls.Add(this.SignalControlPanel);
+            this.Controls.Add(this.ElectrodesControlPanel);
             this.Controls.Add(this.DeviceInfoControl);
+            this.MinimumSize = new System.Drawing.Size(0, 675);
             this.Name = "DeviceTab";
-            this.Size = new System.Drawing.Size(925, 405);
+            this.Size = new System.Drawing.Size(925, 675);
             this.ResumeLayout(false);
 
         }
@@ -61,6 +80,8 @@
         #endregion
 
         private DeviceInfoControl DeviceInfoControl;
-        private ElectrodesControl electrodesControl1;
+        private ElectrodesControl ElectrodesControlPanel;
+        private SignalControl SignalControlPanel;
+        private MEMSControl MemsControlPanel;
     }
 }

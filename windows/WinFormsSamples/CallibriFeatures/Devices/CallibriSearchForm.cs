@@ -13,47 +13,45 @@ namespace CallibriFeatures.Devices
         private DeviceWrapper _selectedDeviceInfo;
 
         public Device SelectedDevice { get; private set; }
-        
+
         public CallibriSearchForm(IReadOnlyCollection<string> exclude)
         {
             InitializeComponent();
             DialogResult = DialogResult.Cancel;
-            Task.Run(() => {
-                _enumerator = new DeviceEnumerator(DeviceType.Callibri);
-                _enumerator.DeviceListChanged += (sender, args) =>
+            _enumerator = new DeviceEnumerator(DeviceType.Callibri);
+            _enumerator.DeviceListChanged += (sender, args) =>
+            {
+                if (!IsHandleCreated)
+                    return;
+
+                BeginInvoke((MethodInvoker)delegate
                 {
-                    if (!IsHandleCreated)
-                        return;
+                    var foundDevices = _enumerator.Devices
+                        .Where(info => !exclude.Contains(new DeviceWrapper(info).AddressString))
+                        .ToArray();
 
-                    BeginInvoke((MethodInvoker)delegate
+                    var disappearedDevices = _deviceListBox.Items
+                        .OfType<DeviceWrapper>()
+                        .Select(x => (DeviceInfo)x)
+                        .Except(foundDevices)
+                        .ToArray();
+                    foreach (var disappearedDevice in disappearedDevices)
                     {
-                        var foundDevices = _enumerator.Devices
-                            .Where(info => !exclude.Contains(new DeviceWrapper(info).AddressString))
-                            .ToArray();
+                        _deviceListBox.Items.Remove(disappearedDevice);
+                    }
 
-                        var disappearedDevices = _deviceListBox.Items
+                    var newDevices = foundDevices
+                        .Except(_deviceListBox.Items
                             .OfType<DeviceWrapper>()
-                            .Select(x=>(DeviceInfo)x)
-                            .Except(foundDevices)
-                            .ToArray();
-                        foreach (var disappearedDevice in disappearedDevices)
-                        {
-                            _deviceListBox.Items.Remove(disappearedDevice);
-                        }
-
-                        var newDevices = foundDevices
-                            .Except(_deviceListBox.Items
-                                .OfType<DeviceWrapper>()
-                                .Select(x => (DeviceInfo)x))
-                            .Select(info=>new DeviceWrapper(info))
-                            .ToArray();
-                        if (newDevices.Length > 0)
-                        {
-                            _deviceListBox.Items.AddRange(newDevices);
-                        }
-                    });
-                };
-            });
+                            .Select(x => (DeviceInfo)x))
+                        .Select(info => new DeviceWrapper(info))
+                        .ToArray();
+                    if (newDevices.Length > 0)
+                    {
+                        _deviceListBox.Items.AddRange(newDevices);
+                    }
+                });
+            };
         }
 
         private void DeviceSearchForm_FormClosed(object sender, FormClosedEventArgs e)

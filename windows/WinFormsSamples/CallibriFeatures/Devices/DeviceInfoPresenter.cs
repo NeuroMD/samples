@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Neuro;
 
 namespace CallibriFeatures.Devices
@@ -48,11 +47,11 @@ namespace CallibriFeatures.Devices
             {
                 if (_device.ReadParam<DeviceState>(Parameter.State) == DeviceState.Disconnected)
                 {
-                    Task.Run(()=>{ _device.Connect(); });
+                    _device.Connect();
                 }
                 else
                 {
-                    Task.Run(() => { _device.Disconnect(); });
+                    _device.Disconnect();
                 }
             }
             catch (Exception exc)
@@ -65,7 +64,7 @@ namespace CallibriFeatures.Devices
         {
             try
             {
-                Task.Run(() => { _device.Execute(Command.FindMe); });
+                _device.Execute(Command.FindMe);
             }
             catch (Exception exc)
             {
@@ -87,6 +86,8 @@ namespace CallibriFeatures.Devices
             if (state == DeviceState.Connected)
             {
                 _infoControl.SerialNumberText = _device.ReadParam<string>(Parameter.SerialNumber);
+                var firmwareVersion = _device.ReadParam<FirmwareVersion>(Parameter.FirmwareVersion);
+                _infoControl.FirmwareVersionText = $"{firmwareVersion.Version} build {firmwareVersion.Build}";
                 _infoControl.ConnectDisconnectText = "Disconnect";
                 _infoControl.FindMeEnabled = true;
             }
@@ -94,6 +95,7 @@ namespace CallibriFeatures.Devices
             {
                 _infoControl.SerialNumberText = "N/A";
                 _infoControl.BatteryChargeText = "N/A";
+                _infoControl.FirmwareVersionText = "N/A";
                 _infoControl.ConnectDisconnectText = "Connect";
                 _infoControl.FindMeEnabled = false;
             }

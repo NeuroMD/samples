@@ -99,7 +99,22 @@
     <Compile Include="Devices\ElectrodesControl.Designer.cs">
       <DependentUpon>ElectrodesControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Devices\ElectrodesControlPresenter.cs" />
     <Compile Include="Devices\IModuleControlPresenter.cs" />
+    <Compile Include="Devices\MEMSControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devices\MEMSControl.Designer.cs">
+      <DependentUpon>MEMSControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Devices\MemsControlPresenter.cs" />
+    <Compile Include="Devices\SignalControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devices\SignalControl.Designer.cs">
+      <DependentUpon>SignalControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Devices\SignalControlPresenter.cs" />
     <Compile Include="DrawableControl\CompoundDrawable.cs" />
     <Compile Include="DrawableControl\DrawableControl.cs">
       <SubType>Component</SubType>
@@ -140,6 +155,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Devices\ElectrodesControl.resx">
       <DependentUpon>ElectrodesControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Devices\MEMSControl.resx">
+      <DependentUpon>MEMSControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Devices\SignalControl.resx">
+      <DependentUpon>SignalControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DrawableControl\DrawableControl.resx" />
     <EmbeddedResource Include="FeaturesForm.resx">

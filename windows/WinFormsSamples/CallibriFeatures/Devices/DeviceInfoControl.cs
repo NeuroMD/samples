@@ -121,6 +121,21 @@ namespace CallibriFeatures.Devices
             }
         }
 
+        public string FirmwareVersionText
+        {
+            set
+            {
+                if (InvokeRequired)
+                {
+                    BeginInvoke((MethodInvoker)delegate { FirmwareVersionLabel.Text = $"Firmware version: {value}"; });
+                }
+                else
+                {
+                    FirmwareVersionLabel.Text = $"Firmware version: {value}";
+                }
+            }
+        }
+
         public bool FindMeEnabled
         {
             set

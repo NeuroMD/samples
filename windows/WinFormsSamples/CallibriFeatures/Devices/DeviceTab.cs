@@ -10,5 +10,8 @@ namespace CallibriFeatures.Devices
         }
 
         public DeviceInfoControl InfoControl => DeviceInfoControl;
+        public ElectrodesControl ElectrodesControl => ElectrodesControlPanel;
+        public SignalControl SignalControl => SignalControlPanel;
+        public MEMSControl MemsControl => MemsControlPanel;
     }
 }
