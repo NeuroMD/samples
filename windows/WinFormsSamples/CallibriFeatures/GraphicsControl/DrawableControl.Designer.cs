@@ -1,4 +1,4 @@
-﻿namespace CallibriFeatures.DrawableControl
+﻿namespace CallibriFeatures.GraphicsControl
 {
     partial class DrawableControl
     {

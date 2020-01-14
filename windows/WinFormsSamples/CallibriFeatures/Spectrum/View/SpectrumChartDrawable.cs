@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using CallibriFeatures.DrawableControl;
+using CallibriFeatures.GraphicsControl;
+using CallibriFeatures.GraphicsControl;
 
 namespace CallibriFeatures.Spectrum.View
 {

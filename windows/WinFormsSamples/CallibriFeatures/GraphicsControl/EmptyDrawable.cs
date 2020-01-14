@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace CallibriFeatures.DrawableControl
+namespace CallibriFeatures.GraphicsControl
 {
 
     internal sealed class EmptyDrawable : IDrawable

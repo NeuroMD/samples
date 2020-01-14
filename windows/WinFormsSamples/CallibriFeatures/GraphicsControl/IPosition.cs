@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace CallibriFeatures.DrawableControl
+namespace CallibriFeatures.GraphicsControl
 {
     public interface IReadonlyPosition
     {

@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace CallibriFeatures.DrawableControl
+namespace CallibriFeatures.GraphicsControl
 {
     public class CompoundDrawable : IDrawable, IMouseEventsHandler
     {

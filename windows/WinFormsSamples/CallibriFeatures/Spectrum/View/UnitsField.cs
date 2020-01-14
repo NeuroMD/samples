@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using CallibriFeatures.DrawableControl;
+using CallibriFeatures.GraphicsControl;
 
 namespace CallibriFeatures.Spectrum.View
 {

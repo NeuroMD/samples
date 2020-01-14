@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using CallibriFeatures.GraphicsControl;
 
 namespace CallibriFeatures.Devices
 {
@@ -13,5 +14,7 @@ namespace CallibriFeatures.Devices
         public ElectrodesControl ElectrodesControl => ElectrodesControlPanel;
         public SignalControl SignalControl => SignalControlPanel;
         public MEMSControl MemsControl => MemsControlPanel;
+        public SignalChartSettingsControl SignalSettingsControl => SignalChartSettingsControl;
+        public DrawableControl SignalPlotControl => SignalPlotDrawableControl;
     }
 }

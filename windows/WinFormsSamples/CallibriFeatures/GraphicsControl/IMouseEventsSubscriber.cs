@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace CallibriFeatures.DrawableControl
+namespace CallibriFeatures.GraphicsControl
 {
     public interface IMouseEventsHandler
     {

@@ -4,7 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using CallibriFeatures.DrawableControl;
+using CallibriFeatures.GraphicsControl;
 using CallibriFeatures.Signal;
 
 namespace CallibriFeatures.Spectrum.View

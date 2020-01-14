@@ -1,4 +1,6 @@
-﻿namespace CallibriFeatures.Devices
+﻿using CallibriFeatures.GraphicsControl;
+
+namespace CallibriFeatures.Devices
 {
     partial class DeviceTab
     {
@@ -28,11 +30,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            CallibriFeatures.GraphicsControl.EmptyDrawable emptyDrawable1 = new CallibriFeatures.GraphicsControl.EmptyDrawable();
+            this.MemsControlPanel = new CallibriFeatures.Devices.MEMSControl();
             this.SignalControlPanel = new CallibriFeatures.Devices.SignalControl();
             this.ElectrodesControlPanel = new CallibriFeatures.Devices.ElectrodesControl();
             this.DeviceInfoControl = new CallibriFeatures.Devices.DeviceInfoControl();
-            this.MemsControlPanel = new CallibriFeatures.Devices.MEMSControl();
+            this.SignalPlotDrawableControl = new CallibriFeatures.GraphicsControl.DrawableControl();
+            this.SignalChartSettingsControl = new CallibriFeatures.Devices.SignalChartSettingsControl();
             this.SuspendLayout();
+            // 
+            // MemsControlPanel
+            // 
+            this.MemsControlPanel.Location = new System.Drawing.Point(4, 469);
+            this.MemsControlPanel.Name = "MemsControlPanel";
+            this.MemsControlPanel.Size = new System.Drawing.Size(282, 201);
+            this.MemsControlPanel.TabIndex = 3;
             // 
             // SignalControlPanel
             // 
@@ -55,21 +67,36 @@
             this.DeviceInfoControl.Size = new System.Drawing.Size(282, 153);
             this.DeviceInfoControl.TabIndex = 0;
             // 
-            // MemsControlPanel
+            // SignalPlotDrawableControl
             // 
-            this.MemsControlPanel.Location = new System.Drawing.Point(4, 469);
-            this.MemsControlPanel.Name = "MemsControlPanel";
-            this.MemsControlPanel.Size = new System.Drawing.Size(282, 201);
-            this.MemsControlPanel.TabIndex = 3;
+            this.SignalPlotDrawableControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SignalPlotDrawableControl.Drawable = emptyDrawable1;
+            this.SignalPlotDrawableControl.Location = new System.Drawing.Point(292, 4);
+            this.SignalPlotDrawableControl.Name = "SignalPlotDrawableControl";
+            this.SignalPlotDrawableControl.Size = new System.Drawing.Size(426, 168);
+            this.SignalPlotDrawableControl.TabIndex = 4;
+            this.SignalPlotDrawableControl.Text = "drawableControl1";
+            // 
+            // SignalChartSettingsControl
+            // 
+            this.SignalChartSettingsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SignalChartSettingsControl.Location = new System.Drawing.Point(724, 4);
+            this.SignalChartSettingsControl.Name = "SignalChartSettingsControl";
+            this.SignalChartSettingsControl.Size = new System.Drawing.Size(198, 168);
+            this.SignalChartSettingsControl.TabIndex = 5;
             // 
             // DeviceTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.SignalChartSettingsControl);
             this.Controls.Add(this.MemsControlPanel);
             this.Controls.Add(this.SignalControlPanel);
             this.Controls.Add(this.ElectrodesControlPanel);
             this.Controls.Add(this.DeviceInfoControl);
+            this.Controls.Add(this.SignalPlotDrawableControl);
             this.MinimumSize = new System.Drawing.Size(0, 675);
             this.Name = "DeviceTab";
             this.Size = new System.Drawing.Size(925, 675);
@@ -78,10 +105,12 @@
         }
 
         #endregion
-
+        
+        private GraphicsControl.DrawableControl SignalPlotDrawableControl;
         private DeviceInfoControl DeviceInfoControl;
         private ElectrodesControl ElectrodesControlPanel;
         private SignalControl SignalControlPanel;
         private MEMSControl MemsControlPanel;
+        private SignalChartSettingsControl SignalChartSettingsControl;
     }
 }

@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using NLog;
 
-namespace CallibriFeatures.DrawableControl
+namespace CallibriFeatures.GraphicsControl
 {
     public partial class DrawableControl : Control
     {

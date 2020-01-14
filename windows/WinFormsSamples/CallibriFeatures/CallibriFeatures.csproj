@@ -108,6 +108,12 @@
       <DependentUpon>MEMSControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Devices\MemsControlPresenter.cs" />
+    <Compile Include="Devices\SignalChartSettingsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devices\SignalChartSettingsControl.Designer.cs">
+      <DependentUpon>SignalChartSettingsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Devices\SignalControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -115,16 +121,17 @@
       <DependentUpon>SignalControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Devices\SignalControlPresenter.cs" />
-    <Compile Include="DrawableControl\CompoundDrawable.cs" />
-    <Compile Include="DrawableControl\DrawableControl.cs">
+    <Compile Include="Devices\SignalPlotPresenter.cs" />
+    <Compile Include="GraphicsControl\CompoundDrawable.cs" />
+    <Compile Include="GraphicsControl\DrawableControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="DrawableControl\DrawableControl.Designer.cs" />
-    <Compile Include="DrawableControl\EmptyDrawable.cs" />
-    <Compile Include="DrawableControl\IDrawable.cs" />
-    <Compile Include="DrawableControl\IMouseEventsSubscriber.cs" />
-    <Compile Include="DrawableControl\IPosition.cs" />
-    <Compile Include="DrawableControl\ISize.cs" />
+    <Compile Include="GraphicsControl\DrawableControl.Designer.cs" />
+    <Compile Include="GraphicsControl\EmptyDrawable.cs" />
+    <Compile Include="GraphicsControl\IDrawable.cs" />
+    <Compile Include="GraphicsControl\IMouseEventsSubscriber.cs" />
+    <Compile Include="GraphicsControl\IPosition.cs" />
+    <Compile Include="GraphicsControl\ISize.cs" />
     <Compile Include="FeaturesForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,8 +140,17 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Signal\BackgroundDrawablePresenter.cs" />
+    <Compile Include="Signal\BackgroundDrawable.cs" />
+    <Compile Include="Signal\BackgroundZone.cs" />
+    <Compile Include="Signal\HorizontalScan.cs" />
+    <Compile Include="Signal\IBackgroundZone.cs" />
     <Compile Include="Signal\ICalculationSpan.cs" />
     <Compile Include="Signal\ScanInterfaces.cs" />
+    <Compile Include="Signal\IPlotDrawablePresenter.cs" />
+    <Compile Include="Signal\SignalDrawable.cs" />
+    <Compile Include="Signal\SignalDrawablePresenter.cs" />
+    <Compile Include="Signal\VerticalScan.cs" />
     <Compile Include="Spectrum\IFrequencyBand.cs" />
     <Compile Include="Spectrum\View\EmptySpectrumField.cs" />
     <Compile Include="Spectrum\View\HorizontalRuler.cs" />
@@ -159,10 +175,13 @@
     <EmbeddedResource Include="Devices\MEMSControl.resx">
       <DependentUpon>MEMSControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Devices\SignalChartSettingsControl.resx">
+      <DependentUpon>SignalChartSettingsControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Devices\SignalControl.resx">
       <DependentUpon>SignalControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DrawableControl\DrawableControl.resx" />
+    <EmbeddedResource Include="GraphicsControl\DrawableControl.resx" />
     <EmbeddedResource Include="FeaturesForm.resx">
       <DependentUpon>FeaturesForm.cs</DependentUpon>
     </EmbeddedResource>
