@@ -14,7 +14,6 @@ namespace Indices
         private readonly Timer _timer = new Timer();
         private SpectrumChartController _spectrumChartController;
         private readonly SpectrumModel _spectrumModel = new SpectrumModel();
-        private readonly SignalViewController _signalViewController;
         private readonly IList<EmulationChannel> _emulChannels = new List<EmulationChannel>();
         
         public MainForm()
@@ -33,7 +32,6 @@ namespace Indices
             _spectrumChartController = new SpectrumChartController(_spectrumChart, _timeTrackBar, _scaleTrackBar, _spectrumModel, _spectrumAmplitudeLabel, _spectrumTimeLabel, 
                 _lowFreqTrackBar, _highFreqTrackBar, _lowFreqLabel, _highFreqLabel, _wattLabel,
                 _rectangularWindowRadio, _sineWindowRadio, _hammingWindowRadio, _blackmanWindowRadio);
-            _signalViewController = new SignalViewController(this, _signalChart, _durationLabek);
         }
 
         private void _deviceModel_ChannelListChanged(object sender, EventArgs e)
@@ -297,7 +295,6 @@ namespace Indices
         {
             if (_channelsListBox.SelectedItem is DoubleSignalChannelWrap channel)
             {
-                _signalViewController.SetChannel(channel);
                 _spectrumModel.SetChannels(new SpectrumChannel(channel));
             }
         }

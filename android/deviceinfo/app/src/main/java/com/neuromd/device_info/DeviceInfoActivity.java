@@ -8,22 +8,22 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
-import com.neuromd.common.INotificationCallback;
+import com.neuromd.neurosdk.DeviceInfo;
+import com.neuromd.neurosdk.DeviceType;
+import com.neuromd.neurosdk.INotificationCallback;
 import com.neuromd.neurosdk.Device;
-import com.neuromd.neurosdk.DeviceScanner;
-import com.neuromd.neurosdk.channels.ChannelInfo;
-import com.neuromd.neurosdk.parameters.Command;
-import com.neuromd.neurosdk.parameters.Parameter;
-import com.neuromd.neurosdk.parameters.ParameterName;
-import com.neuromd.neurosdk.parameters.types.DeviceState;
+import com.neuromd.neurosdk.DeviceEnumerator;
+import com.neuromd.neurosdk.ChannelInfo;
+import com.neuromd.neurosdk.Command;
+import com.neuromd.neurosdk.Parameter;
+import com.neuromd.neurosdk.ParameterName;
+import com.neuromd.neurosdk.DeviceState;
 
 public class DeviceInfoActivity extends AppCompatActivity
 {
-    private DeviceScanner mScanner;
+    private DeviceEnumerator mScanner;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -32,37 +32,26 @@ public class DeviceInfoActivity extends AppCompatActivity
     
         requestPermissions();
         enableBtAndGeolocation();
-        initScanner();
-        initButtons();
     }
-    
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initScanner();
+    }
+
     private void initScanner()
     {
-        mScanner = new DeviceScanner(getApplicationContext());
-        mScanner.scanStateChanged.subscribe(new INotificationCallback<Boolean>()
+        mScanner = new DeviceEnumerator(getApplicationContext(), DeviceType.Any);
+        mScanner.deviceListChanged.subscribe(new INotificationCallback()
         {
             @Override
-            public void onNotify(Object o, final Boolean isScanning)
+            public void onNotify(Object o, Object a)
             {
-                runOnUiThread(new Runnable()
+                for (DeviceInfo deviceInfo : mScanner.devices())
                 {
-                    @Override
-                    public void run()
-                    {
-                        Button startButton = findViewById(R.id.startScanButton);
-                        Button stopButton = findViewById(R.id.stopScanButton);
-                        startButton.setEnabled(!isScanning);
-                        stopButton.setEnabled(isScanning);
-                    }
-                });
-            }
-        });
-        mScanner.deviceFound.subscribe(new INotificationCallback<Device>()
-        {
-            @Override
-            public void onNotify(Object o, Device device)
-            {
-                onDeviceFound(device);
+                    onDeviceFound(mScanner.createDevice(deviceInfo));
+                }
             }
         });
     }
@@ -85,87 +74,20 @@ public class DeviceInfoActivity extends AppCompatActivity
             }
         }
     }
-    
-    private void initButtons()
-    {
-        Button startButton = findViewById(R.id.startScanButton);
-        startButton.setEnabled(true);
-        startButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                mScanner.startScan(0); //zero is for infinity
-            }
-        });
-    
-        Button stopButton = findViewById(R.id.stopScanButton);
-        stopButton.setEnabled(false);
-        stopButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                mScanner.stopScan();
-            }
-        });
-    }
-    
+
     private void onDeviceFound(final Device device)
     {
-        device.parameterChanged.subscribe(new INotificationCallback<ParameterName>()
+        runOnUiThread(new Runnable()
         {
             @Override
-            public void onNotify(Object o, ParameterName parameterName)
+            public void run()
             {
-                if (parameterName == ParameterName.State){
-                    DeviceState state = device.readParam(ParameterName.State);
-                    if (state == DeviceState.Connected){
-                        runOnUiThread(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                onDeviceConnected(device);
-                            }
-                        });
-                    }
-                }
+                EditText deviceInfoText = findViewById(R.id.infoText);
+
+                String deviceName = device.readParam(ParameterName.Name);
+                String deviceAddress = device.readParam(ParameterName.Address);
+                deviceInfoText.append(String.format("Found device: %s [%s]\n", deviceName, deviceAddress));
             }
         });
-        device.connect();
-    }
-    
-    private void onDeviceConnected(Device device)
-    {
-        EditText deviceInfoText = findViewById(R.id.infoText);
-        
-        String deviceName = device.readParam(ParameterName.Name);
-        String deviceAddress = device.readParam(ParameterName.Address);
-        deviceInfoText.append(String.format("Found device: %s [%s]\n", deviceName, deviceAddress));
-    
-        deviceInfoText.append("Supported params:\n");
-        Parameter[] deviceParams = device.parameters();
-        for (Parameter param : deviceParams)
-        {
-            String paramName = param.getName().toString();
-            String accessMode = param.getAccess().toString();
-            deviceInfoText.append(String.format("-%s {%s}\n", paramName, accessMode));
-        }
-    
-        deviceInfoText.append("\nSupported commands:\n");
-        Command[] deviceCommands = device.commands();
-        for (Command cmd : deviceCommands)
-        {
-            deviceInfoText.append(String.format("-%s \n", cmd.toString()));
-        }
-    
-        deviceInfoText.append("\nSupported channels:\n");
-        ChannelInfo[] deviceChannels = device.channels();
-        for (ChannelInfo channel : deviceChannels)
-        {
-            String channelName = channel.getName();
-            deviceInfoText.append(String.format("-%s \n", channelName));
-        }
     }
 }

@@ -18,7 +18,7 @@ namespace EmotionalStates.Devices
 
         public override string ToString()
         {
-            return $"{_deviceInfo.Name} [{_deviceInfo.Address:x6}]";
+            return $"{_deviceInfo.Name} [{_deviceInfo.Address:x6}] S/N:{_deviceInfo.SerialNumber}";
         }
     }
 }

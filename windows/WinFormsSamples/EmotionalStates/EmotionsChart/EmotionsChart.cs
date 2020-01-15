@@ -17,18 +17,24 @@ namespace EmotionalStates.EmotionsChart
         private Size _drawableSize;
 
         private EmotionalState _emotionalState = new EmotionalState()
-            {Attention = 0, Meditation = 0, Relax = 0, Stress = 0, State = 0};
+            {RelaxationRate = 0.0, ConcentrationRate = 0.0};
 
-        private string _productiveRelaxLabelText = "Productive relax: 0 %";
-        private string _meditationLabelText = "Meditation: 0 %";
-        private string _attentionLabelText = "Attention: 0 %";
-        private string _stressLabelText = "Stress: 0 %";
-        private string _stateRelaxLabelText = "Relax";
-        private string _stateDeepRelaxLabelText = "Deep relax";
-        private string _stateSleepLabelText = "Sleep";
+        private BaseEmotionalValue _baseValue = new BaseEmotionalValue(){Alpha = 0.0, Beta = 0.0};
+
+        private double _alphaLeftValue = 0.0;
+        private double _betaLeftValue = 0.0;
+        private double _alphaRightValue = 0.0;
+        private double _betaRightValue = 0.0;
+        private double _basePower = 0.0;
+
+        private string _baseAlphaLabelText = "Base Alpha: 0.00";
+        private string _baseBetaLabelText = "Base Beta: 0.00";
+        private string _alphaPlusBetaLeftLabelText = "Alpha+Beta Left: 0.00";
+        private string _alphaPlusBetaRightLabelText = "Alpha+Beta Right: 0.00";
+        private string _baseLabelText = "Alpha+Beta Base: 0.00";
+        private string _stateRelaxationLabelText = "Relaxation";
         private string _stateNormalActivationLabelText = "Normal activation";
-        private string _stateExcitementLabelText = "Excitement";
-        private string _stateDeepExcitementLabelText = "Deep excitement";
+        private string _concentrationLabelText = "Concentration";
         
         public EmotionBarMode Mode { private get; set; }
 
@@ -48,113 +54,42 @@ namespace EmotionalStates.EmotionsChart
                 graphics.FillRectangle(backgroundBrush, 0, 0, _drawableSize.Width, _drawableSize.Height);
             }
 
-            var stateRelaxLabelSize = graphics.MeasureString(_stateRelaxLabelText, _textBoldFont);
-            var stateDeepRelaxLabelSize = graphics.MeasureString(_stateDeepRelaxLabelText, _textBoldFont);
-            var stateSleepLabelSize = graphics.MeasureString(_stateSleepLabelText, _textBoldFont);
+            var stateRelaxationLabelSize = graphics.MeasureString(_stateRelaxationLabelText, _textBoldFont);
             var stateNormalActivationLabelSize = graphics.MeasureString(_stateNormalActivationLabelText, _textBoldFont);
-            var stateExcitementLabelSize = graphics.MeasureString(_stateExcitementLabelText, _textBoldFont);
-            var stateDeepExcitementLabelSize = graphics.MeasureString(_stateDeepExcitementLabelText, _textBoldFont);
+            var stateConcentrationLabelSize = graphics.MeasureString(_concentrationLabelText, _textBoldFont);
 
-            var productiveRelaxLabelSize = graphics.MeasureString(_productiveRelaxLabelText, _textFont);
-            var meditationLabelSize = graphics.MeasureString(_meditationLabelText, _textFont);
-            var attentionLabelSize = graphics.MeasureString(_attentionLabelText, _textFont);
-            var stressLabelSize = graphics.MeasureString(_stressLabelText, _textFont);
-            var barY = stateRelaxLabelSize.Height;
-            var fullBarWidth = _drawableSize.Width - Math.Max(productiveRelaxLabelSize.Width, meditationLabelSize.Width) -
-                           Math.Max(attentionLabelSize.Width, stressLabelSize.Width);
+            var baseAlphaLabelSize = graphics.MeasureString(_baseAlphaLabelText, _textFont);
+            var baseBetaLabelSize = graphics.MeasureString(_baseBetaLabelText, _textFont);
+            var alphaPlusBetaLeftLabelSize = graphics.MeasureString(_alphaPlusBetaLeftLabelText, _textFont);
+            var alphaPlusBetaRightLabelSize = graphics.MeasureString(_alphaPlusBetaRightLabelText, _textFont);
+            var baseLabelSize = graphics.MeasureString(_baseLabelText, _textFont);
+            var barY = stateRelaxationLabelSize.Height;
+            var fullBarWidth = _drawableSize.Width - Math.Max(baseAlphaLabelSize.Width, baseBetaLabelSize.Width) -
+                               Math.Max(alphaPlusBetaLeftLabelSize.Width, alphaPlusBetaRightLabelSize.Width) -
+                baseLabelSize.Width;
 
 
-            var blockWidth = fullBarWidth / 6;
+            var relaxationBlockWidth = fullBarWidth * 0.4f;
+            var concentrationBlockWidth =relaxationBlockWidth;
+            var normalActivationBlockWidth = fullBarWidth * 0.2f;
             var barX = 0.0f;
             var barWidth = 0.0f;
-            if (Mode == EmotionBarMode.Data)
+            if (Mode == EmotionBarMode.Data || Mode == EmotionBarMode.Artifact)
             {
-                switch (_emotionalState.State)
+                if (_emotionalState.RelaxationRate > 0.0)
                 {
-                    case 10:
-                        barX = 1;
-                        barWidth = fullBarWidth / 2;
-                        break;
-                    case 9:
-                        barX = blockWidth / 2;
-                        barWidth = fullBarWidth / 2 - barX;
-                        break;
-                    case 8:
-                        barX = blockWidth;
-                        barWidth = fullBarWidth / 2 - barX;
-                        break;
-                    case 7:
-                        barX = blockWidth + blockWidth / 4;
-                        barWidth = fullBarWidth / 2 - barX;
-                        break;
-                    case 6:
-                        barX = blockWidth + blockWidth / 2;
-                        barWidth = fullBarWidth / 2 - barX;
-                        break;
-                    case 5:
-                        barX = 2 * blockWidth - blockWidth / 4;
-                        barWidth = fullBarWidth / 2 - barX;
-                        break;
-                    case 4:
-                        barX = 2 * blockWidth;
-                        barWidth = fullBarWidth / 2 - barX;
-                        break;
-                    case 3:
-                        barX = 2 * blockWidth + blockWidth / 4;
-                        barWidth = fullBarWidth / 2 - barX;
-                        break;
-                    case 2:
-                        barX = 2 * blockWidth + blockWidth / 2;
-                        barWidth = fullBarWidth / 2 - barX;
-                        break;
-                    case 1:
-                        barX = 3 * blockWidth - blockWidth / 4;
-                        barWidth = fullBarWidth / 2 - barX;
-                        break;
-
-                    case -10:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2;
-                        break;
-                    case -9:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2 - blockWidth / 2;
-                        break;
-                    case -8:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2 - blockWidth;
-                        break;
-                    case -7:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2 - blockWidth - blockWidth / 4;
-                        break;
-                    case -6:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2 - blockWidth - blockWidth / 2;
-                        break;
-                    case -5:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2 - 2 * blockWidth + blockWidth / 4;
-                        break;
-                    case -4:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2 - 2 * blockWidth;
-                        break;
-                    case -3:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2 - 2 * blockWidth - blockWidth / 4;
-                        ;
-                        break;
-                    case -2:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2 - 2 * blockWidth - blockWidth / 2;
-                        ;
-                        break;
-                    case -1:
-                        barX = fullBarWidth / 2;
-                        barWidth = fullBarWidth / 2 - 3 * blockWidth + blockWidth / 4;
-                        ;
-                        break;
+                    barWidth = (float) _emotionalState.RelaxationRate * (fullBarWidth / 2);
+                    barX = fullBarWidth / 2 - barWidth;
+                }
+                else if (_emotionalState.ConcentrationRate > 0.0)
+                {
+                    barWidth = (float)_emotionalState.ConcentrationRate * (fullBarWidth / 2);
+                    barX = fullBarWidth / 2;
+                }
+                else
+                {
+                    barX = 0;
+                    barWidth = 0;
                 }
             }
             else 
@@ -171,10 +106,10 @@ namespace EmotionalStates.EmotionsChart
             using (var framePen = new Pen(_frameColor, 2))
             {
                 graphics.DrawRectangle(framePen, 1, barY, fullBarWidth, _drawableSize.Height - barY-1);
-                for (var lineX = blockWidth; lineX < fullBarWidth; lineX += blockWidth)
-                {
-                    graphics.DrawLine(framePen, lineX, barY, lineX, _drawableSize.Height-1);
-                }
+                
+                graphics.DrawLine(framePen, relaxationBlockWidth, barY, relaxationBlockWidth, _drawableSize.Height-1);
+                graphics.DrawLine(framePen, relaxationBlockWidth+normalActivationBlockWidth/2, barY, relaxationBlockWidth + normalActivationBlockWidth / 2, _drawableSize.Height-1);
+                graphics.DrawLine(framePen, relaxationBlockWidth+normalActivationBlockWidth, barY, relaxationBlockWidth+normalActivationBlockWidth, _drawableSize.Height-1);
             }
 
             if (Mode == EmotionBarMode.Wait)
@@ -194,45 +129,49 @@ namespace EmotionalStates.EmotionsChart
 
             using (var textBrush = new SolidBrush(_textColor))
             {
-                var emotionalStateName = EmotionStateChannel.ValueToName(_emotionalState.State);
-                var labelCenterX = blockWidth / 2;
-                graphics.DrawString(_stateSleepLabelText,
-                    emotionalStateName == EmotionalStateName.Sleep ? _textBoldFont : _textFont, textBrush,
-                    labelCenterX - stateSleepLabelSize.Width / 2, 0);
-                labelCenterX += blockWidth;
+                var emotionalStateName = EmotionStateChannel.ValueToName(_emotionalState);
+                var labelCenterX = relaxationBlockWidth / 2;
 
-                graphics.DrawString(_stateDeepRelaxLabelText,
-                    emotionalStateName == EmotionalStateName.DeepRelax ? _textBoldFont : _textFont, textBrush,
-                    labelCenterX - stateDeepRelaxLabelSize.Width / 2, 0);
-                labelCenterX += blockWidth;
+                graphics.DrawString(_stateRelaxationLabelText,
+                    emotionalStateName == EmotionalStateName.Relaxation ? _textBoldFont : _textFont, textBrush,
+                    labelCenterX - stateRelaxationLabelSize.Width / 2, 0);
 
-                graphics.DrawString(_stateRelaxLabelText,
-                    emotionalStateName == EmotionalStateName.Relax ? _textBoldFont : _textFont, textBrush,
-                    labelCenterX - stateRelaxLabelSize.Width / 2, 0);
-                labelCenterX += blockWidth;
-
+                labelCenterX = relaxationBlockWidth + normalActivationBlockWidth / 2;
                 graphics.DrawString(_stateNormalActivationLabelText,
                     emotionalStateName == EmotionalStateName.NormalActivation ? _textBoldFont : _textFont, textBrush,
                     labelCenterX - stateNormalActivationLabelSize.Width / 2, 0);
-                labelCenterX += blockWidth;
 
-                graphics.DrawString(_stateExcitementLabelText,
-                    emotionalStateName == EmotionalStateName.Excitement ? _textBoldFont : _textFont, textBrush,
-                    labelCenterX - stateExcitementLabelSize.Width / 2, 0);
-                labelCenterX += blockWidth;
-
-                graphics.DrawString(_stateDeepExcitementLabelText,
-                    emotionalStateName == EmotionalStateName.DeepExcitement ? _textBoldFont : _textFont, textBrush,
-                    labelCenterX - stateDeepExcitementLabelSize.Width / 2, 0);
+                labelCenterX = relaxationBlockWidth + normalActivationBlockWidth + concentrationBlockWidth / 2;
+                graphics.DrawString(_concentrationLabelText,
+                    emotionalStateName == EmotionalStateName.Concentration ? _textBoldFont : _textFont, textBrush,
+                    labelCenterX - stateConcentrationLabelSize.Width / 2, 0);
 
                 var drawableCenterY = _drawableSize.Height / 2;
                 var labelX = fullBarWidth + 2;
-                graphics.DrawString(_productiveRelaxLabelText, _textFont, textBrush, labelX, drawableCenterY - productiveRelaxLabelSize.Height);
-                graphics.DrawString(_meditationLabelText, _textFont, textBrush, labelX, drawableCenterY);
-                labelX += Math.Max(meditationLabelSize.Width, productiveRelaxLabelSize.Width);
+                graphics.DrawString(_baseAlphaLabelText, _textFont, textBrush, labelX, drawableCenterY - baseAlphaLabelSize.Height);
+                graphics.DrawString(_baseBetaLabelText, _textFont, textBrush, labelX, drawableCenterY);
+                labelX += Math.Max(baseAlphaLabelSize.Width, baseBetaLabelSize.Width);
 
-                graphics.DrawString(_attentionLabelText, _textFont, textBrush, labelX, drawableCenterY - attentionLabelSize.Height);
-                graphics.DrawString(_stressLabelText, _textFont, textBrush, labelX, drawableCenterY);
+                graphics.DrawString(_alphaPlusBetaLeftLabelText, _textFont, textBrush, labelX, drawableCenterY - alphaPlusBetaLeftLabelSize.Height);
+                graphics.DrawString(_alphaPlusBetaRightLabelText, _textFont, textBrush, labelX, drawableCenterY);
+                labelX += Math.Max(alphaPlusBetaLeftLabelSize.Width, alphaPlusBetaRightLabelSize.Width);
+
+                graphics.DrawString(_baseLabelText, _textFont, textBrush, labelX, drawableCenterY - baseLabelSize.Height);
+            }
+
+            if (Mode == EmotionBarMode.Artifact)
+            {
+                using (var artifactBrush = new SolidBrush(Color.FromArgb(80, Color.Red)))
+                {
+                    graphics.FillRectangle(artifactBrush, 1, barY, fullBarWidth, _drawableSize.Height - barY - 1);
+                    var artifactString = "Artifact zone";
+                    var artifactStringFont = new Font("Arial", 14);
+                    var stringSize = graphics.MeasureString(artifactString, artifactStringFont);
+                    var barCenterX = fullBarWidth - fullBarWidth / 2;
+                    var barCenterY = barY + (_drawableSize.Height - barY) / 2;
+                    graphics.DrawString(artifactString, artifactStringFont, Brushes.Black,
+                        barCenterX - stringSize.Width / 2, barCenterY - stringSize.Height / 2);
+                }
             }
         }
 
@@ -245,12 +184,72 @@ namespace EmotionalStates.EmotionsChart
             }
         }
 
+        public BaseEmotionalValue BaseValue
+        {
+            set
+            {
+                _baseValue = value;
+                UpdateLabels();
+            }
+        }
+
+        public double AlphaLeft
+        {
+            set
+            {
+                _alphaLeftValue = value;
+                UpdateLabels();
+            }
+            get => _alphaLeftValue;
+        }
+
+        public double BetaLeft
+        {
+            set
+            {
+                _betaLeftValue = value;
+                UpdateLabels();
+            }
+            get => _betaLeftValue;
+        }
+
+        public double AlphaRight
+        {
+            set
+            {
+                _alphaRightValue = value;
+                UpdateLabels();
+            }
+            get => _alphaRightValue;
+        }
+
+        public double BetaRight
+        {
+            set
+            {
+                _betaRightValue = value;
+                UpdateLabels();
+            }
+            get => _betaRightValue;
+        }
+
+        public double BasePower
+        {
+            set
+            {
+                _basePower = value;
+                UpdateLabels();
+            }
+            get => _basePower;
+        }
+
         private void UpdateLabels()
         {
-            _productiveRelaxLabelText = $"Productive relax: {_emotionalState.Relax} %";
-            _meditationLabelText = $"Meditation: {_emotionalState.Meditation} %";
-            _attentionLabelText = $"Attention: {_emotionalState.Attention} %";
-            _stressLabelText = $"Stress: {_emotionalState.Stress} %";
+            _baseAlphaLabelText = $"Base Alpha: {Math.Round(_baseValue.Alpha, 2)}";
+            _baseBetaLabelText = $"Base Beta: {Math.Round(_baseValue.Beta, 2)}";
+            _alphaPlusBetaLeftLabelText = $"Alpha+Beta Left: {Math.Round((_alphaLeftValue + _betaLeftValue)*1e6, 2)} uW";
+            _alphaPlusBetaRightLabelText = $"Alpha+Beta Right: {Math.Round((_alphaRightValue + _betaRightValue)*1e6, 2)} uW";
+            _baseLabelText = $"Alpha+Beta Base: {Math.Round((_basePower)*1e6, 2)} uW";
         }
     }
 }

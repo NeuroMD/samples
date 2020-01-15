@@ -11,6 +11,7 @@ namespace EmotionalStates.IndexChart
         private readonly Button _emotionsButton;
         private readonly Button _emotionsStopButton;
         private readonly Control _context;
+        private DateTime _startTime;
 
         public IndexChartPresenter(IEegIndexChart chart, EegIndexChannel channel, Button emotionsButton, Button emotionsStopButton, Control context)
         {
@@ -30,6 +31,7 @@ namespace EmotionalStates.IndexChart
         public void OnSignalStarted()
         {
             _indexChart.Mode = EegIndexChartMode.Waiting;
+            _startTime = DateTime.Now;
         }
 
         private void _indexChart_SizeChanged(object sender, System.Drawing.Size e)
@@ -63,6 +65,19 @@ namespace EmotionalStates.IndexChart
             var offset = _channel.TotalLength - readLength;
             var data = _channel.ReadData(offset, readLength);
             _indexChart.IndicesData = data;
+            if (_channel.Mode == EegIndexMode.LeftSide)
+            {
+                _indexChart.ChannelName = "T3O1";
+            }
+            else if (_channel.Mode == EegIndexMode.RightSide)
+            {
+                _indexChart.ChannelName = "T4O2";
+            }
+            else
+            {
+                _indexChart.ChannelName = "Artifacts";
+            }
+            _indexChart.LastIndexTime = _channel.TotalLength; //(int)(DateTime.Now - _startTime).TotalMilliseconds; //_channel.TotalLength;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Indices
             _currentDevice?.Dispose();
             _deviceChannels.Clear();
             ChannelListChanged?.Invoke(this, null);
-            _currentDevice = new Device(deviceInfo);
+            _currentDevice = _enumerator.CreateDevice(deviceInfo);
             _currentDevice.Connect();
             if (_currentDevice.ReadParam<DeviceState>(Parameter.State) != DeviceState.Connected)
             {

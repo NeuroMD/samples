@@ -77,6 +77,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Drawable\ChannelAdapter.cs" />
     <Compile Include="Drawable\CompoundDrawable.cs" />
     <Compile Include="Devices\DeviceModel.cs" />
     <Compile Include="Devices\DeviceSearchForm.cs">
@@ -93,16 +94,10 @@
       <DependentUpon>DrawableControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Drawable\IMouseEventsSubscriber.cs" />
-    <Compile Include="EmotionsChart\EmotionCoefficientsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="EmotionsChart\EmotionCoefficientsControl.Designer.cs">
-      <DependentUpon>EmotionCoefficientsControl.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Drawable\SignalViewController.cs" />
     <Compile Include="EmotionsChart\EmotionsChart.cs" />
     <Compile Include="EmotionsChart\EmotionsChartPresenter.cs" />
     <Compile Include="EmotionsChart\IEmotionsChart.cs" />
-    <Compile Include="EmotionsChart\StatesSettingsPresenter.cs" />
     <Compile Include="IndexChart\EegIndexChart.cs" />
     <Compile Include="IndexChart\IEegIndexChart.cs" />
     <Compile Include="Drawable\IDrawable.cs" />
@@ -123,6 +118,13 @@
     <Compile Include="Network\OSCDataSender.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResistanceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ResistanceForm.Designer.cs">
+      <DependentUpon>ResistanceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SignalChart\DrawableSignalChart.cs" />
     <Compile Include="Spectrum\Rhythm.cs" />
     <Compile Include="Spectrum\Spectrum.cs" />
     <Compile Include="Spectrum\SpectrumChart.cs" />
@@ -133,9 +135,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Drawable\DrawableControl.resx">
       <DependentUpon>DrawableControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EmotionsChart\EmotionCoefficientsControl.resx">
-      <DependentUpon>EmotionCoefficientsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="IndexChart\IndexSettingsControl.resx">
       <DependentUpon>IndexSettingsControl.cs</DependentUpon>
@@ -152,6 +151,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ResistanceForm.resx">
+      <DependentUpon>ResistanceForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Spectrum\SpectrumChart.resx">
       <DependentUpon>SpectrumChart.cs</DependentUpon>
     </EmbeddedResource>
@@ -179,6 +181,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SignalView\SignalView.csproj">
+      <Project>{9c76705a-f52a-40e6-9f28-7cabcfb2a864}</Project>
+      <Name>SignalView</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

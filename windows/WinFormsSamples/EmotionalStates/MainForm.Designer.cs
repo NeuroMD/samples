@@ -1,4 +1,5 @@
-﻿using EmotionalStates.Drawable;
+﻿using System.Windows.Forms;
+using EmotionalStates.Drawable;
 
 namespace EmotionalStates
 {
@@ -30,7 +31,7 @@ namespace EmotionalStates
         /// </summary>
         private void InitializeComponent()
         {
-            EmotionalStates.Drawable.EmptyDrawable emptyDrawable2 = new EmotionalStates.Drawable.EmptyDrawable();
+            EmotionalStates.Drawable.EmptyDrawable emptyDrawable1 = new EmotionalStates.Drawable.EmptyDrawable();
             this.label1 = new System.Windows.Forms.Label();
             this._deviceLabel = new System.Windows.Forms.Label();
             this._findDeviceButton = new System.Windows.Forms.Button();
@@ -45,8 +46,8 @@ namespace EmotionalStates
             this.label3 = new System.Windows.Forms.Label();
             this._statesStopButton = new System.Windows.Forms.Button();
             this._spectrumAmplitudeTrackBar = new System.Windows.Forms.TrackBar();
-            this._indexSettingsControl = new EmotionalStates.IndexChart.IndexSettingsControl();
-            this._emotionCoefficientsControl = new EmotionalStates.EmotionsChart.EmotionCoefficientsControl();
+            this.ResistanceCheckButton = new System.Windows.Forms.Button();
+            this.BatteryLabel = new System.Windows.Forms.Label();
             this._drawableControl = new EmotionalStates.Drawable.DrawableControl();
             ((System.ComponentModel.ISupportInitialize)(this._spectrumAmplitudeTrackBar)).BeginInit();
             this.SuspendLayout();
@@ -54,7 +55,7 @@ namespace EmotionalStates
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
+            this.label1.Location = new System.Drawing.Point(580, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 13);
             this.label1.TabIndex = 3;
@@ -63,7 +64,7 @@ namespace EmotionalStates
             // _deviceLabel
             // 
             this._deviceLabel.AutoSize = true;
-            this._deviceLabel.Location = new System.Drawing.Point(63, 13);
+            this._deviceLabel.Location = new System.Drawing.Point(630, 13);
             this._deviceLabel.Name = "_deviceLabel";
             this._deviceLabel.Size = new System.Drawing.Size(67, 13);
             this._deviceLabel.TabIndex = 4;
@@ -71,7 +72,7 @@ namespace EmotionalStates
             // 
             // _findDeviceButton
             // 
-            this._findDeviceButton.Location = new System.Drawing.Point(207, 8);
+            this._findDeviceButton.Location = new System.Drawing.Point(12, 8);
             this._findDeviceButton.Name = "_findDeviceButton";
             this._findDeviceButton.Size = new System.Drawing.Size(75, 23);
             this._findDeviceButton.TabIndex = 5;
@@ -82,7 +83,7 @@ namespace EmotionalStates
             // _startSignalButton
             // 
             this._startSignalButton.Enabled = false;
-            this._startSignalButton.Location = new System.Drawing.Point(288, 8);
+            this._startSignalButton.Location = new System.Drawing.Point(233, 8);
             this._startSignalButton.Name = "_startSignalButton";
             this._startSignalButton.Size = new System.Drawing.Size(75, 23);
             this._startSignalButton.TabIndex = 6;
@@ -93,7 +94,7 @@ namespace EmotionalStates
             // _stopSignalButton
             // 
             this._stopSignalButton.Enabled = false;
-            this._stopSignalButton.Location = new System.Drawing.Point(369, 8);
+            this._stopSignalButton.Location = new System.Drawing.Point(314, 8);
             this._stopSignalButton.Name = "_stopSignalButton";
             this._stopSignalButton.Size = new System.Drawing.Size(75, 23);
             this._stopSignalButton.TabIndex = 7;
@@ -104,7 +105,7 @@ namespace EmotionalStates
             // _emotionsStartButton
             // 
             this._emotionsStartButton.Enabled = false;
-            this._emotionsStartButton.Location = new System.Drawing.Point(450, 8);
+            this._emotionsStartButton.Location = new System.Drawing.Point(395, 8);
             this._emotionsStartButton.Name = "_emotionsStartButton";
             this._emotionsStartButton.Size = new System.Drawing.Size(98, 23);
             this._emotionsStartButton.TabIndex = 8;
@@ -118,7 +119,7 @@ namespace EmotionalStates
             this._broadcastCheckBox.AutoSize = true;
             this._broadcastCheckBox.Checked = true;
             this._broadcastCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._broadcastCheckBox.Location = new System.Drawing.Point(946, 12);
+            this._broadcastCheckBox.Location = new System.Drawing.Point(1478, 12);
             this._broadcastCheckBox.Name = "_broadcastCheckBox";
             this._broadcastCheckBox.Size = new System.Drawing.Size(74, 17);
             this._broadcastCheckBox.TabIndex = 10;
@@ -130,7 +131,7 @@ namespace EmotionalStates
             // 
             this._applyNetSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._applyNetSettingsButton.Enabled = false;
-            this._applyNetSettingsButton.Location = new System.Drawing.Point(1026, 8);
+            this._applyNetSettingsButton.Location = new System.Drawing.Point(1558, 8);
             this._applyNetSettingsButton.Name = "_applyNetSettingsButton";
             this._applyNetSettingsButton.Size = new System.Drawing.Size(75, 23);
             this._applyNetSettingsButton.TabIndex = 11;
@@ -142,7 +143,7 @@ namespace EmotionalStates
             // 
             this._ipAddressTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._ipAddressTextBox.Enabled = false;
-            this._ipAddressTextBox.Location = new System.Drawing.Point(744, 10);
+            this._ipAddressTextBox.Location = new System.Drawing.Point(1276, 10);
             this._ipAddressTextBox.Name = "_ipAddressTextBox";
             this._ipAddressTextBox.Size = new System.Drawing.Size(100, 20);
             this._ipAddressTextBox.TabIndex = 12;
@@ -152,7 +153,7 @@ namespace EmotionalStates
             // _portTextBox
             // 
             this._portTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._portTextBox.Location = new System.Drawing.Point(880, 10);
+            this._portTextBox.Location = new System.Drawing.Point(1412, 10);
             this._portTextBox.Name = "_portTextBox";
             this._portTextBox.Size = new System.Drawing.Size(60, 20);
             this._portTextBox.TabIndex = 13;
@@ -163,7 +164,7 @@ namespace EmotionalStates
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(850, 13);
+            this.label2.Location = new System.Drawing.Point(1382, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 13);
             this.label2.TabIndex = 14;
@@ -173,7 +174,7 @@ namespace EmotionalStates
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(721, 13);
+            this.label3.Location = new System.Drawing.Point(1253, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(17, 13);
             this.label3.TabIndex = 15;
@@ -182,7 +183,7 @@ namespace EmotionalStates
             // _statesStopButton
             // 
             this._statesStopButton.Enabled = false;
-            this._statesStopButton.Location = new System.Drawing.Point(554, 8);
+            this._statesStopButton.Location = new System.Drawing.Point(499, 8);
             this._statesStopButton.Name = "_statesStopButton";
             this._statesStopButton.Size = new System.Drawing.Size(75, 23);
             this._statesStopButton.TabIndex = 16;
@@ -194,63 +195,47 @@ namespace EmotionalStates
             // 
             this._spectrumAmplitudeTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._spectrumAmplitudeTrackBar.Location = new System.Drawing.Point(1060, 37);
+            this._spectrumAmplitudeTrackBar.Location = new System.Drawing.Point(1592, 37);
             this._spectrumAmplitudeTrackBar.Maximum = 500;
             this._spectrumAmplitudeTrackBar.Minimum = 10;
             this._spectrumAmplitudeTrackBar.Name = "_spectrumAmplitudeTrackBar";
             this._spectrumAmplitudeTrackBar.Orientation = System.Windows.Forms.Orientation.Vertical;
             this._spectrumAmplitudeTrackBar.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._spectrumAmplitudeTrackBar.RightToLeftLayout = true;
-            this._spectrumAmplitudeTrackBar.Size = new System.Drawing.Size(45, 619);
+            this._spectrumAmplitudeTrackBar.Size = new System.Drawing.Size(45, 937);
             this._spectrumAmplitudeTrackBar.TabIndex = 18;
             this._spectrumAmplitudeTrackBar.Value = 100;
             // 
-            // _indexSettingsControl
+            // ResistanceCheckButton
             // 
-            this._indexSettingsControl.AlphaWeight = 1D;
-            this._indexSettingsControl.BetaWeight = 1D;
-            this._indexSettingsControl.Delay = 3D;
-            this._indexSettingsControl.DeltaWeight = 0.5D;
-            this._indexSettingsControl.Enabled = false;
-            this._indexSettingsControl.Location = new System.Drawing.Point(6, 37);
-            this._indexSettingsControl.Name = "_indexSettingsControl";
-            this._indexSettingsControl.Size = new System.Drawing.Size(141, 190);
-            this._indexSettingsControl.TabIndex = 21;
-            this._indexSettingsControl.ThetaWeight = 1D;
+            this.ResistanceCheckButton.Enabled = false;
+            this.ResistanceCheckButton.Location = new System.Drawing.Point(93, 8);
+            this.ResistanceCheckButton.Name = "ResistanceCheckButton";
+            this.ResistanceCheckButton.Size = new System.Drawing.Size(134, 23);
+            this.ResistanceCheckButton.TabIndex = 19;
+            this.ResistanceCheckButton.Text = "Resistance check";
+            this.ResistanceCheckButton.UseVisualStyleBackColor = true;
+            this.ResistanceCheckButton.Click += new System.EventHandler(this.ResistanceCheckButton_Click);
             // 
-            // _emotionCoefficientsControl
+            // BatteryLabel
             // 
-            this._emotionCoefficientsControl.Enabled = false;
-            this._emotionCoefficientsControl.Location = new System.Drawing.Point(6, 233);
-            this._emotionCoefficientsControl.Name = "_emotionCoefficientsControl";
-            this._emotionCoefficientsControl.NX1 = 0D;
-            this._emotionCoefficientsControl.NX2 = 0D;
-            this._emotionCoefficientsControl.NX3 = 0D;
-            this._emotionCoefficientsControl.NX4 = 0D;
-            this._emotionCoefficientsControl.NY1 = 0D;
-            this._emotionCoefficientsControl.NY2 = 0D;
-            this._emotionCoefficientsControl.NY3 = 0D;
-            this._emotionCoefficientsControl.NY4 = 0D;
-            this._emotionCoefficientsControl.PX1 = 0D;
-            this._emotionCoefficientsControl.PX2 = 0D;
-            this._emotionCoefficientsControl.PX3 = 0D;
-            this._emotionCoefficientsControl.PX4 = 0D;
-            this._emotionCoefficientsControl.PY1 = 0D;
-            this._emotionCoefficientsControl.PY2 = 0D;
-            this._emotionCoefficientsControl.PY3 = 0D;
-            this._emotionCoefficientsControl.PY4 = 0D;
-            this._emotionCoefficientsControl.Size = new System.Drawing.Size(141, 470);
-            this._emotionCoefficientsControl.TabIndex = 20;
+            this.BatteryLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BatteryLabel.AutoSize = true;
+            this.BatteryLabel.Location = new System.Drawing.Point(1164, 13);
+            this.BatteryLabel.Name = "BatteryLabel";
+            this.BatteryLabel.Size = new System.Drawing.Size(60, 13);
+            this.BatteryLabel.TabIndex = 20;
+            this.BatteryLabel.Text = "Battery: 0%";
             // 
             // _drawableControl
             // 
             this._drawableControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._drawableControl.Drawable = emptyDrawable2;
-            this._drawableControl.Location = new System.Drawing.Point(153, 37);
+            this._drawableControl.Drawable = emptyDrawable1;
+            this._drawableControl.Location = new System.Drawing.Point(12, 37);
             this._drawableControl.Name = "_drawableControl";
-            this._drawableControl.Size = new System.Drawing.Size(930, 666);
+            this._drawableControl.Size = new System.Drawing.Size(1557, 984);
             this._drawableControl.TabIndex = 0;
             this._drawableControl.Text = "drawableControl1";
             // 
@@ -258,9 +243,9 @@ namespace EmotionalStates
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1113, 707);
-            this.Controls.Add(this._indexSettingsControl);
-            this.Controls.Add(this._emotionCoefficientsControl);
+            this.ClientSize = new System.Drawing.Size(1645, 1025);
+            this.Controls.Add(this.BatteryLabel);
+            this.Controls.Add(this.ResistanceCheckButton);
             this.Controls.Add(this._statesStopButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -278,6 +263,7 @@ namespace EmotionalStates
             this.Controls.Add(this._spectrumAmplitudeTrackBar);
             this.Name = "MainForm";
             this.Text = "Emotional states";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this._spectrumAmplitudeTrackBar)).EndInit();
             this.ResumeLayout(false);
@@ -302,8 +288,10 @@ namespace EmotionalStates
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button _statesStopButton;
         private System.Windows.Forms.TrackBar _spectrumAmplitudeTrackBar;
-        private EmotionsChart.EmotionCoefficientsControl _emotionCoefficientsControl;
-        private IndexChart.IndexSettingsControl _indexSettingsControl;
+        private Button ResistanceCheckButton;
+        private Label BatteryLabel;
+        //        private SignalView.SignalChart signalChart1;
+        //        private SignalView.SignalChart signalChart2;
     }
 }
 

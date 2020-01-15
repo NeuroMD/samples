@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -93,7 +94,15 @@ namespace SignalAndResistance
 
         private void _signalStartButton_Click(object sender, System.EventArgs e)
         {
-            _deviceModel.Device?.Execute(Command.StartSignal);
+            try
+            {
+                _deviceModel.Device?.Execute(Command.StartSignal);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show($"Cannot start signal: {exception.Message}", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private void _stopButton_Click(object sender, System.EventArgs e)

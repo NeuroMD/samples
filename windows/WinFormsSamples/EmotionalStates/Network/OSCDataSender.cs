@@ -13,17 +13,11 @@ namespace EmotionalStates.Network
         {
             using (var udpSender = new UdpClient())
             {
-                var relaxPacket = CreatePacket("Relax", state.Relax);
-                udpSender.Send(relaxPacket, relaxPacket.Length, destination);
+                var relaxationPacket = CreatePacket("RelaxationRate", (float)state.RelaxationRate);
+                udpSender.Send(relaxationPacket, relaxationPacket.Length, destination);
 
-                var meditationPacket = CreatePacket("Meditation", state.Meditation);
-                udpSender.Send(meditationPacket, meditationPacket.Length, destination);
-
-                var attentionPacket = CreatePacket("Attention", state.Attention);
-                udpSender.Send(attentionPacket, attentionPacket.Length, destination);
-
-                var stressPacket = CreatePacket("Stress", state.Stress);
-                udpSender.Send(stressPacket, stressPacket.Length, destination);
+                var concentrationPacket = CreatePacket("Meditation", (float)state.ConcentrationRate);
+                udpSender.Send(concentrationPacket, concentrationPacket.Length, destination);
             }
         }
 

@@ -19,6 +19,9 @@ release_build
 /bin
 /lib
 /install
+/.vs
+/out
+CMakeSettings.json
 
 # Qt cache
 CMakeLists.txt.user

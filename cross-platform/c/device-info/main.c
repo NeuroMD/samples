@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "c-wrap/cscanner.h"
-#include "c-wrap/cdevice.h"
-#include "c-wrap/cparams.h"
-#include "c-wrap/sdk_error.h"
+#include "cscanner.h"
+#include "cdevice.h"
+#include "cparams.h"
+#include "sdk_error.h"
 
 void show_device_features(Device* device) {
 	CommandArray commands;
@@ -67,7 +67,7 @@ void on_device_list_changed(DeviceEnumerator *enumerator, void *user_data) {
 	DeviceInfoArray deviceInfoArray;
 	enumerator_get_device_list(enumerator, &deviceInfoArray);
 	for (size_t i = 0; i < deviceInfoArray.info_count; ++i) {
-		on_device_found(create_Device(deviceInfoArray.info_array[i]));
+		on_device_found(create_Device(enumerator, deviceInfoArray.info_array[i]));
 	}
 }
 
