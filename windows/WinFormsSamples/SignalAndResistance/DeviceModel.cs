@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using Neuro;
 
 namespace SignalAndResistance
@@ -13,18 +15,8 @@ namespace SignalAndResistance
 
         public DeviceModel()
         {
-            _enumerator = new DeviceEnumerator(DeviceType.Any);
-            _enumerator.DeviceListChanged += _enumerator_DeviceListChanged;
         }
 
-        private void _enumerator_DeviceListChanged(object sender, EventArgs e)
-        {
-            var devices = _enumerator.Devices;
-            if (devices.Count > 0)
-            {
-                OnDeviceFound(devices[0]);
-            }
-        }
 
         public void Reconnect()
         {
@@ -40,6 +32,12 @@ namespace SignalAndResistance
                 catch { }
                 Device.Dispose();
                 Device = null;
+            }
+
+            var deviceSearchForm = new DeviceSearchForm(new List<string>());
+            if (deviceSearchForm.ShowDialog() == DialogResult.OK)
+            {
+                OnDeviceFound(deviceSearchForm.SelectedDevice);
             }
         }
 
@@ -64,16 +62,24 @@ namespace SignalAndResistance
             }
         }
 
-        private void OnDeviceFound(DeviceInfo deviceInfo)
+        private void OnDeviceFound(Device device)
         {
             if (Device != null)
             {
                 return;
             }
 
-            Device = _enumerator.CreateDevice(deviceInfo);
-            Device.ParameterChanged += OnDeviceParamChanged;
-            Device.Connect();
+            Device = device;
+            var state = Device.ReadParam<DeviceState>(Parameter.State);
+            if (state == DeviceState.Disconnected)
+            {
+                Device.ParameterChanged += OnDeviceParamChanged;
+                Device.Connect();
+            }
+            else
+            {
+                OnDeviceStateChanged(state);
+            }
         }
 
         public void Dispose()

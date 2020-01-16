@@ -77,7 +77,7 @@ namespace SignalView
 
 		float[] scaleBufY = { 0.1f, 0.2f, 0.5f, 1.0f, 2.0f, 5.0f, 10f, 20f, 50f };   //цена деления по оси У 
 		//сколько нановольт в делении        
-		float[] scaleYnV = { 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000, 5000000, 10000000, 20000000, 50000000, 100000000, 200000000, 500000000, 1000000000 };
+		double[] scaleYV = { 100e-9, 200e-9, 500e-9, 1000e-9, 2000e-9, 5000e-9, 10000e-9, 20000e-9, 50000e-9, 100000e-9, 200000e-9, 500000e-9, 1000000e-9, 2000000e-9, 5000000e-9, 10000000e-9, 20000000e-9, 50000000e-9, 100000000e-9, 200000000e-9, 500000000e-9, 1000000000e-9 };
 		double[] scaleBufX = { 1.0, 2.0, 5.0, 10, 20, 50, 0.1, 0.2, 0.5 };   //цена деления по оси X (у флоата не хватает точности, появляются дробные хвосты)
 		string[] scaleBufStringX = { " 1", " 2", " 5", "10", "20", "50", ".1", ".2", ".5", " 1", " 2", " 5", "10", "20", "50", ".1", ".2", ".5", " 1", " 2", " 5", "" };
 		string[] scaleBufStringY = { ".1", ".2", ".5", " 1", " 2", " 5", "10", "20", "50", ".1", ".2", ".5", " 1", " 2", " 5", "10", "20", "50", ".1", ".2", ".5", "" };   
@@ -89,7 +89,7 @@ namespace SignalView
 		float uSPixel;			// микросекунд на пиксел
 		float pixelsBetweenSampels;		// количество пикселов между соседними отсчетами входных данных
 		double nVPixel;			// нановольт на пиксел
-		float shiftYnV;			// сдвиг по оси Y в нановольтах
+		double shiftYnV;			// сдвиг по оси Y в нановольтах
 		int samplesOnScreen;	// столько отсчетов входного сигнала помещается на экран
 		long nVOnScreen;			// столько нановольт помещается на экран
 		//переменные, связаные со входным массивом
@@ -211,7 +211,7 @@ namespace SignalView
                 uSPixel = scaleXuS[scaleX] / gridStepX; // микросекунд на пиксел
                 pixelsBetweenSampels =
                     (float) (inputTuS / uSPixel); // количество пикселов между соседними отсчетами входных данных
-                nVPixel = scaleYnV[scaleY] / gridStepY; // нановольт на пиксел
+                nVPixel = scaleYV[scaleY] / gridStepY; // нановольт на пиксел
 
                 samplesOnScreen =
                     2 * Convert.ToInt32(Math.Ceiling((pointOrigin.X - pointLeftUp.X) / pixelsBetweenSampels));
@@ -287,7 +287,7 @@ namespace SignalView
 			float shiftXpix = (-inputIndex * inputTuS) / uSPixel;
 			// вычисляем сдвиг по оси Y в пикселах
 			// для этого shiftYnV (сдвиг в нановольтах) делим на nVPixel
-			float shiftYpix = (float)(shiftYnV / nVPixel);
+			double shiftYpix = (float)(shiftYnV / nVPixel);
 
 			// Перерисовать панель сигнала
 			// заливаем фон
@@ -323,7 +323,7 @@ namespace SignalView
 			graphTextFormat.FormatFlags = StringFormatFlags.NoClip;
 			// текущий номер отображаемой линии сетки
 			index = Convert.ToInt32(Math.Ceiling(-shiftYpix / gridStepY)) - gridCountY;
-			float pointGridY = shiftYpix + pointOrigin.Y + index * gridStepY;
+			float pointGridY = (float)(shiftYpix + pointOrigin.Y + index * gridStepY);
 			do
 			{
 				// длинные линии
@@ -448,13 +448,13 @@ namespace SignalView
 							// вычисляем координату по Х
 							// для этого умножаем текущий index входного буфера на период сигнала
 							// вычитаем смещение координат и делим на разрешение (uSPixel)
-							currY = (float)(inputBuf[index + inputIndex]*1e9);
+							currY = (float)(inputBuf[index + inputIndex]);
 							signalPointMax.Y = currY;
 							signalPointMin.Y = currY;
 							// перебираем все точки, приходящиеся на этот пиксел
 							do
 							{
-								currY = (float)(inputBuf[index + inputIndex] * 1e9);
+								currY = (float)(inputBuf[index + inputIndex]);
                                 signalPointMax.Y = Math.Max(signalPointMax.Y, currY);
 								signalPointMin.Y = Math.Min(signalPointMin.Y, currY);
 								index++;
@@ -512,7 +512,7 @@ namespace SignalView
 							do
 							{
 								M++;
-								signalPoint.Y += (float)(inputBuf[index + inputIndex] * 1e9);
+								signalPoint.Y += (float)(inputBuf[index + inputIndex]);
                                 index++;
 								if ((index + inputIndex) >= inputLength)
 									break;
@@ -565,7 +565,7 @@ namespace SignalView
 						// и прибавляем сдвиг и координаты центра
 						sigPen = BlackPen;
 						signalPoint.X = shiftXpix + pointOrigin.X + (float)((index + inputIndex) * pixelsBetweenSampels);
-						signalPoint.Y = (float)(shiftYpix + pointOrigin.Y - ((float)(inputBuf[index + inputIndex] * 1e9) / nVPixel));
+						signalPoint.Y = (float)(shiftYpix + pointOrigin.Y - ((float)(inputBuf[index + inputIndex]) / nVPixel));
 						if (signalPoint.Y < pointLeftUp.Y)
 						{
 							sigPen = RedPen;

@@ -14,6 +14,7 @@ namespace EmotionalStates
         public SpectrumPowerChannel AlphaRightPowerChannel { get; private set; }
         public SpectrumPowerChannel BetaRightPowerChannel { get; private set; }
         public EegIndexChannel IndexChannel { get; private set; }
+        public EegIndexChannel IndexViewChannel { get; private set; }
         public SpectrumChannel T3O1SpectrumChannel { get; private set; }
         public SpectrumChannel T4O2SpectrumChannel { get; private set; }
         public BatteryChannel BatteryChannel { get; private set; }
@@ -67,6 +68,11 @@ namespace EmotionalStates
                         deviceChannels["O2"]);
                     IndexChannel.SetWeights(1.00, 1.00, 0.00, 0.00);
                     IndexChannel.Delay = 0.0;
+
+                    IndexViewChannel = new EegIndexChannel(deviceChannels["T3"], deviceChannels["T4"], deviceChannels["O1"],
+                        deviceChannels["O2"]);
+                    IndexViewChannel.SetWeights(1.00, 1.00, 0.00, 1.00);
+                    IndexViewChannel.Delay = 0.0;
 
                     AlphaLeftPowerChannel = new SpectrumPowerChannel(new List<SpectrumChannel>{T3O1SpectrumChannel}, 8, 14, "AlphaLeft");
                     BetaLeftPowerChannel = new SpectrumPowerChannel(new List<SpectrumChannel>{T3O1SpectrumChannel}, 14, 34, "BetaLeft");

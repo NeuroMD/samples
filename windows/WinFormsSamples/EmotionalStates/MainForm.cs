@@ -66,7 +66,7 @@ namespace EmotionalStates
                    catch { }
 
                    var indexChart = new EegIndexChart();
-                   _indexChartPresenter = new IndexChartPresenter(indexChart, _deviceModel.IndexChannel,
+                   _indexChartPresenter = new IndexChartPresenter(indexChart, _deviceModel.IndexViewChannel,
                        _emotionsStartButton, _statesStopButton, this);
 
                    var spectrumChartT3O1 = new SpectrumChart();
